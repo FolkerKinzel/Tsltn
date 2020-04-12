@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
@@ -9,9 +10,9 @@ namespace FolkerKinzel.Tsltn.Models
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
 
-        void AddAutoTranslation(Translation transl);
-        void AddManualTranslation(ManualTranslation manual);
-        Translation? GetTranslation(string originalText, string elementXPath);
-        void RemoveManualTranslation(string originalText, string elementXPath);
+        void AddAutoTranslation(XText node, string translatedText);
+        void AddManualTranslation(XText node, string translatedText);
+        string? GetTranslation(XText node);
+        void RemoveManualTranslation(XText node);
     }
 }

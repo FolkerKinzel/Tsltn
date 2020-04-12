@@ -24,7 +24,6 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        private static Document _instance = new Document();
 
         /// <summary>
         /// ctor
@@ -39,7 +38,7 @@ namespace FolkerKinzel.Tsltn.Models
         public bool Changed => _tsltn?.Changed ?? false;
 
 
-        public static Document Instance => _instance;
+        public static Document Instance { get; } = new Document();
 
 
         public bool SourceDocumentExists { get; private set; }
@@ -53,8 +52,10 @@ namespace FolkerKinzel.Tsltn.Models
                 throw new InvalidOperationException();
             }
 
-            this._tsltn = new TsltnFile();
-            this._tsltn.SourceDocumentFileName = fileToTranslate;
+            this._tsltn = new TsltnFile
+            {
+                SourceDocumentFileName = fileToTranslate
+            };
         }
 
 
@@ -119,7 +120,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        public XNode? GetFirstTextNode()
+        public XText? GetFirstTextNode()
         {
             var members = _xmlDocument?.Root.Element(MEMBERS)?.Elements(MEMBER);
 
@@ -136,9 +137,9 @@ namespace FolkerKinzel.Tsltn.Models
                     {
                         var extractedNode = ExtractFirstNode(node);
 
-                        if(extractedNode.NodeType == XmlNodeType.Text)
+                        if(extractedNode is XText txt)
                         {
-                            return extractedNode;
+                            return txt;
                         }
                     }
                 }
@@ -283,13 +284,13 @@ namespace FolkerKinzel.Tsltn.Models
         public string? TargetLanguage { get => _tsltn?.TargetLanguage; set { if (_tsltn != null) { _tsltn.TargetLanguage = value; } } }
 
 
-        public void AddAutoTranslation(Translation transl) => _tsltn?.AddAutoTranslation(transl);
+        public void AddAutoTranslation(XText node, string translatedText) => _tsltn?.AddAutoTranslation(node, translatedText);
 
-        public void AddManualTranslation(ManualTranslation manual) => _tsltn?.AddManualTranslation(manual);
+        public void AddManualTranslation(XText node, string translatedText) => _tsltn?.AddManualTranslation(node, translatedText);
 
-        public Translation? GetTranslation(string originalText, string elementXPath) => _tsltn?.GetTranslation(originalText, elementXPath);
+        public string? GetTranslation(XText node) => _tsltn?.GetTranslation(node);
 
-        public void RemoveManualTranslation(string originalText, string elementXPath) => _tsltn?.RemoveManualTranslation(originalText, elementXPath);
+        public void RemoveManualTranslation(XText node) => _tsltn?.RemoveManualTranslation(node);
 
         #endregion
 

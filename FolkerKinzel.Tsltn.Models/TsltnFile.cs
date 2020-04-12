@@ -10,6 +10,7 @@ using System.IO;
 
 namespace FolkerKinzel.Tsltn.Models
 {
+    [XmlRoot("Tsltn")]
     public sealed class TsltnFile : IXmlSerializable, ITsltnFile
     {
         private const string FILE_VERSION = "1.0";
@@ -23,19 +24,60 @@ namespace FolkerKinzel.Tsltn.Models
         private readonly Dictionary<int, Translation> _autoTranslations = new Dictionary<int, Translation>();
         private readonly Dictionary<int, ManualTranslation> _manualTranslations = new Dictionary<int, ManualTranslation>();
 
+        private string? _sourceDocumentFileName;
+        private string? _sourceLanguage;
+        private string? _targetLanguage;
+
+
         public TsltnFile() { }
 
-        public string? SourceDocumentFileName { get; set; }
+        public string? SourceDocumentFileName
+        {
+            get { return _sourceDocumentFileName; }
+            set 
+            { 
+                _sourceDocumentFileName = value;
+                this.Changed = true;
+            }
+        }
 
 
+        public string? SourceLanguage
+        {
+            get { return _sourceLanguage; }
+            set
+            {
+                _sourceLanguage = value;
+                this.Changed = true;
+            }
+        }
 
-        public string? SourceLanguage { get; set; }
 
-        public string? TargetLanguage { get; set; }
+        public string? TargetLanguage
+        {
+            get { return _targetLanguage; }
+            set
+            { 
+                _targetLanguage = value;
+                this.Changed = true;
+            }
+        }
+
 
         public bool Changed { get; private set; }
 
-        public void AddManualTranslation(ManualTranslation manual)
+
+        public void AddManualTranslation(XText node, string translatedText)
+        {
+            var manual = new ManualTranslation(node, translatedText);
+
+            AddManualTranslation(manual);
+
+            Changed = true;
+        }
+
+
+        private void AddManualTranslation(ManualTranslation manual)
         {
             if (manual.IsEmpty) return;
 
@@ -47,14 +89,13 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 this._manualTranslations[manual.Node] = manual;
             }
-
-            Changed = true;
         }
 
-        public void RemoveManualTranslation(string originalText, string elementXPath)
+
+        public void RemoveManualTranslation(XText node)
         {
-            int elementHash = HashService.HashXPath(elementXPath);
-            int originalTextHash = HashService.HashOriginalText(originalText);
+            int elementHash = Utility.Instance.GetNodeHash(node);
+            int originalTextHash = HashService.HashOriginalText(node.Value);
 
             if (_manualTranslations.ContainsKey(elementHash))
             {
@@ -67,7 +108,17 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        public void AddAutoTranslation(Translation transl)
+        public void AddAutoTranslation(XText node, string translatedText)
+        {
+            var transl = new Translation(node, translatedText);
+
+            AddAutoTranslation(transl);
+
+            Changed = true;
+        }
+
+
+        private void AddAutoTranslation(Translation transl)
         {
             if (transl.IsEmpty)
             {
@@ -77,16 +128,13 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 this._autoTranslations[transl.Hash] = transl;
             }
-
-            Changed = true;
         }
 
 
-        public Translation? GetTranslation(string originalText, string elementXPath)
+        public string? GetTranslation(XText node)
         {
-            int elementHash = HashService.HashXPath(elementXPath);
-
-            int originalTextHash = HashService.HashOriginalText(originalText);
+            int elementHash = Utility.Instance.GetNodeHash(node);
+            int originalTextHash = HashService.HashOriginalText(node.Value);
 
             Translation? translation = null;
 
@@ -99,11 +147,11 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 if (_autoTranslations.ContainsKey(originalTextHash))
                 {
-                    return _autoTranslations[originalTextHash];
+                    return _autoTranslations[originalTextHash].Value;
                 }
             }
 
-            return translation;
+            return translation?.Value;
         }
 
         internal void Save(string? tsltnFileName)
@@ -157,9 +205,9 @@ namespace FolkerKinzel.Tsltn.Models
 
             reader.MoveToContent();
 
-            SourceDocumentFileName = reader.GetAttribute(SOURCE_FILE);
-            SourceLanguage = reader.GetAttribute(SOURCE_LANGUAGE);
-            TargetLanguage = reader.GetAttribute(TARGET_LANGUAGE);
+            _sourceDocumentFileName = reader.GetAttribute(SOURCE_FILE);
+            _sourceLanguage = reader.GetAttribute(SOURCE_LANGUAGE);
+            _targetLanguage = reader.GetAttribute(TARGET_LANGUAGE);
 
             reader.Read();
 
@@ -195,8 +243,6 @@ namespace FolkerKinzel.Tsltn.Models
                     reader.Read();
                 }
             }
-
-            Changed = false;
         }
 
 
@@ -233,8 +279,6 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
 
-
-
             foreach (KeyValuePair<int, ManualTranslation> kvp in _manualTranslations)
             {
                 var trans = kvp.Value;
@@ -244,8 +288,6 @@ namespace FolkerKinzel.Tsltn.Models
                     trans.WriteXml(writer);
                 }
             }
-
-
         }
 
         #endregion

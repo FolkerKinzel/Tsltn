@@ -7,19 +7,29 @@ using System.Xml.Serialization;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public class Translation
+    internal sealed class Translation
     {
         internal const string XML_NAME = "T";
 
         private const string HASH = "Hash";
 
-        public Translation(string originalText, string translatedText)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="translatedText"></param>
+        public Translation(XText node, string translatedText)
         {
-            this.Hash = originalText.GetStableHashCode(HashType.AlphaNumericNoCase);
+            this.Hash = node.Value.GetStableHashCode(HashType.AlphaNumericNoCase);
             this.Value = translatedText;
         }
 
-        internal Translation(int hash, string value)
+        /// <summary>
+        /// ctor for Deserialization
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <param name="value"></param>
+        private Translation(int hash, string value)
         {
             this.Hash = hash;
             this.Value = value;
@@ -28,7 +38,11 @@ namespace FolkerKinzel.Tsltn.Models
         internal int Hash { get; }
 
         public string? Value { get; }
+
         public bool IsEmpty => string.IsNullOrWhiteSpace(this.Value);
+
+
+        #region Serialization
 
         internal void WriteXml(XmlWriter writer)
         {
@@ -44,5 +58,6 @@ namespace FolkerKinzel.Tsltn.Models
             return new Translation(hash, el.Value);
         }
 
+        #endregion
     }
 }

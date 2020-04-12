@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.Tsltn.Models",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.Tsltn.Models.Tests", "FolkerKinzel.Tsltn.Models.Tests\FolkerKinzel.Tsltn.Models.Tests.csproj", "{15D80FB8-51D7-4BA8-B47E-2F6F484BED06}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.Strings", "..\FolkerKinzel.Strings\FolkerKinzel.Strings\FolkerKinzel.Strings.csproj", "{08FCFBF6-82F6-49DC-9D28-5EAF19E501A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{15D80FB8-51D7-4BA8-B47E-2F6F484BED06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15D80FB8-51D7-4BA8-B47E-2F6F484BED06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15D80FB8-51D7-4BA8-B47E-2F6F484BED06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FCFBF6-82F6-49DC-9D28-5EAF19E501A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FCFBF6-82F6-49DC-9D28-5EAF19E501A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FCFBF6-82F6-49DC-9D28-5EAF19E501A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FCFBF6-82F6-49DC-9D28-5EAF19E501A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

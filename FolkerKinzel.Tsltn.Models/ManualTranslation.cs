@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public sealed class ManualTranslation
+    internal sealed class ManualTranslation
     {
         internal const string XML_NAME = "MT";
 
@@ -16,15 +16,23 @@ namespace FolkerKinzel.Tsltn.Models
 
         private readonly Dictionary<int, Translation> _translations = new Dictionary<int, Translation>();
 
-
-        public ManualTranslation(string elementXPath)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="translatedText"></param>
+        public ManualTranslation(XText node, string translatedText)
         {
-            this.Node = HashService.HashXPath(elementXPath);
+            this.Node = Utility.Instance.GetNodeHash(node);
+            AddTranslation(new Translation(node, translatedText));
         }
 
-       
 
-        internal ManualTranslation(int elementHash)
+        /// <summary>
+        /// ctor for Deserialization
+        /// </summary>
+        /// <param name="elementHash"></param>
+        private ManualTranslation(int elementHash)
         {
             this.Node = elementHash;
         }
@@ -36,7 +44,7 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        public void AddTranslation(Translation transl)
+        private void AddTranslation(Translation transl)
         {
             if (!transl.IsEmpty)
             {

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\FolkerKinzel.Strings\FolkerKinzel.Strings\FolkerKinzel.Strings.csproj" />
+  </ItemGroup>
+
 </Project>

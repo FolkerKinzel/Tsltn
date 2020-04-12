@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace FolkerKinzel.Tsltn.Models.Tests
 {
@@ -27,24 +28,22 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                 TargetLanguage = "en"
             };
 
-            var translation = new Translation("Hello Car", "Hallo Auto");
-            tsltn.AddAutoTranslation(translation);
+            tsltn.AddAutoTranslation(new XText("Hello Car"), "Hallo Auto");
 
-            translation = new Translation("Car 2", "Auto 2");
-            tsltn.AddAutoTranslation(translation);
+            XText auto2 = new XText("Car 2");
+            tsltn.AddAutoTranslation(auto2, "Auto 2");
 
-            var manTranslation = new ManualTranslation("Node1");
-            manTranslation.AddTranslation(new Translation("Hi Manual", "Hallo Manual"));
-            tsltn.AddManualTranslation(manTranslation);
+            XText txt1 = new XText("Hi Manual");
+            XElement parent1 = new XElement("Node1", txt1);
+            tsltn.AddManualTranslation(txt1, "Hallo Manual");
 
-          
-            manTranslation = new ManualTranslation("Node2");
-            manTranslation.AddTranslation(new Translation("Manual 2", "Manual 2"));
-            tsltn.AddManualTranslation(manTranslation);
+            XText txt2 = new XText("Manual 2");
+            XElement parent2 = new XElement("Node2", txt2);
+            tsltn.AddManualTranslation(txt2, "manuell 2");
 
-            manTranslation = new ManualTranslation("Node2");
-            manTranslation.AddTranslation(new Translation("Manual 3", "Manual 3"));
-            tsltn.AddManualTranslation(manTranslation);
+            XText txt3 = new XText("Manual 3");
+            parent2.Add(txt3);
+            tsltn.AddManualTranslation(txt3, "manuell 3");
 
             var sb = new StringBuilder();
 
@@ -64,9 +63,9 @@ namespace FolkerKinzel.Tsltn.Models.Tests
           
             Assert.AreEqual("de", tsltn2.SourceLanguage);
             Assert.AreEqual("en", tsltn2.TargetLanguage);
-            Assert.AreEqual("Auto 2", tsltn.GetTranslation("Car 2", "nix da")?.Value);
-            Assert.AreEqual("Manual 2", tsltn.GetTranslation("Manual 2", "Node2")?.Value);
-            Assert.AreEqual("Manual 3", tsltn.GetTranslation("Manual 3", "Node2")?.Value);
+            Assert.AreEqual("Auto 2", tsltn.GetTranslation(auto2));
+            Assert.AreEqual("manuell 2", tsltn.GetTranslation(txt2));
+            Assert.AreEqual("manuell 3", tsltn.GetTranslation(txt3));
 
 
         }
