@@ -10,9 +10,9 @@ namespace FolkerKinzel.Tsltn.Models
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
 
-        void AddAutoTranslation(XText node, string translatedText);
-        void AddManualTranslation(XText node, string translatedText);
-        string? GetTranslation(XText node);
-        void RemoveManualTranslation(XText node);
+        void AddAutoTranslation(XElement node, string translatedText);
+        void AddManualTranslation(XElement node, string translatedText);
+        string? GetTranslation(XElement node);
+        void RemoveManualTranslation(XElement node);
     }
 }

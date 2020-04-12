@@ -1,26 +1,24 @@
-﻿using FolkerKinzel.Strings;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace FolkerKinzel.Tsltn.Models
+namespace FolkerKinzel.Tsltn.Models.Intls
 {
     internal sealed class Translation
     {
         internal const string XML_NAME = "T";
-
-        private const string HASH = "Hash";
+        internal const string HASH = "Hash";
 
         /// <summary>
         /// ctor
         /// </summary>
         /// <param name="node"></param>
         /// <param name="translatedText"></param>
-        public Translation(XText node, string translatedText)
+        public Translation(XElement node, string translatedText)
         {
-            this.Hash = node.Value.GetStableHashCode(HashType.AlphaNumericNoCase);
+            this.Hash = Utility.Instance.GetOriginalTextHash(node);
             this.Value = translatedText;
         }
 
@@ -39,7 +37,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         public string? Value { get; }
 
-        public bool IsEmpty => string.IsNullOrWhiteSpace(this.Value);
+        //public bool IsEmpty => string.IsNullOrWhiteSpace(this.Value);
 
 
         #region Serialization

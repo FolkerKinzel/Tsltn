@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
+using System.Xml;
 
 namespace FolkerKinzel.Tsltn.Models.Tests
 {
@@ -31,28 +32,28 @@ namespace FolkerKinzel.Tsltn.Models.Tests
             doc.SourceLanguage = "de";
             doc.TargetLanguage = "en";
 
-            doc.AddAutoTranslation(new XText("Hello Car"), "Hallo Auto");
+            //doc.AddAutoTranslation(new XElement("summary", "Hello Car"), "Hallo Auto");
 
-            doc.AddAutoTranslation(new XText("Car 2"), "Auto 2");
+            //doc.AddAutoTranslation(new XElement("summary", "Car 2"), "Auto 2");
 
-            XText txt1 = new XText("Hi Manual");
-            XElement parent1 = new XElement("Node1", txt1);
-            doc.AddManualTranslation(txt1, "Hallo Manual");
+            //XText txt1 = new XText("Hi Manual");
+            //XElement parent1 = new XElement("Node1", txt1);
+            //doc.AddManualTranslation(parent1, "Hallo Manual");
 
-            XText txt2 = new XText("Manual 2");
-            XElement parent2 = new XElement("Node2", txt2);
-            doc.AddManualTranslation(txt2, "manuell 2");
+            //XText txt2 = new XText("Manual 2");
+            //XElement parent2 = new XElement("Node2", txt2);
+            //doc.AddManualTranslation(txt2, "manuell 2");
 
-            XText txt3 = new XText("Manual 3");
-            parent2.Add(txt3);
-            doc.AddManualTranslation(txt3, "manuell 3");
+            //XText txt3 = new XText("Manual 3");
+            //parent2.Add(txt3);
+            //doc.AddManualTranslation(txt3, "manuell 3");
 
            
             doc.SaveAs(tsltnPath);
 
             doc.Open(tsltnPath);
 
-            XNode? node = doc.GetFirstTextNode();
+            XElement? section = doc.GetFirstNode();
 
 
             //foreach (var nd in node.Document.Root.DescendantNodes())
@@ -60,24 +61,31 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             //}
 
-            for (int i = 0; i < 10; i++)
+            string s;
+
+            for (int i = 0; i < 20; i++)
             {
-                if (node is null)
+                if (section is null)
                 {
                     break;
                 }
 
-                node = doc.GetNextNode(node);
+                section = doc.GetNextNode(section);
+
+                s = Utility.Instance.GetNodePath(section);
             }
 
             for (int i = 0; i < 20; i++)
             {
-                if (node is null)
+                if (section is null)
                 {
                     break;
                 }
 
-                node = doc.GetPreviousNode(node);
+                section = doc.GetPreviousNode(section);
+
+                s = Utility.Instance.GetNodePath(section);
+
             }
 
         }

@@ -1,8 +1,11 @@
-﻿using System;
+﻿using FolkerKinzel.Tsltn.Models.Intls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -10,26 +13,15 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public class Document : ITsltnFile //: INotifyPropertyChanged
+    public class Document : ITsltnFile
     {
-        //public event PropertyChangedEventHandler? PropertyChanged;
-
-        //private Node? _currentNode;
-
-        private const string MEMBERS = "members";
-        private const string MEMBER = "member";
-
         private TsltnFile? _tsltn;
         private XDocument? _xmlDocument;
-
-
-
 
         /// <summary>
         /// ctor
         /// </summary>
         private Document() { }
-
 
 
         public string? TsltnFileName { get; private set; }
@@ -59,11 +51,16 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        public void Open(string tsltnFileName)
+        public void Open(string? tsltnFileName)
         {
             if (Changed)
             {
                 throw new InvalidOperationException();
+            }
+
+            if (tsltnFileName is null)
+            {
+                return;
             }
 
             this.TsltnFileName = tsltnFileName;
@@ -90,7 +87,7 @@ namespace FolkerKinzel.Tsltn.Models
         public void Reload()
         {
             this.Save();
-            this.Open(this.TsltnFileName!);
+            this.Open(this.TsltnFileName);
         }
 
 
@@ -120,9 +117,9 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        public XText? GetFirstTextNode()
+        public XElement? GetFirstNode()
         {
-            var members = _xmlDocument?.Root.Element(MEMBERS)?.Elements(MEMBER);
+            var members = _xmlDocument?.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
 
             if (members is null)
             {
@@ -131,169 +128,261 @@ namespace FolkerKinzel.Tsltn.Models
 
             foreach (var member in members)
             {
-                foreach (var section in member.Elements())
+                foreach (XElement section in member.Elements())
                 {
-                    foreach (var node in section.DescendantNodes())
-                    {
-                        var extractedNode = ExtractFirstNode(node);
+                    var el = ExtractFirstNode(section);
 
-                        if(extractedNode is XText txt)
-                        {
-                            return txt;
-                        }
+                    if (el != null) return el;
+                }
+            }
+
+            return null;
+        }
+
+
+        private XElement? ExtractFirstNode(XElement section)
+        {
+            // Die Reihenfolge ist entscheidend, denn 
+            // Utility.IsTranslatable führt nur einen 
+            // knappen Negativtest durch!
+            if (Utility.IsContainerSection(section))
+            {
+                return Utility.Instance.MaskCodeBlock(ExtractFirstFromContainer(section));
+            }
+            else if (Utility.IsTranslatable(section))
+            {
+                return Utility.Instance.MaskCodeBlock(section);
+            }
+
+            return null;
+
+            /////////////////////////////////////////////////////////////
+
+            static XElement? ExtractFirstFromContainer(XElement container)
+            {
+                foreach (var innerElement in container.Elements())
+                {
+                    if (Utility.IsContainerSection(innerElement))
+                    {
+                        return ExtractFirstFromContainer(innerElement);
+                    }
+                    else if (Utility.IsTranslatable(innerElement))
+                    {
+                        return innerElement;
                     }
                 }
+
+                return null;
+            }
+        }
+
+        
+        
+
+
+        public XElement? GetNextNode(XElement? currentNode)
+        {
+            while (true)
+            {
+                if(currentNode is XCodeCloneElement clone)
+                {
+                    currentNode = clone.Source;
+                }
+
+                if (currentNode is null || currentNode.Name == Sandcastle.MEMBERS)
+                {
+                    break;
+                }
+
+                foreach (var sibling in currentNode.ElementsAfterSelf())
+                {
+                    var el = ExtractFirstNode(sibling);
+
+                    if (el != null)
+                    {
+                        return el;
+                    }
+                }
+
+                currentNode = currentNode.Parent;
             }
 
             return null;
         }
 
 
-        private XNode ExtractFirstNode(XNode parent)
+        public XElement? GetPreviousNode(XElement? currentNode)
         {
-            if(parent is XElement el)
+            while (true)
             {
-                XNode firstChild = el.FirstNode;
+                if (currentNode is XCodeCloneElement clone)
+                {
+                    currentNode = clone.Source;
+                }
 
-                if(firstChild is XElement el2)
+                if (currentNode is null || currentNode.Name == Sandcastle.MEMBERS)
                 {
-                    return ExtractFirstNode(el2);
+                    break;
                 }
-                else if(firstChild is null)
+
+                foreach (var sibling in currentNode.ElementsBeforeSelf().Reverse())
                 {
-                    return parent;
+                    var el = ExtractLastNode(sibling);
+
+                    if (el != null)
+                    {
+                        return el;
+                    }
                 }
-                else
-                {
-                    return firstChild;
-                }
+
+                currentNode = currentNode.Parent;
             }
-            else
-            {
-                return parent;
-            }
+
+            return null;
         }
 
 
         
 
 
-        public XNode? GetNextNode(XNode currentNode)
+        private XElement? ExtractLastNode(XElement section)
         {
-            XNode? nextNode = currentNode.NextNode;
-
-            if (nextNode != null)
+            // Die Reihenfolge ist entscheidend, denn 
+            // Utility.IsTranslatable führt nur einen 
+            // knappen Negativtest durch!
+            if (Utility.IsContainerSection(section))
             {
-                return ExtractFirstNode(nextNode);
+                return Utility.Instance.MaskCodeBlock(ExtractLastFromContainer(section));
             }
-
-
-            while (true)
+            else if (Utility.IsTranslatable(section))
             {
-                XElement parent = currentNode.Parent;
-
-
-                if (parent.Name == MEMBERS)
-                {
-                    break;
-                }
-                
-
-                var sibling = parent.NextNode;
-
-                if(sibling is null)
-                {
-                    currentNode = parent;
-                    continue;
-                }
-
-                return ExtractFirstNode(sibling);
+                return Utility.Instance.MaskCodeBlock(section);
             }
 
             return null;
-        }
 
+            ///////////////////////////////////////////////////////////////
 
-        public XNode? GetPreviousNode(XNode currentNode)
-        {
-            XNode? previousNode = currentNode.PreviousNode;
-
-            if (previousNode != null)
+            static XElement? ExtractLastFromContainer(XElement container)
             {
-                return ExtractLastNode(previousNode);
-            }
-
-
-            while (true)
-            {
-                XElement parent = currentNode.Parent;
-
-
-                if (parent.Name == MEMBERS)
+                foreach (var innerElement in container.Elements().Reverse())
                 {
-                    break;
+                    if (Utility.IsContainerSection(innerElement))
+                    {
+                        return ExtractLastFromContainer(innerElement);
+                    }
+                    else if (Utility.IsTranslatable(innerElement))
+                    {
+                        return innerElement;
+                    }
                 }
 
-
-                var sibling = parent.PreviousNode;
-
-                if (sibling is null)
-                {
-                    currentNode = parent;
-                    continue;
-                }
-
-                return ExtractLastNode(sibling);
-            }
-
-            return null;
-        }
-
-        private XNode ExtractLastNode(XNode parent)
-        {
-            if (parent is XElement el)
-            {
-                XNode lastChild = el.LastNode;
-
-                if (lastChild is XElement el2)
-                {
-                    return ExtractLastNode(el2);
-                }
-                else if (lastChild is null)
-                {
-                    return parent;
-                }
-                else
-                {
-                    return lastChild;
-                }
-            }
-            else
-            {
-                return parent;
+                return null;
             }
         }
-
 
         
+        public void Translate(string fileName)
+        {
+            this.Save();
+
+            var util = Utility.Instance;
+            var node = GetFirstNode();
+
+            while(node != null)
+            {
+                util.Translate(node, GetTranslation(node));
+                node = GetNextNode(node);
+            }
+
+            _xmlDocument?.Save(fileName);
+
+            this.Open(this.TsltnFileName);
+        }
+
+
+        public XElement? FindNextUntranslated(XElement node)
+        {
+            XElement? unTrans = GetNextNode(node);
+            while(unTrans != null)
+            {
+                if(GetTranslation(unTrans) is null)
+                {
+                    return unTrans;
+                }
+
+                unTrans = GetNextNode(unTrans);
+            }
+
+            unTrans = GetFirstNode();
+
+            while(unTrans != null && !object.ReferenceEquals(unTrans, node))
+            {
+                if (GetTranslation(unTrans) is null)
+                {
+                    return unTrans;
+                }
+
+                unTrans = GetNextNode(unTrans);
+            }
+
+            return null;
+        }
+
+
 
         #region ITsltnFile
 
-        public string? SourceDocumentFileName { get => _tsltn?.SourceDocumentFileName; set { if (_tsltn != null) { _tsltn.SourceDocumentFileName = value; } } }
-        public string? SourceLanguage { get => _tsltn?.SourceLanguage; set { if (_tsltn != null) { _tsltn.SourceLanguage = value; } } }
-        public string? TargetLanguage { get => _tsltn?.TargetLanguage; set { if (_tsltn != null) { _tsltn.TargetLanguage = value; } } }
+        public string? SourceDocumentFileName 
+        {
+            get => _tsltn?.SourceDocumentFileName;
+            set 
+            { 
+                if (_tsltn != null) 
+                { 
+                    _tsltn.SourceDocumentFileName = value;
+                } 
+            }
+        }
 
+        public string? SourceLanguage 
+        { 
+            get => _tsltn?.SourceLanguage; 
+            set 
+            { 
+                if (_tsltn != null) 
+                { 
+                    _tsltn.SourceLanguage = value;
+                } 
+            } 
+        }
 
-        public void AddAutoTranslation(XText node, string translatedText) => _tsltn?.AddAutoTranslation(node, translatedText);
+        public string? TargetLanguage
+        { 
+            get => _tsltn?.TargetLanguage;
+            set 
+            {
+                if (_tsltn != null)
+                {
+                    _tsltn.TargetLanguage = value;
+                }
+            }
+        }
 
-        public void AddManualTranslation(XText node, string translatedText) => _tsltn?.AddManualTranslation(node, translatedText);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddAutoTranslation(XElement node, string translatedText) => _tsltn?.AddAutoTranslation(node, translatedText);
 
-        public string? GetTranslation(XText node) => _tsltn?.GetTranslation(node);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddManualTranslation(XElement node, string translatedText) => _tsltn?.AddManualTranslation(node, translatedText);
 
-        public void RemoveManualTranslation(XText node) => _tsltn?.RemoveManualTranslation(node);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string? GetTranslation(XElement node) => _tsltn?.GetTranslation(node);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveManualTranslation(XElement node) => _tsltn?.RemoveManualTranslation(node);
 
         #endregion
 
-        //private void OnPropertyChanged(string propertyName) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    
     }
 }

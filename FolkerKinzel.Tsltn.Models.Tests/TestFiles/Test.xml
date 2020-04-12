@@ -14,7 +14,32 @@
             deshalb i.d.R. gesetzt sein.
             </note>
             </summary>
+            <example>
+            Some Text.
+            <code language="cs">First Codeblock.</code>
+            Another Text.
+            <code language="cs">Second Codeblock</code>
+            </example>
         </member>
+      <member name="M:FolkerKinzel.CsvTools.Extensions.CsvOptionsExtensions.IsSet(FolkerKinzel.CsvTools.CsvOptions,FolkerKinzel.CsvTools.CsvOptions)">
+        <summary>
+          Untersucht, ob sämtliche in <paramref name="flags"/> gesetzten Flags auch in <paramref name="value"/>
+          gesetzt sind.
+        </summary>
+        <param name="value">
+          Der <see cref="T:FolkerKinzel.CsvTools.CsvOptions"/>?-Wert, der daraufhin überprüft wird, ob sämtliche in <paramref name="flags"/> gesetzten
+          Flags auf ihm gesetzt sind.
+        </param>
+        <param name="flags">
+          Ein einzelner <see cref="T:FolkerKinzel.CsvTools.CsvOptions"/>-Wert oder eine Kombination aus mehreren
+          <see cref="T:FolkerKinzel.CsvTools.CsvOptions"/>-Werten.
+        </param>
+        <returns>
+          True, wenn sämtliche in <paramref name="flags"/> gesetzten Flags auch in <paramref name="value"/>
+          gesetzt sind. (Wenn <paramref name="flags"/>&#160;<see cref="F:FolkerKinzel.CsvTools.CsvOptions.None"/> ist, wird nur dann true zurückgegeben,
+          wenn auch <paramref name="value"/>&#160;<see cref="F:FolkerKinzel.CsvTools.CsvOptions.None"/> ist.
+        </returns>
+      </member>
         <member name="T:FolkerKinzel.CsvTools.CsvReader">
             <summary>
             Bietet schreibgeschützten Vorwärtszugriff auf die Datensätze einer CSV-Datei. (Das bedeutet, dass der <see cref="T:FolkerKinzel.CsvTools.CsvReader"/> die Datei nur einmal vorwärts
@@ -49,19 +74,6 @@
             <see cref="P:FolkerKinzel.CsvTools.CsvWriter.Record"/> wieder auf <c>null</c>-Werte, so dass der Datensatz erneut befüllt werden kann. Wenn andere Datentypen als <see cref="T:System.String"/>
             geschrieben werden sollen, bietet sich die Verwendung der Klasse <see cref="T:FolkerKinzel.CsvTools.Helpers.CsvRecordWrapper"/> an, die einen komfortablen Adapter zwischen den
             Daten der Anwendung und der CSV-Datei darstellt.</remarks>
-        </member>
-        <member name="M:FolkerKinzel.CsvTools.Extensions.CsvOptionsExtensions.IsSet(FolkerKinzel.CsvTools.CsvOptions,FolkerKinzel.CsvTools.CsvOptions)">
-            <summary>
-            Untersucht, ob sämtliche in <paramref name="flags"/> gesetzten Flags auch in <paramref name="value"/>
-            gesetzt sind.
-            </summary>
-            <param name="value">Der <see cref="T:FolkerKinzel.CsvTools.CsvOptions"/>?-Wert, der daraufhin überprüft wird, ob sämtliche in <paramref name="flags"/> gesetzten 
-            Flags auf ihm gesetzt sind.</param>
-            <param name="flags">Ein einzelner <see cref="T:FolkerKinzel.CsvTools.CsvOptions"/>-Wert oder eine Kombination aus mehreren 
-            <see cref="T:FolkerKinzel.CsvTools.CsvOptions"/>-Werten.</param>
-            <returns>True, wenn sämtliche in <paramref name="flags"/> gesetzten Flags auch in <paramref name="value"/>
-            gesetzt sind. (Wenn <paramref name="flags"/>&#160;<see cref="F:FolkerKinzel.CsvTools.CsvOptions.None"/> ist, wird nur dann true zurückgegeben,
-            wenn auch <paramref name="value"/>&#160;<see cref="F:FolkerKinzel.CsvTools.CsvOptions.None"/> ist.</returns>
         </member>
         <member name="M:FolkerKinzel.CsvTools.Helpers.Converters.Intls.EnumConverter`1.#ctor(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
             <summary>

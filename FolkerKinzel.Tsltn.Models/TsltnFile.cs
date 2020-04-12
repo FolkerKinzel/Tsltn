@@ -7,6 +7,8 @@ using System.Xml.Linq;
 using System.Globalization;
 using System.Text;
 using System.IO;
+using System.Runtime.CompilerServices;
+using FolkerKinzel.Tsltn.Models.Intls;
 
 namespace FolkerKinzel.Tsltn.Models
 {
@@ -67,7 +69,7 @@ namespace FolkerKinzel.Tsltn.Models
         public bool Changed { get; private set; }
 
 
-        public void AddManualTranslation(XText node, string translatedText)
+        public void AddManualTranslation(XElement node, string translatedText)
         {
             var manual = new ManualTranslation(node, translatedText);
 
@@ -76,39 +78,23 @@ namespace FolkerKinzel.Tsltn.Models
             Changed = true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void AddManualTranslation(ManualTranslation manual) => this._manualTranslations[manual.Node] = manual;
 
-        private void AddManualTranslation(ManualTranslation manual)
+
+        public void RemoveManualTranslation(XElement node)
         {
-            if (manual.IsEmpty) return;
+            int nodeHash = Utility.Instance.GetNodeHash(node);
 
-            if (this._manualTranslations.ContainsKey(manual.Node))
+            if (_manualTranslations.Remove(nodeHash))
             {
-                this._manualTranslations[manual.Node].Merge(manual);
+                Changed = true;
             }
-            else
-            {
-                this._manualTranslations[manual.Node] = manual;
-            }
+
+           
         }
 
-
-        public void RemoveManualTranslation(XText node)
-        {
-            int elementHash = Utility.Instance.GetNodeHash(node);
-            int originalTextHash = HashService.HashOriginalText(node.Value);
-
-            if (_manualTranslations.ContainsKey(elementHash))
-            {
-                var mt = _manualTranslations[elementHash];
-
-                if (mt.RemoveTranslation(originalTextHash))
-                {
-                    Changed = true;
-                }
-            }
-        }
-
-        public void AddAutoTranslation(XText node, string translatedText)
+        public void AddAutoTranslation(XElement node, string translatedText)
         {
             var transl = new Translation(node, translatedText);
 
@@ -117,41 +103,27 @@ namespace FolkerKinzel.Tsltn.Models
             Changed = true;
         }
 
-
-        private void AddAutoTranslation(Translation transl)
-        {
-            if (transl.IsEmpty)
-            {
-                this._autoTranslations.Remove(transl.Hash);
-            }
-            else
-            {
-                this._autoTranslations[transl.Hash] = transl;
-            }
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void AddAutoTranslation(Translation transl) => this._autoTranslations[transl.Hash] = transl;
 
 
-        public string? GetTranslation(XText node)
+        public string? GetTranslation(XElement node)
         {
             int elementHash = Utility.Instance.GetNodeHash(node);
-            int originalTextHash = HashService.HashOriginalText(node.Value);
-
-            Translation? translation = null;
 
             if (_manualTranslations.ContainsKey(elementHash))
             {
-                translation = _manualTranslations[elementHash].GetTranslation(originalTextHash);
+                return _manualTranslations[elementHash].Translation.Value;
             }
 
-            if (translation is null)
+            int originalTextHash = Utility.Instance.GetOriginalTextHash(node);
+
+            if (_autoTranslations.ContainsKey(originalTextHash))
             {
-                if (_autoTranslations.ContainsKey(originalTextHash))
-                {
-                    return _autoTranslations[originalTextHash].Value;
-                }
+                return _autoTranslations[originalTextHash].Value;
             }
-
-            return translation?.Value;
+            
+            return null;
         }
 
         internal void Save(string? tsltnFileName)
@@ -198,7 +170,7 @@ namespace FolkerKinzel.Tsltn.Models
             return null;
         }
 
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Argumente von öffentlichen Methoden validieren", Justification = "<Ausstehend>")]
         public void ReadXml(XmlReader reader)
         {
             //var xElement = XElement.Load(reader);
@@ -245,9 +217,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-
-
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Argumente von öffentlichen Methoden validieren", Justification = "<Ausstehend>")]
         public void WriteXml(XmlWriter writer)
         {
             //writer.WriteStartElement(XML_NAME);
@@ -281,12 +251,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             foreach (KeyValuePair<int, ManualTranslation> kvp in _manualTranslations)
             {
-                var trans = kvp.Value;
-
-                if (!trans.IsEmpty)
-                {
-                    trans.WriteXml(writer);
-                }
+                kvp.Value.WriteXml(writer);
             }
         }
 
