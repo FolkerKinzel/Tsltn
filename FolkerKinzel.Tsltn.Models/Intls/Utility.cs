@@ -7,19 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace FolkerKinzel.Tsltn.Models
+namespace FolkerKinzel.Tsltn.Models.Intls
 {
-    public class Utility : IUtility
+    internal static class Utility
     {
-        private readonly StringBuilder _sb = new StringBuilder();
-        private readonly List<string> _list = new List<string>();
-
-        private Utility() { }
-
-        public static Utility Instance { get; } = new Utility();
+        private static readonly StringBuilder _sb = new StringBuilder();
+        private static readonly List<string> _list = new List<string>();
 
 
-        internal void Translate(XElement node, string? translation)
+        internal static void Translate(XElement node, string? translation)
         {
             if (translation is null)
             {
@@ -53,7 +49,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
         [return: NotNullIfNotNull("node")]
-        internal XElement? MaskCodeBlock(XElement? node)
+        internal static XElement? MaskCodeBlock(XElement? node)
         {
             if (node is null)
             {
@@ -71,27 +67,27 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        public string GetNodePath(XElement? node)
+        internal static string GetNodePath(XElement? node)
         {
             FillStringBuilder(node);
             return _sb.ToString();
         }
 
 
-        internal int GetNodeHash(XElement? node)
+        internal static int GetNodeHash(XElement? node)
         {
             FillStringBuilder(node);
             return _sb.GetStableHashCode(HashType.Ordinal);
         }
 
 
-        internal int GetOriginalTextHash(XElement node)
+        internal static int GetOriginalTextHash(XElement node)
         {
             return node.GetInnerXml().GetStableHashCode(HashType.AlphaNumericNoCase);
         }
 
 
-        private void FillStringBuilder(XElement? node)
+        private static void FillStringBuilder(XElement? node)
         {
             _list.Clear();
             _sb.Clear();
@@ -150,15 +146,38 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
 
-            for (int i = _list.Count - 1; i >= 0; i--)
+            int last = _list.Count - 1;
+            for (int i = last; i >= 0; i--)
             {
-                _sb.Append(_list[i]);
+                if (i == last)
+                {
+                    string memberName = _list[last];
+                    int length = memberName.Length;
+
+                    if (length > 2)
+                    {
+                        // Membernamen fangen mit der Art des Members an, z.B. "T:" für Type oder "P:" für Property.
+                        // Das ist für die Übersetzung nicht relevant und kann weggelassen werden.
+
+                        _sb.Append(memberName, 2, length - 2);
+                    }
+                    else
+                    {
+                        _sb.Append(memberName);
+                    }
+
+                }
+                else
+                {
+                    _sb.Append(_list[i]);
+                }
 
                 if (i != 0)
                 {
                     _sb.Append('/');
                 }
             }
+
         }
 
 

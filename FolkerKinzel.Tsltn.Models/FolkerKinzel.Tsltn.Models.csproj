@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Compile Remove="HashService.cs" />
+    <Compile Remove="Intls\ManualTranslation.cs" />
+    <Compile Remove="Intls\Translation.cs" />
   </ItemGroup>
 
   <ItemGroup>

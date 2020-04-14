@@ -9,7 +9,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 {
     internal sealed class ManualTranslation
     {
-        internal const string XML_NAME = "MT";
+        internal const string MANUAL_TRANSLATION_XML_NAME = "MT";
         private const string ELEMENT = "Node";
 
 
@@ -45,7 +45,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         internal void WriteXml(XmlWriter writer)
         {
-            writer.WriteStartElement(XML_NAME);
+            writer.WriteStartElement(MANUAL_TRANSLATION_XML_NAME);
             writer.WriteAttributeString(ELEMENT, Node.ToString("X", CultureInfo.InvariantCulture));
             writer.WriteAttributeString(Translation.HASH, Translation.Hash.ToString("X", CultureInfo.InvariantCulture));
             writer.WriteString(Translation.Value);

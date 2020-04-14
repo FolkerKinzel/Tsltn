@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace FolkerKinzel.Tsltn.Models
+namespace FolkerKinzel.Tsltn.Models.Intls
 {
-    public static class XElementExtensions
+    internal static class XElementExtensions
     {
         public static string GetInnerXml(this XElement node)
         {

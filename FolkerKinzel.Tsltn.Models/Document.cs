@@ -13,25 +13,63 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public class Document : ITsltnFile
+    public class Document
     {
-        private TsltnFile? _tsltn;
-        private XDocument? _xmlDocument;
+        private static TsltnFile? _tsltn;
+        private static XDocument? _xmlDocument;
 
         /// <summary>
         /// ctor
         /// </summary>
         private Document() { }
 
+        public static Document Instance { get; } = new Document();
 
-        public string? TsltnFileName { get; private set; }
 
 
         public bool Changed => _tsltn?.Changed ?? false;
 
 
-        public static Document Instance { get; } = new Document();
+        public string? TsltnFileName { get; private set; }
 
+
+        public string? SourceDocumentFileName
+        {
+            get => _tsltn?.SourceDocumentFileName;
+            set
+            {
+                if (_tsltn != null)
+                {
+                    _tsltn.SourceDocumentFileName = value;
+                }
+            }
+        }
+
+        public string? SourceLanguage
+        {
+            get => _tsltn?.SourceLanguage;
+            set
+            {
+                if (_tsltn != null)
+                {
+                    _tsltn.SourceLanguage = value;
+                }
+            }
+        }
+
+        public string? TargetLanguage
+        {
+            get => _tsltn?.TargetLanguage;
+            set
+            {
+                if (_tsltn != null)
+                {
+                    _tsltn.TargetLanguage = value;
+                }
+            }
+        }
+
+        public Node? FirstNode { get; private set; }
 
         public bool SourceDocumentExists { get; private set; }
 
@@ -39,20 +77,37 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void CreateNew(string fileToTranslate)
         {
-            if(Changed)
+            this.SourceDocumentExists = false;
+
+            if (Changed)
             {
                 throw new InvalidOperationException();
             }
 
-            this._tsltn = new TsltnFile
+            _tsltn = new TsltnFile
             {
                 SourceDocumentFileName = fileToTranslate
             };
+
+            if (!File.Exists(fileToTranslate))
+            {
+                return;
+            }
+            else
+            {
+                this.SourceDocumentExists = true;
+            }
+
+            _xmlDocument = XDocument.Load(fileToTranslate, LoadOptions.None);
+
+            InitFirstNode();
         }
 
 
         public void Open(string? tsltnFileName)
         {
+            this.SourceDocumentExists = false;
+
             if (Changed)
             {
                 throw new InvalidOperationException();
@@ -65,14 +120,13 @@ namespace FolkerKinzel.Tsltn.Models
 
             this.TsltnFileName = tsltnFileName;
 
-            this._tsltn = TsltnFile.Load(tsltnFileName);
+            _tsltn = TsltnFile.Load(tsltnFileName);
 
 
             string xmlFileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), _tsltn.SourceDocumentFileName));
 
             if(!File.Exists(xmlFileName))
             {
-                this.SourceDocumentExists = false;
                 return;
             }
             else
@@ -80,7 +134,22 @@ namespace FolkerKinzel.Tsltn.Models
                 this.SourceDocumentExists = true;
             }
 
-            this._xmlDocument = XDocument.Load(xmlFileName, LoadOptions.None);
+            _xmlDocument = XDocument.Load(xmlFileName, LoadOptions.None);
+
+            InitFirstNode();
+        }
+
+        private void InitFirstNode()
+        {
+            XElement? firstNode = GetFirstNode();
+
+            if(firstNode is null)
+            {
+                FirstNode = null;
+                return;
+            }
+
+            FirstNode = new Node(firstNode);
         }
 
 
@@ -106,18 +175,36 @@ namespace FolkerKinzel.Tsltn.Models
                 return;
             }
 
-            this._tsltn.Save(TsltnFileName);
+            _tsltn.Save(TsltnFileName);
+        }
+
+
+        public void Translate(string fileName)
+        {
+            this.Save();
+
+            var node = GetFirstNode();
+
+            while (node != null)
+            {
+                Utility.Translate(node, GetTranslation(node));
+                node = GetNextNode(node);
+            }
+
+            _xmlDocument?.Save(fileName);
+
+            this.Open(this.TsltnFileName);
         }
 
 
         public void CloseDocument()
         {
-            this._tsltn = null;
+            _tsltn = null;
             this.TsltnFileName = null;
         }
 
 
-        public XElement? GetFirstNode()
+        internal static XElement? GetFirstNode()
         {
             var members = _xmlDocument?.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
 
@@ -140,18 +227,18 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        private XElement? ExtractFirstNode(XElement section)
+        private static XElement? ExtractFirstNode(XElement section)
         {
             // Die Reihenfolge ist entscheidend, denn 
             // Utility.IsTranslatable führt nur einen 
             // knappen Negativtest durch!
             if (Utility.IsContainerSection(section))
             {
-                return Utility.Instance.MaskCodeBlock(ExtractFirstFromContainer(section));
+                return Utility.MaskCodeBlock(ExtractFirstFromContainer(section));
             }
             else if (Utility.IsTranslatable(section))
             {
-                return Utility.Instance.MaskCodeBlock(section);
+                return Utility.MaskCodeBlock(section);
             }
 
             return null;
@@ -180,7 +267,7 @@ namespace FolkerKinzel.Tsltn.Models
         
 
 
-        public XElement? GetNextNode(XElement? currentNode)
+        internal static XElement? GetNextNode(XElement? currentNode)
         {
             while (true)
             {
@@ -211,7 +298,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        public XElement? GetPreviousNode(XElement? currentNode)
+        internal static XElement? GetPreviousNode(XElement? currentNode)
         {
             while (true)
             {
@@ -245,18 +332,18 @@ namespace FolkerKinzel.Tsltn.Models
         
 
 
-        private XElement? ExtractLastNode(XElement section)
+        private static XElement? ExtractLastNode(XElement section)
         {
             // Die Reihenfolge ist entscheidend, denn 
             // Utility.IsTranslatable führt nur einen 
             // knappen Negativtest durch!
             if (Utility.IsContainerSection(section))
             {
-                return Utility.Instance.MaskCodeBlock(ExtractLastFromContainer(section));
+                return Utility.MaskCodeBlock(ExtractLastFromContainer(section));
             }
             else if (Utility.IsTranslatable(section))
             {
-                return Utility.Instance.MaskCodeBlock(section);
+                return Utility.MaskCodeBlock(section);
             }
 
             return null;
@@ -282,26 +369,8 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
         
-        public void Translate(string fileName)
-        {
-            this.Save();
 
-            var util = Utility.Instance;
-            var node = GetFirstNode();
-
-            while(node != null)
-            {
-                util.Translate(node, GetTranslation(node));
-                node = GetNextNode(node);
-            }
-
-            _xmlDocument?.Save(fileName);
-
-            this.Open(this.TsltnFileName);
-        }
-
-
-        public XElement? FindNextUntranslated(XElement node)
+        internal static XElement? GetNextUntranslated(XElement node)
         {
             XElement? unTrans = GetNextNode(node);
             while(unTrans != null)
@@ -331,58 +400,25 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        #region ITsltnFile
 
-        public string? SourceDocumentFileName 
-        {
-            get => _tsltn?.SourceDocumentFileName;
-            set 
-            { 
-                if (_tsltn != null) 
-                { 
-                    _tsltn.SourceDocumentFileName = value;
-                } 
-            }
-        }
-
-        public string? SourceLanguage 
-        { 
-            get => _tsltn?.SourceLanguage; 
-            set 
-            { 
-                if (_tsltn != null) 
-                { 
-                    _tsltn.SourceLanguage = value;
-                } 
-            } 
-        }
-
-        public string? TargetLanguage
-        { 
-            get => _tsltn?.TargetLanguage;
-            set 
-            {
-                if (_tsltn != null)
-                {
-                    _tsltn.TargetLanguage = value;
-                }
-            }
-        }
+ 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void AddAutoTranslation(XElement node, string? transl) => _tsltn?.AddAutoTranslation(node, transl);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddAutoTranslation(XElement node, string translatedText) => _tsltn?.AddAutoTranslation(node, translatedText);
+        internal static void AddManualTranslation(XElement node, string? transl) => _tsltn?.AddManualTranslation(node, transl);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddManualTranslation(XElement node, string translatedText) => _tsltn?.AddManualTranslation(node, translatedText);
+        private static string? GetTranslation(XElement node) => _tsltn?.GetTranslation(node);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public string? GetTranslation(XElement node) => _tsltn?.GetTranslation(node);
+        internal static string? GetManualTranslation(XElement node) => _tsltn?.GetManualTranslation(node);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveManualTranslation(XElement node) => _tsltn?.RemoveManualTranslation(node);
+        internal static string? GetAutoTranslation(XElement node) => _tsltn?.GetAutoTranslation(node);
 
-        #endregion
 
-    
+
+
     }
 }

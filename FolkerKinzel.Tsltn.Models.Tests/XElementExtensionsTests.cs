@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using FolkerKinzel.Tsltn.Models.Intls;
 
 namespace FolkerKinzel.Tsltn.Models.Tests
 {

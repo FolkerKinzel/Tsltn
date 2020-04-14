@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using FolkerKinzel.Tsltn.Models.Intls;
 
 namespace FolkerKinzel.Tsltn.Models.Tests
 {
@@ -19,10 +20,10 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             testElement.Add(new XText("Hallo"), new XElement("InnerTest"));
 
-            Utility.Instance.Translate(testElement, test);
+            Utility.Translate(testElement, test);
 
-            var clone = Utility.Instance.MaskCodeBlock(testElement);
-            Utility.Instance.Translate(clone, "<code />Dazwischen<code />");
+            var clone = Utility.MaskCodeBlock(testElement);
+            Utility.Translate(clone, "<code />Dazwischen<code />");
         }
     }
 }

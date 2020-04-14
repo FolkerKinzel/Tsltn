@@ -6,6 +6,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml;
+using FolkerKinzel.Tsltn.Models.Intls;
 
 namespace FolkerKinzel.Tsltn.Models.Tests
 {
@@ -72,7 +73,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
                 section = doc.GetNextNode(section);
 
-                s = Utility.Instance.GetNodePath(section);
+                s = Utility.GetNodePath(section);
             }
 
             for (int i = 0; i < 20; i++)
@@ -84,7 +85,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
                 section = doc.GetPreviousNode(section);
 
-                s = Utility.Instance.GetNodePath(section);
+                s = Utility.GetNodePath(section);
 
             }
 

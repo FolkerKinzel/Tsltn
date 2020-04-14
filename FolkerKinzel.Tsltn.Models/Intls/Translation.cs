@@ -8,7 +8,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 {
     internal sealed class Translation
     {
-        internal const string XML_NAME = "T";
+        internal const string TRANSLATION_XML_NAME = "T";
         internal const string HASH = "Hash";
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         internal void WriteXml(XmlWriter writer)
         {
-            writer.WriteStartElement(XML_NAME);
+            writer.WriteStartElement(TRANSLATION_XML_NAME);
             writer.WriteAttributeString(HASH, Hash.ToString("X", CultureInfo.InvariantCulture));
             writer.WriteString(Value);
             writer.WriteEndElement();
