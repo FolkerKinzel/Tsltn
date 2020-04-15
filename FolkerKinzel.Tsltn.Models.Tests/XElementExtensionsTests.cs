@@ -26,7 +26,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             
 
-            string s = root.GetInnerXml();
+            string s = root.InnerXml();
 
             Assert.IsTrue(s.Contains($"<{CHILD} />"));
             Assert.IsTrue(s.Contains(HALLO));

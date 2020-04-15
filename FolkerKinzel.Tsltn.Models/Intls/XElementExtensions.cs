@@ -5,7 +5,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 {
     internal static class XElementExtensions
     {
-        public static string GetInnerXml(this XElement node)
+        public static string InnerXml(this XElement node)
         {
             if(node is null)
             {

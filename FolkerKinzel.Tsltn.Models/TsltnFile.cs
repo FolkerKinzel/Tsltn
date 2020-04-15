@@ -9,6 +9,7 @@ using System.Text;
 using System.IO;
 using System.Runtime.CompilerServices;
 using FolkerKinzel.Tsltn.Models.Intls;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FolkerKinzel.Tsltn.Models
 {
@@ -75,85 +76,61 @@ namespace FolkerKinzel.Tsltn.Models
         internal bool Changed { get; private set; }
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void AddManualTranslation(XElement node, string? transl)
-        {
-            AddManualTranslation(Utility.GetNodeHash(node), transl);
-        }
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //internal void SetManualTranslation(XElement node, string? transl)
+        //{
+        //    SetManualTranslation(Utility.GetNodePathHash(node), transl);
+        //}
 
         
-        private void AddManualTranslation(int nodeHash, string? transl)
+        internal void SetManualTranslation(int nodePathHash, string? transl)
         {
             if (transl is null)
             {
-                if (this._manualTranslations.Remove(nodeHash))
+                if (this._manualTranslations.Remove(nodePathHash))
                 {
                     Changed = true;
                 }
             }
             else
             {
-                this._manualTranslations[nodeHash] = transl;
+                this._manualTranslations[nodePathHash] = transl;
                 Changed = true;
             }
         }
 
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //internal void SetAutoTranslation(XElement node, string? transl)
+        //{
+        //    SetAutoTranslation(Utility.GetContentHash(node), transl);
+        //}
+
+        internal void SetAutoTranslation(int contentHash, string? transl)
+        {
+            if (transl is null)
+            {
+                if (this._autoTranslations.Remove(contentHash))
+                {
+                    Changed = true;
+                }
+            }
+            else
+            {
+                this._autoTranslations[contentHash] = transl;
+
+                Changed = true;
+            }
+        }
+
+ 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void AddAutoTranslation(XElement node, string? transl)
+        internal bool TryGetManualTranslation(int nodePathHash, [NotNullWhen(true)] out string? transl) => _manualTranslations.TryGetValue(nodePathHash, out transl);
+
+
+        internal string? GetAutoTranslation(int contentHash)
         {
-            AddAutoTranslation(Utility.GetOriginalTextHash(node), transl);
-        }
-
-        private void AddAutoTranslation(int hash, string? transl)
-        {
-            if (transl is null)
-            {
-                if (this._autoTranslations.Remove(hash))
-                {
-                    Changed = true;
-                }
-            }
-            else
-            {
-                this._autoTranslations[hash] = transl;
-
-                Changed = true;
-            }
-        }
-
-        internal string? GetTranslation(XElement node)
-        {
-            int elementHash = Utility.GetNodeHash(node);
-
-            if (_manualTranslations.ContainsKey(elementHash))
-            {
-                return _manualTranslations[elementHash];
-            }
-
-            int originalTextHash = Utility.GetOriginalTextHash(node);
-
-            if (_autoTranslations.ContainsKey(originalTextHash))
-            {
-                return _autoTranslations[originalTextHash];
-            }
-            
-            return null;
-        }
-
-     
-        internal string? GetManualTranslation(XElement node)
-        {
-            int nodeHash = Utility.GetNodeHash(node);
-
-            return _manualTranslations.ContainsKey(nodeHash) ? _manualTranslations[nodeHash] : null;
-        }
-
-    
-        internal string? GetAutoTranslation(XElement node)
-        {
-            int hash = Utility.GetOriginalTextHash(node);
-
-            return _autoTranslations.ContainsKey(hash) ? _autoTranslations[hash] : null;
+            _autoTranslations.TryGetValue(contentHash, out string? transl);
+            return transl;
         }
 
         internal void Save(string? tsltnFileName)
@@ -222,7 +199,7 @@ namespace FolkerKinzel.Tsltn.Models
                                 if (XNode.ReadFrom(reader) is XElement el)
                                 {
                                     int hash = int.Parse(el.Attribute(HASH).Value, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                                    this.AddAutoTranslation(hash, el.Value);
+                                    this.SetAutoTranslation(hash, el.Value);
                                 }
                             }
                             break;
@@ -231,7 +208,7 @@ namespace FolkerKinzel.Tsltn.Models
                                 if (XNode.ReadFrom(reader) is XElement el)
                                 {
                                     int elementHash = int.Parse(el.Attribute(ELEMENT).Value, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                                    this.AddManualTranslation(elementHash, el.Value);
+                                    this.SetManualTranslation(elementHash, el.Value);
                                 }
                             }
                             break;

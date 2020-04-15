@@ -73,23 +73,26 @@ namespace FolkerKinzel.Tsltn.Models
 
         public bool SourceDocumentExists { get; private set; }
 
-        
 
-        public void CreateNew(string fileToTranslate)
+
+        public void CreateNew(string sourceDocumentFileName)
         {
-            this.SourceDocumentExists = false;
-
             if (Changed)
             {
                 throw new InvalidOperationException();
             }
 
+            this.TsltnFileName = null;
+            this.SourceDocumentExists = false;
+            FirstNode = null;
+            Node.ClearNodeContainer();
+
             _tsltn = new TsltnFile
             {
-                SourceDocumentFileName = fileToTranslate
+                SourceDocumentFileName = sourceDocumentFileName
             };
 
-            if (!File.Exists(fileToTranslate))
+            if (!File.Exists(sourceDocumentFileName))
             {
                 return;
             }
@@ -98,7 +101,7 @@ namespace FolkerKinzel.Tsltn.Models
                 this.SourceDocumentExists = true;
             }
 
-            _xmlDocument = XDocument.Load(fileToTranslate, LoadOptions.None);
+            _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
 
             InitFirstNode();
         }
@@ -125,7 +128,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             string xmlFileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), _tsltn.SourceDocumentFileName));
 
-            if(!File.Exists(xmlFileName))
+            if (!File.Exists(xmlFileName))
             {
                 return;
             }
@@ -143,7 +146,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             XElement? firstNode = GetFirstNode();
 
-            if(firstNode is null)
+            if (firstNode is null)
             {
                 FirstNode = null;
                 return;
@@ -170,7 +173,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void Save()
         {
-            if(_tsltn is null)
+            if (_tsltn is null)
             {
                 return;
             }
@@ -201,6 +204,9 @@ namespace FolkerKinzel.Tsltn.Models
         {
             _tsltn = null;
             this.TsltnFileName = null;
+            this.SourceDocumentExists = false;
+            FirstNode = null;
+            Node.ClearNodeContainer();
         }
 
 
@@ -263,15 +269,15 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        
-        
+
+
 
 
         internal static XElement? GetNextNode(XElement? currentNode)
         {
             while (true)
             {
-                if(currentNode is XCodeCloneElement clone)
+                if (currentNode is XCodeCloneElement clone)
                 {
                     currentNode = clone.Source;
                 }
@@ -329,7 +335,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        
+
 
 
         private static XElement? ExtractLastNode(XElement section)
@@ -368,24 +374,12 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        
+
 
         internal static XElement? GetNextUntranslated(XElement node)
         {
             XElement? unTrans = GetNextNode(node);
-            while(unTrans != null)
-            {
-                if(GetTranslation(unTrans) is null)
-                {
-                    return unTrans;
-                }
-
-                unTrans = GetNextNode(unTrans);
-            }
-
-            unTrans = GetFirstNode();
-
-            while(unTrans != null && !object.ReferenceEquals(unTrans, node))
+            while (unTrans != null)
             {
                 if (GetTranslation(unTrans) is null)
                 {
@@ -395,30 +389,58 @@ namespace FolkerKinzel.Tsltn.Models
                 unTrans = GetNextNode(unTrans);
             }
 
-            return null;
+            unTrans = GetFirstNode();
+
+            while (unTrans != null && !object.ReferenceEquals(unTrans, node))
+            {
+                if (GetTranslation(unTrans) is null)
+                {
+                    return unTrans;
+                }
+
+                unTrans = GetNextNode(unTrans);
+            }
+
+            return null;        
+        }
+
+        private static string? GetTranslation(XElement node)
+        {
+            int nodePathHash = Utility.GetNodePathHash(node);
+
+            if (TryGetManualTranslation(nodePathHash, out string? manualTransl))
+            {
+                return manualTransl;
+            }
+
+            int contentHash = Utility.GetContentHash(node);
+
+            return GetAutoTranslation(contentHash);
         }
 
 
-
-
- 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AddAutoTranslation(XElement node, string? transl) => _tsltn?.AddAutoTranslation(node, transl);
+        internal static void SetAutoTranslation(int contentHash, string? transl) => _tsltn?.SetAutoTranslation(contentHash, transl);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AddManualTranslation(XElement node, string? transl) => _tsltn?.AddManualTranslation(node, transl);
+        internal static void SetManualTranslation(int nodePathHash, string? transl) => _tsltn?.SetManualTranslation(nodePathHash, transl);
+
+
+        internal static bool TryGetManualTranslation(int nodePathHash, [NotNullWhen(true)] out string? transl)
+        {
+            if (_tsltn is null)
+            {
+                transl = null;
+                return false;
+            }
+            else
+            {
+                return _tsltn.TryGetManualTranslation(nodePathHash, out transl);
+            }
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static string? GetTranslation(XElement node) => _tsltn?.GetTranslation(node);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static string? GetManualTranslation(XElement node) => _tsltn?.GetManualTranslation(node);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static string? GetAutoTranslation(XElement node) => _tsltn?.GetAutoTranslation(node);
-
-
-
-
+        internal static string? GetAutoTranslation(int contentHash) => _tsltn?.GetAutoTranslation(contentHash);
     }
 }

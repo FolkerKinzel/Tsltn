@@ -30,16 +30,16 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             const string SUMMARY = "summary";
 
-            tsltn.AddAutoTranslation(new XElement(SUMMARY, "Hello Car"), "Hallo Auto");
+            tsltn.SetAutoTranslation(new XElement(SUMMARY, "Hello Car"), "Hallo Auto");
 
             var auto2 = new XElement(SUMMARY, "Car 2");
-            tsltn.AddAutoTranslation(auto2, "Auto 2");
+            tsltn.SetAutoTranslation(auto2, "Auto 2");
 
             XElement parent1 = new XElement("Node1", "Hi Manual");
-            tsltn.AddManualTranslation(parent1, "Hallo Manual");
+            tsltn.SetManualTranslation(parent1, "Hallo Manual");
 
             XElement parent2 = new XElement("Node2", "Manual 2");
-            tsltn.AddManualTranslation(parent2, "manuell 2");
+            tsltn.SetManualTranslation(parent2, "manuell 2");
 
 
             var sb = new StringBuilder();

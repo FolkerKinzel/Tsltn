@@ -2,77 +2,185 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace FolkerKinzel.Tsltn.Models
 {
     public class Node
     {
+        private static readonly Dictionary<long, Node> _nodeContainer = new Dictionary<long, Node>();
+
+        private static readonly Regex _whitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
+
         private readonly XElement _xElement;
+        private readonly int _nodePathHash;
+        private readonly int _contentHash;
+        private Node? _previousNode;
+        private Node? _nextNode;
+
+
+        private string? _manualTranslation;
+
+
+        private const string NonBreakingSpace = "&#160;";
 
 
         internal Node(XElement el)
         {
             this._xElement = el;
 
-            this.Translation = Document.GetManualTranslation(_xElement);
+            string innerXml = el.InnerXml();
+            this.InnerXml = _whitespaceRegex.Replace(innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal), " ");
+            // Das Replacement des geschützten Leerzeichens soll beim Hashen
+            // ignoriert werden:
+            this._contentHash = Utility.GetContentHash(innerXml);
 
-            if(Translation != null)
-            {
-                IsManualTranslation = true;
-            }
-            else
-            {
-                Translation = Document.GetAutoTranslation(_xElement);
-            }
+            this.NodePath = Utility.GetNodePath(el);
+            this._nodePathHash = Utility.GetNodePathHash(NodePath);
 
-            this.NodePath = Utility.GetNodePath(_xElement);
+            //this.ID = CreateNodeID(_nodePathHash, _contentHash);
+
+            this.IsManualTranslation = Document.TryGetManualTranslation(_nodePathHash, out _manualTranslation);
+
         }
 
-        public string? Translation { get; set; }
-
-        public bool IsManualTranslation { get; set; }
+        public long ID => CreateNodeID(_nodePathHash, _contentHash);
 
         public string NodePath { get; }
 
+        public string InnerXml { get; }
 
-        public Node? GetNextNode()
+        public string InnerText => _xElement.Value;
+
+
+        public string? ManualTranslation
         {
-            var el = Document.GetNextNode(_xElement);
-
-            if(el is null)
-            {
-                return null;
-            }
-
-            return new Node(el);
+            get { return _manualTranslation; }
+            set { _manualTranslation = value; }
         }
 
 
-        public Node? GetPreviousNode()
+        public string? AutoTranslation
         {
-            var el = Document.GetPreviousNode(_xElement);
+            get => Document.GetAutoTranslation(_contentHash);
+            set => Document.SetAutoTranslation(_contentHash, value);
+        }
 
-            if (el is null)
+        public bool IsManualTranslation { get; set; }
+
+
+        public Node? PreviousNode
+        {
+            get
             {
-                return null;
-            }
+                _nodeContainer[ID] = this;
 
-            return new Node(el);
+                if (_previousNode != null)
+                {
+                    return _previousNode;
+                }
+
+                var el = Document.GetPreviousNode(_xElement);
+
+                if (el is null)
+                {
+                    return null;
+                }
+
+                var previousNode = new Node(el);
+
+                previousNode = _nodeContainer.ContainsKey(previousNode.ID) ? _nodeContainer[previousNode.ID] : previousNode;
+
+                previousNode.NextNode = this;
+                this.PreviousNode = previousNode;
+
+                return previousNode;
+            }
+            private set => _previousNode = value;
         }
 
 
-        public Node? GetNextUntranslated()
+
+        public Node? NextNode
         {
-            var el = Document.GetNextUntranslated(_xElement);
-
-            if (el is null)
+            get
             {
-                return null;
-            }
+                _nodeContainer[ID] = this;
 
-            return new Node(el);
+                if (_nextNode != null)
+                {
+                    return _nextNode;
+                }
+
+                var el = Document.GetNextNode(_xElement);
+
+                if (el is null)
+                {
+                    return null;
+                }
+
+                var nextNode = new Node(el);
+
+                nextNode = _nodeContainer.ContainsKey(nextNode.ID) ? _nodeContainer[nextNode.ID] : nextNode;
+
+                nextNode.PreviousNode = this;
+                this.NextNode = nextNode;
+
+                return nextNode;
+            }
+            private set => _nextNode = value;
         }
+
+
+        public Node? NextUntranslated
+        {
+            get
+            {
+                _nodeContainer[ID] = this;
+
+
+                var el = Document.GetNextUntranslated(_xElement);
+
+                if (el is null)
+                {
+                    return null;
+                }
+
+                var untranslated = new Node(el);
+
+                untranslated = _nodeContainer.ContainsKey(untranslated.ID) ? _nodeContainer[untranslated.ID] : untranslated;
+
+                return untranslated;
+            }
+        }
+
+
+        internal static void ClearNodeContainer()
+        {
+            _nodeContainer.Clear();
+            _nodeContainer.TrimExcess();
+        }
+
+        private static long CreateNodeID(int nodePathHash, int contentHash)
+        {
+            long id = (uint)nodePathHash;
+
+            id <<= 32;
+            
+            id |= (uint)contentHash;
+
+            return id;
+        }
+
+
+        
+
+
+        
+
+
+       
 
     }
 }

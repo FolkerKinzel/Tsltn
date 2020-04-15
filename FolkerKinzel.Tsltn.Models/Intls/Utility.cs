@@ -74,17 +74,21 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         }
 
 
-        internal static int GetNodeHash(XElement? node)
+        internal static int GetNodePathHash(XElement? node)
         {
             FillStringBuilder(node);
             return _sb.GetStableHashCode(HashType.Ordinal);
         }
 
+        internal static int GetNodePathHash(string nodePath) => nodePath.GetStableHashCode(HashType.Ordinal);
 
-        internal static int GetOriginalTextHash(XElement node)
+
+        internal static int GetContentHash(XElement node)
         {
-            return node.GetInnerXml().GetStableHashCode(HashType.AlphaNumericNoCase);
+            return node.InnerXml().GetStableHashCode(HashType.AlphaNumericNoCase);
         }
+
+        internal static int GetContentHash(string innerXml) => innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
 
 
         private static void FillStringBuilder(XElement? node)
