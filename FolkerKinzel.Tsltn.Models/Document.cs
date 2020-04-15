@@ -413,7 +413,7 @@ namespace FolkerKinzel.Tsltn.Models
                 return manualTransl;
             }
 
-            int contentHash = Utility.GetContentHash(node);
+            int contentHash = Utility.GetContentHash(node, out string _);
 
             return GetAutoTranslation(contentHash);
         }
@@ -439,6 +439,11 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool HasManualTranslation(int nodePathHash) => _tsltn?.HasManualTranslation(nodePathHash) ?? false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool HasAutoTranslation(int contentHash) => _tsltn?.HasAutoTranslation(contentHash) ?? false;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string? GetAutoTranslation(int contentHash) => _tsltn?.GetAutoTranslation(contentHash);

@@ -83,12 +83,13 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         internal static int GetNodePathHash(string nodePath) => nodePath.GetStableHashCode(HashType.Ordinal);
 
 
-        internal static int GetContentHash(XElement node)
+        internal static int GetContentHash(XElement node, out string innerXml)
         {
-            return node.InnerXml().GetStableHashCode(HashType.AlphaNumericNoCase);
+            innerXml = node.InnerXml();
+            return innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
         }
 
-        internal static int GetContentHash(string innerXml) => innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
+        //internal static int GetContentHash(string innerXml) => innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
 
 
         private static void FillStringBuilder(XElement? node)

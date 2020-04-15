@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Globalization;
 using System.Xml.Linq;
+using FolkerKinzel.Tsltn.Models.Intls;
 
 namespace FolkerKinzel.Tsltn.Models.Tests
 {
@@ -30,16 +31,16 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             const string SUMMARY = "summary";
 
-            tsltn.SetAutoTranslation(new XElement(SUMMARY, "Hello Car"), "Hallo Auto");
+            tsltn.SetAutoTranslation(Utility.GetContentHash(new XElement(SUMMARY, "Hello Car"), out string _), "Hallo Auto");
 
             var auto2 = new XElement(SUMMARY, "Car 2");
-            tsltn.SetAutoTranslation(auto2, "Auto 2");
+            tsltn.SetAutoTranslation(Utility.GetContentHash(auto2, out string _), "Auto 2");
 
             XElement parent1 = new XElement("Node1", "Hi Manual");
-            tsltn.SetManualTranslation(parent1, "Hallo Manual");
+            tsltn.SetManualTranslation(Utility.GetNodePathHash(parent1), "Hallo Manual");
 
             XElement parent2 = new XElement("Node2", "Manual 2");
-            tsltn.SetManualTranslation(parent2, "manuell 2");
+            tsltn.SetManualTranslation(Utility.GetNodePathHash(parent2), "manuell 2");
 
 
             var sb = new StringBuilder();
@@ -60,8 +61,9 @@ namespace FolkerKinzel.Tsltn.Models.Tests
           
             Assert.AreEqual("de", tsltn2.SourceLanguage);
             Assert.AreEqual("en", tsltn2.TargetLanguage);
-            Assert.AreEqual("Auto 2", tsltn.GetTranslation(auto2));
-            Assert.AreEqual("manuell 2", tsltn.GetTranslation(parent2));
+            Assert.AreEqual("Auto 2", tsltn.GetAutoTranslation(Utility.GetContentHash(auto2, out string _)));
+            tsltn.TryGetManualTranslation(Utility.GetNodePathHash(parent2), out string? result);
+            Assert.AreEqual("manuell 2", result);
 
 
         }

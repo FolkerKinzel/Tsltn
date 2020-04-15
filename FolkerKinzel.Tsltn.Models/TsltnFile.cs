@@ -126,6 +126,11 @@ namespace FolkerKinzel.Tsltn.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool TryGetManualTranslation(int nodePathHash, [NotNullWhen(true)] out string? transl) => _manualTranslations.TryGetValue(nodePathHash, out transl);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal bool HasManualTranslation(int nodePathHash) => _manualTranslations.ContainsKey(nodePathHash);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal bool HasAutoTranslation(int contentHash) => _autoTranslations.ContainsKey(contentHash);
 
         internal string? GetAutoTranslation(int contentHash)
         {

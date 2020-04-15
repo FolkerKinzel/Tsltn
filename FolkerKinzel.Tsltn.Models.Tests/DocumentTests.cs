@@ -54,7 +54,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             doc.Open(tsltnPath);
 
-            XElement? section = doc.GetFirstNode();
+            XElement? section = Document.GetFirstNode();
 
 
             //foreach (var nd in node.Document.Root.DescendantNodes())
@@ -71,7 +71,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                section = doc.GetNextNode(section);
+                section = Document.GetNextNode(section);
 
                 s = Utility.GetNodePath(section);
             }
@@ -83,7 +83,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                section = doc.GetPreviousNode(section);
+                section = Document.GetPreviousNode(section);
 
                 s = Utility.GetNodePath(section);
 
