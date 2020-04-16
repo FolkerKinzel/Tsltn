@@ -20,7 +20,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         private INode? _previousNode;
         private INode? _nextNode;
-
+        private string? _innerText;
 
         private const string NonBreakingSpace = "&#160;";
 
@@ -59,7 +59,14 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public string InnerXml { get; }
 
-        public string InnerText => XmlNode.Value;
+        public string InnerText
+        {
+            get
+            {
+                this._innerText ??= _whitespaceRegex.Replace(XmlNode.Value, " ");
+                return _innerText;
+            }
+        }
 
         public string? GetTranslation() =>
             Document.TryGetManualTranslation(_nodePathHash, out string? manualTransl)
