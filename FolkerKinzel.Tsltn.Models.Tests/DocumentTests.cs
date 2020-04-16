@@ -27,7 +27,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
  
             var doc = Document.Instance;
 
-            doc.CreateNew(TestFiles.TestXml);
+            doc.NewTsltn(TestFiles.TestXml);
 
 
             doc.SourceLanguage = "de";
@@ -50,7 +50,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
             //doc.AddManualTranslation(txt3, "manuell 3");
 
            
-            doc.SaveAs(tsltnPath);
+            doc.SaveTsltnAs(tsltnPath);
 
             doc.Open(tsltnPath);
 

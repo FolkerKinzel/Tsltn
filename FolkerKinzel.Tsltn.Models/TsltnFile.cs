@@ -138,6 +138,23 @@ namespace FolkerKinzel.Tsltn.Models
             return transl;
         }
 
+        internal List<(bool IsManualTranslation, int Hash, string Text)> GetAllTranslations()
+        {
+            var all = new List<(bool IsManualTranslation, int Hash, string Text)>();
+
+            foreach (var kvp in _autoTranslations)
+            {
+                all.Add((false, kvp.Key, kvp.Value));
+            }
+
+            foreach (var kvp in _manualTranslations)
+            {
+                all.Add((true, kvp.Key, kvp.Value));
+            }
+
+            return all;
+        }
+
         internal void Save(string? tsltnFileName)
         {
 

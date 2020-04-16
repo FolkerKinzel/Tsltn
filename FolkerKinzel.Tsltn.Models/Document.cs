@@ -13,7 +13,7 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public class Document
+    public class Document : IDocument
     {
         private static TsltnFile? _tsltn;
         private static XDocument? _xmlDocument;
@@ -25,7 +25,9 @@ namespace FolkerKinzel.Tsltn.Models
 
         public static Document Instance { get; } = new Document();
 
+        #region IDocument
 
+        #region Properties
 
         public bool Changed => _tsltn?.Changed ?? false;
 
@@ -69,13 +71,15 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        public Node? FirstNode { get; private set; }
+        public INode? FirstNode { get; private set; }
 
         public bool SourceDocumentExists { get; private set; }
 
+        #endregion
 
+        #region Methods
 
-        public void CreateNew(string sourceDocumentFileName)
+        public void NewTsltn(string sourceDocumentFileName)
         {
             if (Changed)
             {
@@ -142,65 +146,116 @@ namespace FolkerKinzel.Tsltn.Models
             InitFirstNode();
         }
 
-        private void InitFirstNode()
-        {
-            XElement? firstNode = GetFirstNode();
 
-            if (firstNode is null)
+
+        public void SaveTsltnAs(string tsltnFileName)
+        {
+            if (tsltnFileName is null)
             {
-                FirstNode = null;
-                return;
+                throw new ArgumentNullException(nameof(tsltnFileName));
             }
-
-            FirstNode = new Node(firstNode);
-        }
-
-
-        public void Reload()
-        {
-            this.Save();
-            this.Open(this.TsltnFileName);
-        }
-
-
-        public void SaveAs(string tsltnFileName)
-        {
             this.TsltnFileName = tsltnFileName;
-            Save();
+            _tsltn?.Save(TsltnFileName);
         }
 
 
 
-        public void Save()
+        public void SaveTsltn()
         {
-            if (_tsltn is null)
-            {
-                return;
-            }
-
-            _tsltn.Save(TsltnFileName);
+            SaveTsltnAs(this.TsltnFileName!);
         }
 
 
-        public void Translate(string fileName)
+        public void Translate(
+            string outFileName,
+            out List<(XmlException Exception, INode Node)> errors,
+            out List<(bool IsManualTranslation, int Hash, string Text)> unused)
         {
-            this.Save();
 
-            var node = GetFirstNode();
+            this.SaveTsltn();
+
+            var node = ((Node?)FirstNode)?.XmlNode;
+
+            errors = new List<(XmlException Exception, INode Node)>();
+
+            var used = new List<(bool IsManualTranslation, int Hash, string Text)>();
 
             while (node != null)
             {
-                Utility.Translate(node, GetTranslation(node));
+                try
+                {
+                    var trans = GetTranslation(node);
+
+                    if (trans.HasValue)
+                    {
+                        used.Add(trans.Value);
+                        Utility.Translate(node, trans.Value.Text);
+                    }
+                }
+                catch (XmlException e)
+                {
+                    errors.Add((e, Node.GetNode(node)));
+                }
                 node = GetNextNode(node);
             }
 
-            _xmlDocument?.Save(fileName);
+            _xmlDocument?.Save(outFileName);
 
             this.Open(this.TsltnFileName);
+
+
+
+            unused = GetAllTranslations().Except(used, new TranslationTupleComparer()).ToList();
+
+
+            /////////////////////////////////////////////
+
+            static (bool IsManualTranslation, int Hash, string Text)? GetTranslation(XElement node)
+            {
+                int nodePathHash = Utility.GetNodePathHash(node);
+
+                if (TryGetManualTranslation(nodePathHash, out string? manualTransl))
+                {
+                    return (true, nodePathHash, manualTransl);
+                }
+
+                int contentHash = Utility.GetContentHash(node, out string _);
+
+                string? autoTransl = GetAutoTranslation(contentHash);
+
+                return autoTransl is null ? ((bool IsManualTranslation, int Hash, string Text)?)null : (IsManualTranslation: false, Hash: contentHash, Text: autoTransl);
+            }
         }
 
 
-        public void CloseDocument()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
+        public List<(bool IsManualTranslation, int Hash, string Text)> GetAllTranslations() => _tsltn?.GetAllTranslations() ?? new List<(bool IsManualTranslation, int Hash, string Text)>();
+
+
+        [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
+        public void RemoveUnusedTranslations(IEnumerable<(bool IsManualTranslation, int Hash, string Text)> unused)
+        {
+            if (unused is null)
+            {
+                throw new ArgumentNullException(nameof(unused));
+            }
+
+            foreach (var (IsManualTranslation, Hash, _) in unused)
+            {
+                if (IsManualTranslation)
+                {
+                    SetManualTranslation(Hash, null);
+                }
+                else
+                {
+                    SetAutoTranslation(Hash, null);
+                }
+            }
+        }
+
+
+        public void Close()
         {
             _tsltn = null;
             this.TsltnFileName = null;
@@ -209,6 +264,11 @@ namespace FolkerKinzel.Tsltn.Models
             Node.ClearNodeContainer();
         }
 
+        #endregion
+
+        #endregion
+
+        #region internal static
 
         internal static XElement? GetFirstNode()
         {
@@ -223,7 +283,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 foreach (XElement section in member.Elements())
                 {
-                    var el = ExtractFirstNode(section);
+                    var el = ExtractDescendant(section);
 
                     if (el != null) return el;
                 }
@@ -231,46 +291,6 @@ namespace FolkerKinzel.Tsltn.Models
 
             return null;
         }
-
-
-        private static XElement? ExtractFirstNode(XElement section)
-        {
-            // Die Reihenfolge ist entscheidend, denn 
-            // Utility.IsTranslatable führt nur einen 
-            // knappen Negativtest durch!
-            if (Utility.IsContainerSection(section))
-            {
-                return Utility.MaskCodeBlock(ExtractFirstFromContainer(section));
-            }
-            else if (Utility.IsTranslatable(section))
-            {
-                return Utility.MaskCodeBlock(section);
-            }
-
-            return null;
-
-            /////////////////////////////////////////////////////////////
-
-            static XElement? ExtractFirstFromContainer(XElement container)
-            {
-                foreach (var innerElement in container.Elements())
-                {
-                    if (Utility.IsContainerSection(innerElement))
-                    {
-                        return ExtractFirstFromContainer(innerElement);
-                    }
-                    else if (Utility.IsTranslatable(innerElement))
-                    {
-                        return innerElement;
-                    }
-                }
-
-                return null;
-            }
-        }
-
-
-
 
 
         internal static XElement? GetNextNode(XElement? currentNode)
@@ -289,7 +309,7 @@ namespace FolkerKinzel.Tsltn.Models
 
                 foreach (var sibling in currentNode.ElementsAfterSelf())
                 {
-                    var el = ExtractFirstNode(sibling);
+                    var el = ExtractDescendant(sibling);
 
                     if (el != null)
                     {
@@ -320,7 +340,7 @@ namespace FolkerKinzel.Tsltn.Models
 
                 foreach (var sibling in currentNode.ElementsBeforeSelf().Reverse())
                 {
-                    var el = ExtractLastNode(sibling);
+                    var el = ExtractAncestor(sibling);
 
                     if (el != null)
                     {
@@ -338,50 +358,13 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        private static XElement? ExtractLastNode(XElement section)
-        {
-            // Die Reihenfolge ist entscheidend, denn 
-            // Utility.IsTranslatable führt nur einen 
-            // knappen Negativtest durch!
-            if (Utility.IsContainerSection(section))
-            {
-                return Utility.MaskCodeBlock(ExtractLastFromContainer(section));
-            }
-            else if (Utility.IsTranslatable(section))
-            {
-                return Utility.MaskCodeBlock(section);
-            }
-
-            return null;
-
-            ///////////////////////////////////////////////////////////////
-
-            static XElement? ExtractLastFromContainer(XElement container)
-            {
-                foreach (var innerElement in container.Elements().Reverse())
-                {
-                    if (Utility.IsContainerSection(innerElement))
-                    {
-                        return ExtractLastFromContainer(innerElement);
-                    }
-                    else if (Utility.IsTranslatable(innerElement))
-                    {
-                        return innerElement;
-                    }
-                }
-
-                return null;
-            }
-        }
-
-
 
         internal static XElement? GetNextUntranslated(XElement node)
         {
             XElement? unTrans = GetNextNode(node);
             while (unTrans != null)
             {
-                if (GetTranslation(unTrans) is null)
+                if (HasTranslation(node))
                 {
                     return unTrans;
                 }
@@ -393,7 +376,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             while (unTrans != null && !object.ReferenceEquals(unTrans, node))
             {
-                if (GetTranslation(unTrans) is null)
+                if (HasTranslation(unTrans))
                 {
                     return unTrans;
                 }
@@ -401,22 +384,16 @@ namespace FolkerKinzel.Tsltn.Models
                 unTrans = GetNextNode(unTrans);
             }
 
-            return null;        
+            return null;
+
+            /////////////////////////////////////////
+
+            static bool HasTranslation(XElement node) =>
+                HasManualTranslation(Utility.GetNodePathHash(node)) || HasAutoTranslation(Utility.GetContentHash(node, out string _));
         }
 
-        private static string? GetTranslation(XElement node)
-        {
-            int nodePathHash = Utility.GetNodePathHash(node);
 
-            if (TryGetManualTranslation(nodePathHash, out string? manualTransl))
-            {
-                return manualTransl;
-            }
 
-            int contentHash = Utility.GetContentHash(node, out string _);
-
-            return GetAutoTranslation(contentHash);
-        }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -447,5 +424,107 @@ namespace FolkerKinzel.Tsltn.Models
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string? GetAutoTranslation(int contentHash) => _tsltn?.GetAutoTranslation(contentHash);
+
+
+        #endregion
+
+
+        #region private
+
+        private void InitFirstNode()
+        {
+            XElement? firstNode = GetFirstNode();
+
+            if (firstNode is null)
+            {
+                FirstNode = null;
+                return;
+            }
+
+            FirstNode = new Node(firstNode);
+        }
+
+        #region private static
+
+        
+
+        private static XElement? ExtractDescendant(XElement section)
+        {
+            // Die Reihenfolge ist entscheidend, denn 
+            // Utility.IsTranslatable führt nur einen 
+            // knappen Negativtest durch!
+            if (Utility.IsContainerSection(section))
+            {
+                return Utility.MaskCodeBlock(ExtractDescendantFromContainer(section));
+            }
+            else if (Utility.IsTranslatable(section))
+            {
+                return Utility.MaskCodeBlock(section);
+            }
+
+            return null;
+
+            /////////////////////////////////////////////////////////////
+
+            static XElement? ExtractDescendantFromContainer(XElement container)
+            {
+                foreach (var innerElement in container.Elements())
+                {
+                    if (Utility.IsContainerSection(innerElement))
+                    {
+                        return ExtractDescendantFromContainer(innerElement);
+                    }
+                    else if (Utility.IsTranslatable(innerElement))
+                    {
+                        return innerElement;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+
+        private static XElement? ExtractAncestor(XElement section)
+        {
+            // Die Reihenfolge ist entscheidend, denn 
+            // Utility.IsTranslatable führt nur einen 
+            // knappen Negativtest durch!
+            if (Utility.IsContainerSection(section))
+            {
+                return Utility.MaskCodeBlock(ExtractAncestorFromContainer(section));
+            }
+            else if (Utility.IsTranslatable(section))
+            {
+                return Utility.MaskCodeBlock(section);
+            }
+
+            return null;
+
+            ///////////////////////////////////////////////////////////////
+
+            static XElement? ExtractAncestorFromContainer(XElement container)
+            {
+                foreach (var innerElement in container.Elements().Reverse())
+                {
+                    if (Utility.IsContainerSection(innerElement))
+                    {
+                        return ExtractAncestorFromContainer(innerElement);
+                    }
+                    else if (Utility.IsTranslatable(innerElement))
+                    {
+                        return innerElement;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+
+
+        #endregion
+
+        #endregion
     }
 }

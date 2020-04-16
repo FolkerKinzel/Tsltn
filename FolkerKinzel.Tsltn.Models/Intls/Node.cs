@@ -8,20 +8,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace FolkerKinzel.Tsltn.Models
+namespace FolkerKinzel.Tsltn.Models.Intls
 {
-    public class Node
+    internal class Node : INode
     {
         private static readonly Dictionary<long, Node> _nodeContainer = new Dictionary<long, Node>();
-
         private static readonly Regex _whitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
 
-        private readonly XElement _xElement;
         private readonly int _nodePathHash;
         private readonly int _contentHash;
 
-        private Node? _previousNode;
-        private Node? _nextNode;
+        private INode? _previousNode;
+        private INode? _nextNode;
 
 
         private const string NonBreakingSpace = "&#160;";
@@ -29,7 +27,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal Node(XElement el)
         {
-            this._xElement = el;
+            this.XmlNode = el;
 
             // Das Replacement des geschützten Leerzeichens soll beim Hashen
             // ignoriert werden:
@@ -44,7 +42,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         private Node(XElement el, string innerXml, int nodePathHash, int contentHash)
         {
-            this._xElement = el;
+            this.XmlNode = el;
 
             this.InnerXml = _whitespaceRegex.Replace(innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal), " ");
             this.NodePath = Utility.GetNodePath(el);
@@ -52,52 +50,49 @@ namespace FolkerKinzel.Tsltn.Models
             this._nodePathHash = nodePathHash;
         }
 
+
+        internal XElement XmlNode { get; }
+
         public long ID => CreateNodeID(_nodePathHash, _contentHash);
 
         public string NodePath { get; }
 
         public string InnerXml { get; }
 
-        public string InnerText => _xElement.Value;
+        public string InnerText => XmlNode.Value;
+
+        public string? GetTranslation() =>
+            Document.TryGetManualTranslation(_nodePathHash, out string? manualTransl)
+            ? manualTransl
+            : Document.GetAutoTranslation(_contentHash);
 
 
-        [DisallowNull]
-        public string? Translation
+        public void SetTranslation(string value)
         {
-            get => Document.TryGetManualTranslation(_nodePathHash, out string? manualTransl) ? manualTransl : Document.GetAutoTranslation(_contentHash);
-
-            set
+            if (value is null)
             {
-                Debug.Assert(value != null);
+                throw new ArgumentNullException(nameof(value));
+            }
 
-                if(Document.HasAutoTranslation(_contentHash))
+            if (!value.Equals(GetTranslation(), StringComparison.Ordinal))
+            {
+                if (Document.HasAutoTranslation(_contentHash))
                 {
                     Document.SetManualTranslation(_nodePathHash, value);
                 }
                 else
                 {
+                    Document.SetManualTranslation(_nodePathHash, null);
                     Document.SetAutoTranslation(_contentHash, value);
                 }
             }
         }
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ResetToAutoTranslation() => Document.SetManualTranslation(_nodePathHash, null);
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ResetTranslation()
-        {
-            Document.SetManualTranslation(_nodePathHash, null);
-            Document.SetAutoTranslation(_contentHash, null);
-        }
-        
-
         public bool IsManualTranslation => Document.HasManualTranslation(_nodePathHash);
 
 
-        public Node? PreviousNode
+        public INode? PreviousNode
         {
             get
             {
@@ -108,19 +103,14 @@ namespace FolkerKinzel.Tsltn.Models
                     return _previousNode;
                 }
 
-                var el = Document.GetPreviousNode(_xElement);
+                var el = Document.GetPreviousNode(XmlNode);
 
                 if (el is null)
                 {
                     return null;
                 }
 
-
-                int nodePathHash = Utility.GetNodePathHash(el);
-                int contentHash = Utility.GetContentHash(el, out string innerXml);
-                long nodeID = CreateNodeID(nodePathHash, contentHash);
-
-                Node previousNode = _nodeContainer.ContainsKey(nodeID) ? _nodeContainer[nodeID] : new Node(el, innerXml, nodePathHash, contentHash);
+                Node previousNode = GetNode(el);
 
                 previousNode.NextNode = this;
                 this.PreviousNode = previousNode;
@@ -132,7 +122,7 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        public Node? NextNode
+        public INode? NextNode
         {
             get
             {
@@ -143,18 +133,14 @@ namespace FolkerKinzel.Tsltn.Models
                     return _nextNode;
                 }
 
-                var el = Document.GetNextNode(_xElement);
+                var el = Document.GetNextNode(XmlNode);
 
                 if (el is null)
                 {
                     return null;
                 }
 
-                int nodePathHash = Utility.GetNodePathHash(el);
-                int contentHash = Utility.GetContentHash(el, out string innerXml);
-                long nodeID = CreateNodeID(nodePathHash, contentHash);
-
-                Node nextNode = _nodeContainer.ContainsKey(nodeID) ? _nodeContainer[nodeID] : new Node(el, innerXml, nodePathHash, contentHash);
+                Node? nextNode = GetNode(el);
 
                 nextNode.PreviousNode = this;
                 this.NextNode = nextNode;
@@ -165,27 +151,65 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        public Node? NextUntranslated
+        public INode? NextUntranslated
         {
             get
             {
                 _nodeContainer[ID] = this;
 
-                var el = Document.GetNextUntranslated(_xElement);
+                var el = Document.GetNextUntranslated(XmlNode);
 
-                if (el is null)
+                return GetNode(el);
+            }
+        }
+
+
+        public INode? FindNode(string nodePathFragment, bool ignoreCase)
+        {
+            _nodeContainer[ID] = this;
+
+            StringComparison comp = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+
+            XElement? node = Document.GetNextNode(this.XmlNode);
+
+            while (node != null)
+            {
+                string path = Utility.GetNodePath(node);
+
+                if (path.Contains(nodePathFragment, comp))
                 {
-                    return null;
+                    return GetNode(node);
                 }
 
-                int nodePathHash = Utility.GetNodePathHash(el);
-                int contentHash = Utility.GetContentHash(el, out string innerXml);
-                long nodeID = CreateNodeID(nodePathHash, contentHash);
-
-                Node untranslated = _nodeContainer.ContainsKey(nodeID) ? _nodeContainer[nodeID] : new Node(el, innerXml, nodePathHash, contentHash);
-
-                return untranslated;
+                node = Document.GetNextNode(node);
             }
+
+
+            if (Document.Instance.FirstNode!.NodePath.Contains(nodePathFragment, comp))
+            {
+                return Document.Instance.FirstNode;
+            }
+
+            if (object.ReferenceEquals(this, Document.Instance.FirstNode))
+            {
+                return null;
+            }
+
+            node = Document.GetNextNode(((Node)Document.Instance.FirstNode).XmlNode);
+
+            while (node != null && !object.ReferenceEquals(node, this))
+            {
+                string path = Utility.GetNodePath(node);
+
+                if (path.Contains(nodePathFragment, comp))
+                {
+                    return GetNode(node);
+                }
+
+                node = Document.GetNextNode(node);
+            }
+
+            return null;
         }
 
 
@@ -196,12 +220,28 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
+        [return: NotNullIfNotNull("el")]
+        internal static Node? GetNode(XElement? el)
+        {
+            if (el is null)
+            {
+                return null;
+            }
+
+            int nodePathHash = Utility.GetNodePathHash(el);
+            int contentHash = Utility.GetContentHash(el, out string innerXml);
+            long nodeID = CreateNodeID(nodePathHash, contentHash);
+
+            return _nodeContainer.ContainsKey(nodeID) ? _nodeContainer[nodeID] : new Node(el, innerXml, nodePathHash, contentHash);
+        }
+
+
         private static long CreateNodeID(int nodePathHash, int contentHash)
         {
             long id = (uint)nodePathHash;
 
             id <<= 32;
-            
+
             id |= (uint)contentHash;
 
             return id;

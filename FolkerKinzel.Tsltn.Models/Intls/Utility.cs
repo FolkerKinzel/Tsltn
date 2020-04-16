@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Xml;
 
 namespace FolkerKinzel.Tsltn.Models.Intls
 {
@@ -15,13 +16,19 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         private static readonly List<string> _list = new List<string>();
 
 
-        internal static void Translate(XElement node, string? translation)
-        {
-            if (translation is null)
-            {
-                return;
-            }
+        
 
+
+        /// <summary>
+        /// Ersetzt das innere Xml von <paramref name="node"/> durch das in 
+        /// <paramref name="translation"/> enthaltene Xml.
+        /// </summary>
+        /// <param name="node">Das <see cref="XElement"/>, das überstzt wird.</param>
+        /// <param name="translation">XML, das den übersetzten Inhalt von <paramref name="node"/>
+        /// bilden soll.</param>
+        /// <exception cref="XmlException">Der Inhalt von <paramref name="translation"/> war kein gültiges Xml.</exception>
+        internal static void Translate(XElement node, string translation)
+        {
             const string ROOT = "Root";
             _sb.Clear();
 
