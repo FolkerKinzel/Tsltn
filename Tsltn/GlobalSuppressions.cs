@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE1006:Benennungsstile", Justification = "<Ausstehend>", Scope = "member", Target = "~M:Tsltn.MainWindow.miQuit_Click(System.Object,System.Windows.RoutedEventArgs)")]
+[assembly: SuppressMessage("Style", "IDE1006:Benennungsstile", Justification = "<Ausstehend>", Scope = "member", Target = "~M:Tsltn.TsltnPage.tbTranslation_LostFocus(System.Object,System.Windows.RoutedEventArgs)")]

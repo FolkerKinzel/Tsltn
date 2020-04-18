@@ -61,11 +61,128 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Browse all ähnelt.
+        /// </summary>
+        public static string BrowseAll {
+            get {
+                return ResourceManager.GetString("BrowseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cntrl ähnelt.
+        /// </summary>
+        public static string Cntrl {
+            get {
+                return ResourceManager.GetString("Cntrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy text ähnelt.
+        /// </summary>
+        public static string CopyText {
+            get {
+                return ResourceManager.GetString("CopyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy xml ähnelt.
+        /// </summary>
+        public static string CopyXml {
+            get {
+                return ResourceManager.GetString("CopyXml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Go to: ähnelt.
+        /// </summary>
+        public static string GoTo {
+            get {
+                return ResourceManager.GetString("GoTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Next &gt; ähnelt.
+        /// </summary>
+        public static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found that contains {0} in its path. ähnelt.
+        /// </summary>
+        public static string NoElementFound {
+            get {
+                return ResourceManager.GetString("NoElementFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file {0} is empty{1}or not a {2}. ähnelt.
+        /// </summary>
+        public static string NotAXmlFile {
+            get {
+                return ResourceManager.GetString("NotAXmlFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt; Previous ähnelt.
+        /// </summary>
+        public static string Previous {
+            get {
+                return ResourceManager.GetString("Previous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Shift ähnelt.
+        /// </summary>
+        public static string Shift {
+            get {
+                return ResourceManager.GetString("Shift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Translate ähnelt.
         /// </summary>
         public static string Translate {
             get {
                 return ResourceManager.GetString("Translate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tsltn file ähnelt.
+        /// </summary>
+        public static string TsltnFile {
+            get {
+                return ResourceManager.GetString("TsltnFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unexpected error ähnelt.
+        /// </summary>
+        public static string UnexpectedError {
+            get {
+                return ResourceManager.GetString("UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Visual Studio XML documentation file ähnelt.
+        /// </summary>
+        public static string XmlDocumentationFile {
+            get {
+                return ResourceManager.GetString("XmlDocumentationFile", resourceCulture);
             }
         }
     }

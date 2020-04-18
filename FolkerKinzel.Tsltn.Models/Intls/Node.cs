@@ -53,7 +53,9 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         internal XElement XmlNode { get; }
 
-        public long ID => CreateNodeID(_nodePathHash, _contentHash);
+        //public Regex WhitespaceRegex => _whitespaceRegex;
+
+        private long ID => CreateNodeID(_nodePathHash, _contentHash);
 
         public string NodePath { get; }
 
@@ -68,35 +70,37 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             }
         }
 
-        public string? GetTranslation() =>
+       
+        public string? Translation
+        {
+            get =>
             Document.TryGetManualTranslation(_nodePathHash, out string? manualTransl)
             ? manualTransl
             : Document.GetAutoTranslation(_contentHash);
 
-
-        public void SetTranslation(string value)
-        {
-            if (value is null)
+            set
             {
-                throw new ArgumentNullException(nameof(value));
-            }
+                value ??= "";
 
-            if (!value.Equals(GetTranslation(), StringComparison.Ordinal))
-            {
-                if (Document.HasAutoTranslation(_contentHash))
+                if (!value.Equals(Translation, StringComparison.Ordinal))
                 {
-                    Document.SetManualTranslation(_nodePathHash, value);
-                }
-                else
-                {
-                    Document.SetManualTranslation(_nodePathHash, null);
-                    Document.SetAutoTranslation(_contentHash, value);
+                    if (Document.HasAutoTranslation(_contentHash))
+                    {
+                        Document.SetManualTranslation(_nodePathHash, value);
+                    }
+                    else
+                    {
+                        Document.SetManualTranslation(_nodePathHash, null);
+                        Document.SetAutoTranslation(_contentHash, value);
+                    }
                 }
             }
         }
 
 
-        public bool IsManualTranslation => Document.HasManualTranslation(_nodePathHash);
+        
+
+        //private bool IsManualTranslation => Document.HasManualTranslation(_nodePathHash);
 
 
         public INode? PreviousNode

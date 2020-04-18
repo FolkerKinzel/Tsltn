@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -31,6 +32,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         public bool Changed => _tsltn?.Changed ?? false;
 
+     
 
         public string? TsltnFileName { get; private set; }
 
@@ -86,26 +88,14 @@ namespace FolkerKinzel.Tsltn.Models
                 throw new InvalidOperationException();
             }
 
-            this.TsltnFileName = null;
-            this.SourceDocumentExists = false;
-            FirstNode = null;
-            Node.ClearNodeContainer();
+            Close();
 
+            _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
+        
             _tsltn = new TsltnFile
             {
                 SourceDocumentFileName = sourceDocumentFileName
             };
-
-            if (!File.Exists(sourceDocumentFileName))
-            {
-                return;
-            }
-            else
-            {
-                this.SourceDocumentExists = true;
-            }
-
-            _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
 
             InitFirstNode();
         }

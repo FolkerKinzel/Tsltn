@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FolkerKinzel.Tsltn.Models;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,11 +18,54 @@ namespace Tsltn
     /// <summary>
     /// Interaktionslogik für NavigationUserControl.xaml
     /// </summary>
-    public partial class NavigationUserControl : UserControl
+    public partial class NavigationUserControl : UserControl, INotifyPropertyChanged
     {
+        public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public NavigationUserControl()
         {
             InitializeComponent();
+        }
+
+
+        public INode? Node { get; set; }
+
+        public string? PathFragment { get; set; }
+
+        public bool CaseSensitive { get; set; }
+
+
+        private void OnNavigationRequested(INode? target, string pathFragment) => NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(target, pathFragment));
+        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            PathFragment = PathFragment?.Replace(" ", "");
+
+            
+
+            if (string.IsNullOrEmpty(PathFragment) || Node is null)
+            {
+                return;
+            }
+
+            var target = Node.FindNode(PathFragment, CaseSensitive);
+
+            
+            OnNavigationRequested(target, PathFragment);
+
+           
+
+            OnPropertyChanged(nameof(PathFragment));
+
+        }
+
+        private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !(string.IsNullOrWhiteSpace(PathFragment) || Node is null);
         }
     }
 }

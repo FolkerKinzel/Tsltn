@@ -16,9 +16,6 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         private static readonly List<string> _list = new List<string>();
 
 
-        
-
-
         /// <summary>
         /// Ersetzt das innere Xml von <paramref name="node"/> durch das in 
         /// <paramref name="translation"/> enthaltene Xml.

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FolkerKinzel.Tsltn.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Tsltn.Resources;
 
 namespace Tsltn
 {
@@ -16,9 +18,31 @@ namespace Tsltn
     {
         public const string PROGRAM_NAME = "Tsltn";
 
-        private void OnStartup(object sender, StartupEventArgs e)
+        //private void OnStartup(object sender, StartupEventArgs e)
+        //{
+        //    ApplicationCommands.SaveAs.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift));
+        //}
+
+
+        protected override void OnStartup(StartupEventArgs e)
         {
-            ApplicationCommands.SaveAs.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift));
+            base.OnStartup(e);
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            ApplicationCommands.SaveAs.InputGestures.Add(
+                new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.Shift}+S"));
+
+            new MainWindow(Document.Instance).Show();
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show($"{Res.UnexpectedError}:{Environment.NewLine}{e.Exception.Message}",
+                App.PROGRAM_NAME, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+
+            e.Handled = false;
         }
     }
 }

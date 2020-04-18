@@ -117,7 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BrowseAll" xml:space="preserve">
+    <value>Browse all</value>
+  </data>
+  <data name="Cntrl" xml:space="preserve">
+    <value>Cntrl</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Copy text</value>
+  </data>
+  <data name="CopyXml" xml:space="preserve">
+    <value>Copy xml</value>
+  </data>
+  <data name="GoTo" xml:space="preserve">
+    <value>Go to:</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next &gt;</value>
+  </data>
+  <data name="NoElementFound" xml:space="preserve">
+    <value>No element was found that contains {0} in its path.</value>
+  </data>
+  <data name="NotAXmlFile" xml:space="preserve">
+    <value>The file {0} is empty{1}or not a {2}.</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>&lt; Previous</value>
+  </data>
+  <data name="Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
   <data name="Translate" xml:space="preserve">
     <value>Translate</value>
+  </data>
+  <data name="TsltnFile" xml:space="preserve">
+    <value>Tsltn file</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Unexpected error</value>
+  </data>
+  <data name="XmlDocumentationFile" xml:space="preserve">
+    <value>Visual Studio XML documentation file</value>
   </data>
 </root>

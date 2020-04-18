@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace FolkerKinzel.Tsltn.Models
@@ -12,6 +13,8 @@ namespace FolkerKinzel.Tsltn.Models
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
         string? TsltnFileName { get; }
+
+      
 
         void Close();
         List<(bool IsManualTranslation, int Hash, string Text)> GetAllTranslations();

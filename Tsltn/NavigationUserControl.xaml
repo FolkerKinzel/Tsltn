@@ -4,17 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tsltn"
+             xmlns:r ="clr-namespace:Tsltn.Resources"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
+    </UserControl.CommandBindings>
     <StackPanel>
-        <Label>Gehe zu:</Label>
+        <Label Content="{x:Static r:Res.GoTo}"></Label>
         <DockPanel>
-            <Button DockPanel.Dock="Right">-></Button>
-            <TextBox Grid.Row="1" Grid.ColumnSpan="2" MinWidth="160"></TextBox>
+            <Button DockPanel.Dock="Right" Command="BrowseForward">&#x2192;</Button>
+            <TextBox Grid.Row="1" Grid.ColumnSpan="2"
+                     MinWidth="160" AcceptsReturn="False" AcceptsTab="False"
+                     Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <StackPanel Orientation="Horizontal">
-            <Button>Abc</Button>
-            
+            <ToggleButton IsThreeState="False" IsChecked="{Binding CaseSensitive}">Abc</ToggleButton>
         </StackPanel>
     </StackPanel>
 </UserControl>
