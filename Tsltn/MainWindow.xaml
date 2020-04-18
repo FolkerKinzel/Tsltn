@@ -4,9 +4,92 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsltn"
+   
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Height="450" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        WindowStyle="ThreeDBorderWindow"  ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
+        
+        WindowState="Maximized"
+        Title = "{x:Static local:App.PROGRAM_NAME}">
+    <Window.Resources>
+        
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="Help" Executed="Help_Executed" />
+        <CommandBinding Command="Open" Executed="Open_Executed"/>
+        <CommandBinding Command="Close" Executed="Close_Executed"  CanExecute="Close_CanExecute"/>
+        <CommandBinding Command="Save" Executed="SaveAs_Executed" CanExecute="Close_CanExecute"/>
+        <CommandBinding Command="SaveAs" Executed="SaveAs_Executed"  CanExecute="Close_CanExecute"/>
+        <CommandBinding Command="local:TsltnCommand.Translate" Executed="Translate_Executed"  CanExecute="Close_CanExecute"></CommandBinding>
+    </Window.CommandBindings>
+    <DockPanel>
+        
+        <Menu DockPanel.Dock="Top" FontSize="16">
+        <MenuItem Header="_Datei" Padding="8,4">
+            <MenuItem Command="Open">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/Open_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="Close">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="Save">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="SaveAs">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+                <Separator/>
+                <MenuItem Command="local:TsltnCommand.Translate"/>
 
-    </Grid>
+
+
+                <Separator/>
+                <MenuItem Name="miRecentFiles" Header="_Zuletzt geöffnete Dateien">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/HistoryTable_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="_Beenden" Click="miQuit_Click" Name="miQuit">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuItem>
+        
+        <MenuItem Header="_Hilfe" Padding="8,4">
+            <MenuItem Header="_Hilfe" Command="ApplicationCommands.Help">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/Help_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            
+            <MenuItem Header="_Info" Click="Info_Click">
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"></Image>
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuItem>
+    </Menu>
+        
+        
+
+    <StatusBar DockPanel.Dock="Bottom">
+        <StatusBarItem HorizontalContentAlignment="Center" Background="CornflowerBlue" Foreground="Cornsilk">
+            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Text="{Binding FileName}" TextTrimming="CharacterEllipsis"/>
+        </StatusBarItem>
+    </StatusBar>
+
+    <Frame Name="frmContent" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Background="DarkGray" />
+    </DockPanel>
 </Window>

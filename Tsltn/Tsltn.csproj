@@ -4,10 +4,51 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Copyright>Copyright © 2020 Folker Kinzel</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HistoryTable_16x.png" />
+    <None Remove="pics\CloseDocument_16x.png" />
+    <None Remove="pics\Help_16x.png" />
+    <None Remove="pics\InformationSymbol_16x.png" />
+    <None Remove="pics\Open_16x.png" />
+    <None Remove="pics\SaveAs_16x.png" />
+    <None Remove="pics\ShutDown_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Res.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Res.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Res.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Res.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="pics\Help_16x.png" />
+    <Resource Include="pics\HistoryTable_16x.png" />
+    <Resource Include="pics\CloseDocument_16x.png" />
+    <Resource Include="pics\InformationSymbol_16x.png" />
+    <Resource Include="pics\Open_16x.png" />
+    <Resource Include="pics\SaveAs_16x.png" />
+    <Resource Include="pics\ShutDown_16x.png" />
   </ItemGroup>
 
 </Project>
