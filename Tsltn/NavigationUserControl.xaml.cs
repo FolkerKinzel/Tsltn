@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,35 +30,28 @@ namespace Tsltn
         }
 
 
-        public INode? Node { get; set; }
-
         public string? PathFragment { get; set; }
 
         public bool CaseSensitive { get; set; }
 
 
-        private void OnNavigationRequested(INode? target, string pathFragment) => NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(target, pathFragment));
+        private void OnNavigationRequested(string pathFragment, bool caseSensitive) => NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(pathFragment, caseSensitive));
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
 
-            PathFragment = PathFragment?.Replace(" ", "");
+            PathFragment = PathFragment?.Replace(" ", "", StringComparison.Ordinal);
 
             
 
-            if (string.IsNullOrEmpty(PathFragment) || Node is null)
+            if (string.IsNullOrEmpty(PathFragment))
             {
                 return;
             }
 
-            var target = Node.FindNode(PathFragment, CaseSensitive);
-
-            
-            OnNavigationRequested(target, PathFragment);
-
-           
+            OnNavigationRequested(PathFragment, CaseSensitive);
 
             OnPropertyChanged(nameof(PathFragment));
 
@@ -65,7 +59,7 @@ namespace Tsltn
 
         private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !(string.IsNullOrWhiteSpace(PathFragment) || Node is null);
+            e.CanExecute = !(string.IsNullOrWhiteSpace(PathFragment));
         }
     }
 }

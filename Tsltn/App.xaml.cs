@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -26,15 +28,15 @@ namespace Tsltn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            ApplicationCommands.SaveAs.InputGestures.Add(
+                new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.Shift}+S"));
+
             base.OnStartup(e);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            ApplicationCommands.SaveAs.InputGestures.Add(
-                new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.Shift}+S"));
-
-            new MainWindow(Document.Instance).Show();
+            new MainWindow(Document.Instance, new RecentFilesMenu()).Show();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

@@ -61,6 +61,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die About ähnelt.
+        /// </summary>
+        public static string AboutMenuItem {
+            get {
+                return ResourceManager.GetString("AboutMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Browse all ähnelt.
         /// </summary>
         public static string BrowseAll {
@@ -97,11 +106,29 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
+        /// </summary>
+        public static string FileMenuHeader {
+            get {
+                return ResourceManager.GetString("FileMenuHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Go to: ähnelt.
         /// </summary>
         public static string GoTo {
             get {
                 return ResourceManager.GetString("GoTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Help ähnelt.
+        /// </summary>
+        public static string HelpMenuHeader {
+            get {
+                return ResourceManager.GetString("HelpMenuHeader", resourceCulture);
             }
         }
         
@@ -115,7 +142,16 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found that contains {0} in its path. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Node path: ähnelt.
+        /// </summary>
+        public static string NodePath {
+            get {
+                return ResourceManager.GetString("NodePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found, that contains {0} in its path. ähnelt.
         /// </summary>
         public static string NoElementFound {
             get {
@@ -133,11 +169,56 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Open the file to translate ähnelt.
+        /// </summary>
+        public static string OpenSourceFile {
+            get {
+                return ResourceManager.GetString("OpenSourceFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Original ähnelt.
+        /// </summary>
+        public static string Original {
+            get {
+                return ResourceManager.GetString("Original", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt; Previous ähnelt.
         /// </summary>
         public static string Previous {
             get {
                 return ResourceManager.GetString("Previous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Quit ähnelt.
+        /// </summary>
+        public static string QuitMenuItem {
+            get {
+                return ResourceManager.GetString("QuitMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recent files ähnelt.
+        /// </summary>
+        public static string RecentFilesMenuItem {
+            get {
+                return ResourceManager.GetString("RecentFilesMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
+        /// </summary>
+        public static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
             }
         }
         
@@ -151,11 +232,47 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Source file: ähnelt.
+        /// </summary>
+        public static string SourceFile {
+            get {
+                return ResourceManager.GetString("SourceFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Source language: ähnelt.
+        /// </summary>
+        public static string SourceLanguage {
+            get {
+                return ResourceManager.GetString("SourceLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Target language: ähnelt.
+        /// </summary>
+        public static string TargetLanguage {
+            get {
+                return ResourceManager.GetString("TargetLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Translate ähnelt.
         /// </summary>
         public static string Translate {
             get {
                 return ResourceManager.GetString("Translate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Translation ähnelt.
+        /// </summary>
+        public static string Translation {
+            get {
+                return ResourceManager.GetString("Translation", resourceCulture);
             }
         }
         

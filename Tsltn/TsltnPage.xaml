@@ -7,19 +7,34 @@
       xmlns:r ="clr-namespace:Tsltn.Resources"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="NodePage"
       Background="WhiteSmoke"
-      DataContext="{Binding RelativeSource={RelativeSource Self}}">
+      DataContext="{Binding RelativeSource={RelativeSource Self}}"
+      FontSize="16">
+    <Page.Resources>
+        <Style x:Key="HeaderTextBlock" TargetType="TextBlock">
+            <Style.Setters>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
+            </Style.Setters>
+        </Style>
+        <Style TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Padding" Value="7,2,7,2"/>
+                <Setter Property="MinWidth" Value="85"/>
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
     <Page.CommandBindings>
         <CommandBinding Command="PreviousPage" CanExecute="PreviousPage_CanExecute" Executed="PreviousPage_Executed"/>
         <CommandBinding Command="NextPage" CanExecute="NextPage_CanExecute" Executed="NextPage_Executed"/>
         <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
-        <CommandBinding Command="{x:Static local:TsltnPageCommand.CopyXml}" Executed="Copy_Executed"/>
-
+        <CommandBinding Command="{x:Static local:TsltnPageCommand.CopyXml}" Executed="CopyXml_Executed"/>
         <CommandBinding Command="{x:Static local:TsltnPageCommand.CopyText}" Executed="CopyText_Executed"/>
         <CommandBinding Command="{x:Static local:TsltnPageCommand.BrowseAll}" Executed="BrowseAll_Executed"/>
     </Page.CommandBindings>
-    <Grid>
+    <Grid Margin="10,0,10,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -33,9 +48,13 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.ColumnSpan="2">
+            <local:NavigationUserControl x:Name="NavCtrl" DockPanel.Dock="Right" Margin="5"/>
+            
             <Grid DockPanel.Dock="Left" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -44,39 +63,85 @@
                 </Grid.RowDefinitions>
                 <Grid.Resources>
                     <Style TargetType="TextBox">
-                        <Setter Property="Width" Value="60"></Setter>
+                        <Style.Setters>
+                            <Setter Property="MinWidth" Value="60"/>
+                            <Setter Property="Margin" Value="5,0,5,0"/>
+                        </Style.Setters>
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Setters>
+                            <Setter Property="Margin" Value="5,0,5,0"/>
+                        </Style.Setters>
                     </Style>
                 </Grid.Resources>
-                <Label>Source language: </Label>
-                <Label Grid.Row="1">Target language: </Label>
-                <TextBox Grid.Column="1" Text="{Binding SourceLanguage, UpdateSourceTrigger=LostFocus}"/>
-                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding TargetLanguage, UpdateSourceTrigger=LostFocus}"/>
+                <Label Content="{x:Static r:Res.SourceLanguage}"/>
+                <Label Grid.Row="1" Content="{x:Static r:Res.TargetLanguage}"/>
+                <TextBox Name="_tbSourceLanguage" Grid.Column="1" Text="{Binding SourceLanguage, UpdateSourceTrigger=Explicit}" VerticalAlignment="Center"/>
+                <TextBox Name="_tbTargetLanguage" Grid.Column="1" Grid.Row="1" Text="{Binding TargetLanguage, UpdateSourceTrigger=Explicit}" VerticalAlignment="Center"/>
+
+                <TextBlock Grid.Column="2" DockPanel.Dock="Left" VerticalAlignment="Center" Text="{x:Static r:Res.SourceFile}"/>
+                <TextBlock Grid.Column="2" Grid.Row="1" DockPanel.Dock="Left" VerticalAlignment="Center" Text="{x:Static r:Res.NodePath}"/>
+                <TextBlock Grid.Column="3" TextTrimming="CharacterEllipsis" Text="{Binding SourceFileName, Mode=OneTime}" VerticalAlignment="Center"/>
+                
+                <!--
+                <ScrollViewer Grid.Column="3" Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible" CanContentScroll="True">
+                   
+                </ScrollViewer>
+                -->
+
+                <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding NodePath}" VerticalAlignment="Center"/>
             </Grid>
-            <local:NavigationUserControl x:Name="NavCtrl" DockPanel.Dock="Right"/>
-            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Node path:</TextBlock>
-            <ScrollViewer VerticalAlignment="Center" DockPanel.Dock="Left">
-                <TextBlock ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding NodePath}" VerticalAlignment="Center"/>
-            </ScrollViewer>
+            
+            
         </DockPanel>
 
-        <TextBlock Grid.Row="1">Original</TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="1">Translation</TextBlock>
-        
-        <ScrollViewer Grid.Row="2">
+        <TextBlock Grid.Row="1" Style="{StaticResource HeaderTextBlock}" Text="{x:Static r:Res.Original}"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Static r:Res.Translation}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource HeaderTextBlock}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Translation}" Value="{x:Null}">
+                            <DataTrigger.Setters>
+                                <Setter Property="Background" Value="Gray"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <Button Name="_btnReset" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Content="{x:Static r:Res.Reset}" Click="_btnReset_Click">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Translation}" Value="{x:Null}">
+                            <DataTrigger.Setters>
+                            <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
             <TextBlock Text="{Binding InnerXml}" TextWrapping="WrapWithOverflow"/>
         </ScrollViewer>
-        <TextBox Name="tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation}" LostFocus="tbTranslation_LostFocus"/>
+        <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=PropertyChanged}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.CanContentScroll="True"/>
         
-        <DockPanel Grid.Row="3">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+        <Grid Grid.Row="3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Command="local:TsltnPageCommand.CopyXml" Content="{x:Static r:Res.CopyXml}"/>
                 <Button Command="local:TsltnPageCommand.CopyText" Content="{x:Static r:Res.CopyText}"/>
             </StackPanel>
-            <Button Command="PreviousPage" DockPanel.Dock="Left" Content="{x:Static r:Res.Previous}" HorizontalAlignment="Left"></Button>
-        </DockPanel>
+            <Button Command="PreviousPage" Content="{x:Static r:Res.Previous}" HorizontalAlignment="Left"></Button>
+            <Button Command="NextPage" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
+        </Grid>
 
         <Button Grid.Column="1" Grid.Row="3" DockPanel.Dock="Top" HorizontalAlignment="Center" Command="local:TsltnPageCommand.BrowseAll" Content="{x:Static r:Res.BrowseAll}"></Button>
-        <Button Grid.Column="1" Grid.Row="3" Command="NextPage" DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
 
         <GridSplitter Grid.Row="3" Grid.ColumnSpan="2"></GridSplitter>
         <ListBox Grid.Row="4" Grid.ColumnSpan="2"></ListBox>

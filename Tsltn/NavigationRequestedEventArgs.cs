@@ -5,13 +5,13 @@ namespace Tsltn
 {
     public class NavigationRequestedEventArgs : EventArgs
     {
-        public NavigationRequestedEventArgs(INode? target, string pathFragment)
+        public NavigationRequestedEventArgs(string pathFragment, bool caseSensitive)
         {
-            this.Target = target;
             this.PathFragment = pathFragment;
+            this.CaseSensitive = caseSensitive;
         }
 
-        public INode? Target { get; }
         public string PathFragment { get; }
+        public bool CaseSensitive { get; }
     }
 }

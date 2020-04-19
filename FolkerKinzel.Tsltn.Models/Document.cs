@@ -56,10 +56,15 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 if (_tsltn != null)
                 {
-                    _tsltn.SourceLanguage = value;
+                    value = string.IsNullOrWhiteSpace(value) ? null : value;
+                    if (!StringComparer.Ordinal.Equals(_tsltn.SourceLanguage, value))
+                    {
+                        _tsltn.SourceLanguage = value;
+                    }
                 }
             }
         }
+
 
         public string? TargetLanguage
         {
@@ -68,7 +73,11 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 if (_tsltn != null)
                 {
-                    _tsltn.TargetLanguage = value;
+                    value = string.IsNullOrWhiteSpace(value) ? null : value;
+                    if (!StringComparer.Ordinal.Equals(_tsltn.TargetLanguage, value))
+                    {
+                        _tsltn.TargetLanguage = value;
+                    }
                 }
             }
         }
@@ -103,21 +112,23 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void Open(string? tsltnFileName)
         {
-            this.SourceDocumentExists = false;
-
             if (Changed)
             {
                 throw new InvalidOperationException();
             }
+
+            Close();
 
             if (tsltnFileName is null)
             {
                 return;
             }
 
+            _tsltn = TsltnFile.Load(tsltnFileName);
+
             this.TsltnFileName = tsltnFileName;
 
-            _tsltn = TsltnFile.Load(tsltnFileName);
+            
 
 
             string xmlFileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), _tsltn.SourceDocumentFileName));
@@ -144,16 +155,17 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 throw new ArgumentNullException(nameof(tsltnFileName));
             }
-            this.TsltnFileName = tsltnFileName;
+
             _tsltn?.Save(TsltnFileName);
+            this.TsltnFileName = tsltnFileName;
         }
 
 
 
-        public void SaveTsltn()
-        {
-            SaveTsltnAs(this.TsltnFileName!);
-        }
+        //public void SaveTsltn()
+        //{
+        //    SaveTsltnAs(this.TsltnFileName!);
+        //}
 
 
         public void Translate(
@@ -162,7 +174,7 @@ namespace FolkerKinzel.Tsltn.Models
             out List<(bool IsManualTranslation, int Hash, string Text)> unused)
         {
 
-            this.SaveTsltn();
+            //this.SaveTsltnAs(TsltnFileName);
 
             var node = ((Node?)FirstNode)?.XmlNode;
 

@@ -9,9 +9,11 @@
         Height="450" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         WindowStyle="ThreeDBorderWindow"  ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
-        
         WindowState="Maximized"
-        Title = "{x:Static local:App.PROGRAM_NAME}">
+        Title = "{x:Static local:App.PROGRAM_NAME}"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing"
+        Closed="Window_Closed">
     <Window.Resources>
         
     </Window.Resources>
@@ -21,13 +23,13 @@
         <CommandBinding Command="Close" Executed="Close_Executed"  CanExecute="Close_CanExecute"/>
         <CommandBinding Command="Save" Executed="Save_ExecutedAsync" CanExecute="Close_CanExecute"/>
         <CommandBinding Command="SaveAs" Executed="SaveAs_ExecutedAsync"  CanExecute="Close_CanExecute"/>
-        <CommandBinding Command="New" Executed="New_Executed"/>
+        <CommandBinding Command="New" Executed="New_ExecutedAsync"/>
         <CommandBinding Command="local:TsltnCommand.Translate" Executed="Translate_ExecutedAsync"  CanExecute="Close_CanExecute"></CommandBinding>
     </Window.CommandBindings>
     <DockPanel>
         
         <Menu DockPanel.Dock="Top" FontSize="16">
-        <MenuItem Header="_Datei" Padding="8,4">
+        <MenuItem Header="{x:Static r:Res.FileMenuHeader}" Padding="8,4">
                 <MenuItem Command="New">
                     
                 </MenuItem>
@@ -54,31 +56,29 @@
                 <Separator/>
                 <MenuItem Command="local:TsltnCommand.Translate"/>
 
-
-
                 <Separator/>
-                <MenuItem Name="miRecentFiles" Header="_Zuletzt geöffnete Dateien">
+                <MenuItem Name="miRecentFiles" Header="{x:Static r:Res.RecentFilesMenuItem}">
                 <MenuItem.Icon>
                     <Image Width="16" Height="16" Source="pics/HistoryTable_16x.png"></Image>
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="_Beenden" Click="miQuit_Click" Name="miQuit">
+            <MenuItem Header="{x:Static r:Res.QuitMenuItem}" Click="miQuit_Click" Name="miQuit">
                 <MenuItem.Icon>
                     <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"></Image>
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
         
-        <MenuItem Header="_Hilfe" Padding="8,4">
-            <MenuItem Header="_Hilfe" Command="ApplicationCommands.Help">
+        <MenuItem Header="{x:Static r:Res.HelpMenuHeader}" Padding="8,4">
+            <MenuItem Command="ApplicationCommands.Help">
                 <MenuItem.Icon>
                     <Image Width="16" Height="16" Source="pics/Help_16x.png"></Image>
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
             
-            <MenuItem Header="_Info" Click="Info_Click">
+            <MenuItem Header="{x:Static r:Res.AboutMenuItem}" Click="Info_Click">
                 <MenuItem.Icon>
                     <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"></Image>
                 </MenuItem.Icon>
@@ -94,6 +94,6 @@
         </StatusBarItem>
     </StatusBar>
 
-    <Frame Name="frmContent" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Background="DarkGray" />
+    <Frame Name="frmContent" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Background="DarkGray"/>
     </DockPanel>
 </Window>

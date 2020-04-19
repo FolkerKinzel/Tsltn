@@ -21,7 +21,7 @@ namespace FolkerKinzel.Tsltn.Models
         void NewTsltn(string sourceDocumentFileName);
         void Open(string? tsltnFileName);
         void RemoveUnusedTranslations(IEnumerable<(bool IsManualTranslation, int Hash, string Text)> unused);
-        void SaveTsltn();
+        //void SaveTsltn();
         void SaveTsltnAs(string tsltnFileName);
         void Translate(string outFileName, out List<(XmlException Exception, INode Node)> errors, out List<(bool IsManualTranslation, int Hash, string Text)> unused);
     }
