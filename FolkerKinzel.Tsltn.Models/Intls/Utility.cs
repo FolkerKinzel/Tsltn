@@ -77,6 +77,19 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             return _sb.ToString();
         }
 
+        internal static long CreateNodeID(XElement node, out string innerXml)
+        {
+            int nodePathHash = GetNodePathHash(node);
+            int contentHash = GetContentHash(node, out innerXml);
+
+            long id = (uint)nodePathHash;
+
+            id <<= 32;
+
+            id |= (uint)contentHash;
+
+            return id;
+        }
 
         internal static int GetNodePathHash(XElement? node)
         {

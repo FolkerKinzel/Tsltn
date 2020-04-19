@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -25,8 +26,10 @@ namespace Tsltn
         private readonly Window _owner;
         private INode _node;
         private bool _hasDocumentUntranslatedNodes;
-        private string? _translation;
+        private string _translation = "";
         private readonly IDocument _doc;
+        private bool _hasTranslation;
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -41,7 +44,12 @@ namespace Tsltn
             this._owner = owner;
             this._doc = doc;
             this._node = doc.FirstNode!;
-            this.Translation = _node.Translation;
+
+            if (_node.Translation != null)
+            {
+                this._translation = _node.Translation;
+                this._hasTranslation = true;
+            }
             this.SourceFileName = System.IO.Path.GetFileName(_doc.SourceDocumentFileName);
 
             InitializeComponent();
@@ -51,30 +59,30 @@ namespace Tsltn
         }
 
 
-        private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
-        {
-            var target = _node.FindNode(e.PathFragment, e.CaseSensitive);
 
-            if (target is null)
-            {
-                MessageBox.Show(
-                    _owner,
-                    string.Format(CultureInfo.CurrentCulture, Res.NoElementFound, e.PathFragment));
-            }
-            else
-            {
-                Navigate(target);
+        public bool HasTranslation
+        {
+            get { return _hasTranslation; }
+            set 
+            { 
+                _hasTranslation = value;
+                OnPropertyChanged(nameof(HasTranslation));
+
+                if(!value)
+                {
+                    Translation = "";
+                }
             }
         }
 
 
-
-        public string? Translation
+        [AllowNull]
+        public string Translation
         {
             get => _translation;
             set
             {
-                _translation = value;
+                _translation = value ?? "";
                 OnPropertyChanged(nameof(Translation));
             }
         }
@@ -108,9 +116,17 @@ namespace Tsltn
         public string NodePath => _node.NodePath;
 
 
-        internal void GetData()
+        internal void UpdateSource()
         {
-            _node.Translation = this.Translation;
+            if (HasTranslation)
+            {
+                this._tbTranslation.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                _node.Translation = this.Translation;
+            }
+            else
+            {
+                _node.Translation = null;
+            }
 
             this._tbSourceLanguage.GetBindingExpression(TextBox.TextProperty).UpdateSource();
             _doc.SourceLanguage = SourceLanguage;
@@ -120,7 +136,28 @@ namespace Tsltn
         }
 
 
-        private void _btnReset_Click(object sender, RoutedEventArgs e) => this.Translation = null;
+        private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
+        {
+            var target = _node.FindNode(e.PathFragment, e.CaseSensitive);
+
+            if (target is null)
+            {
+                MessageBox.Show(
+                    _owner,
+                    string.Format(CultureInfo.CurrentCulture, Res.NoElementFound, e.PathFragment));
+            }
+            else
+            {
+                Navigate(target);
+            }
+        }
+
+        private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
+
+        private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            HasTranslation = true;
+        }
 
         private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -197,7 +234,7 @@ namespace Tsltn
 
         private void Navigate(INode node)
         {
-            GetData();
+            UpdateSource();
 
             this._node = node;
             this.Translation = node.Translation;
@@ -211,6 +248,6 @@ namespace Tsltn
 
         private void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-
+        
     }
 }

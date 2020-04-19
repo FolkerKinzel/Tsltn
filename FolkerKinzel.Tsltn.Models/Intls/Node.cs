@@ -80,9 +80,12 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
             set
             {
-                value ??= "";
-
-                if (!value.Equals(Translation, StringComparison.Ordinal))
+                if(value is null)
+                {
+                    Document.SetManualTranslation(_nodePathHash, null);
+                    Document.SetAutoTranslation(_contentHash, null);
+                }
+                else if (!StringComparer.Ordinal.Equals(value, Translation))
                 {
                     if (Document.HasAutoTranslation(_contentHash))
                     {

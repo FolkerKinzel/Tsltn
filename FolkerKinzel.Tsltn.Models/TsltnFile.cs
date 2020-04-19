@@ -76,11 +76,7 @@ namespace FolkerKinzel.Tsltn.Models
         internal bool Changed { get; private set; }
 
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal void SetManualTranslation(XElement node, string? transl)
-        //{
-        //    SetManualTranslation(Utility.GetNodePathHash(node), transl);
-        //}
+        
 
         
         internal void SetManualTranslation(int nodePathHash, string? transl)
@@ -99,11 +95,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal void SetAutoTranslation(XElement node, string? transl)
-        //{
-        //    SetAutoTranslation(Utility.GetContentHash(node), transl);
-        //}
+        
 
         internal void SetAutoTranslation(int contentHash, string? transl)
         {

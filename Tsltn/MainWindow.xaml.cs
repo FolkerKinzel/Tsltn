@@ -161,7 +161,7 @@ namespace Tsltn
                 return;
             }
 
-            page.GetData();
+            page.UpdateSource();
 
             if (_doc.Changed)
             {

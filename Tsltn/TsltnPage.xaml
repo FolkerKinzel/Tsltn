@@ -100,7 +100,7 @@
             <TextBlock.Style>
                 <Style TargetType="TextBlock" BasedOn="{StaticResource HeaderTextBlock}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Translation}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding HasTranslation}" Value="False">
                             <DataTrigger.Setters>
                                 <Setter Property="Background" Value="Gray"/>
                                 <Setter Property="Foreground" Value="Black"/>
@@ -110,24 +110,16 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-        <Button Name="_btnReset" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Content="{x:Static r:Res.Reset}" Click="_btnReset_Click">
-            <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Translation}" Value="{x:Null}">
-                            <DataTrigger.Setters>
-                            <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
+        <Button Name="_btnReset" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
+                Content="{x:Static r:Res.Reset}" IsEnabled="{Binding HasTranslation}" Click="_btnReset_Click"/>
+
+
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
             <TextBlock Text="{Binding InnerXml}" TextWrapping="WrapWithOverflow"/>
         </ScrollViewer>
-        <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=Explicit}"
+                 GotKeyboardFocus="_tbTranslation_GotKeyboardFocus"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"/>
