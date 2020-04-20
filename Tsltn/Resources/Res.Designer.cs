@@ -63,6 +63,15 @@ namespace Tsltn.Resources {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die About ähnelt.
         /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die About ähnelt.
+        /// </summary>
         public static string AboutMenuItem {
             get {
                 return ResourceManager.GetString("AboutMenuItem", resourceCulture);
@@ -106,11 +115,29 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die New Translation ähnelt.
+        /// </summary>
+        public static string DefaultFileName {
+            get {
+                return ResourceManager.GetString("DefaultFileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
         /// </summary>
         public static string FileMenuHeader {
             get {
                 return ResourceManager.GetString("FileMenuHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &quot;The file &quot;{0}&quot; was changed.{1}Do you want to save the changes?&quot; ähnelt.
+        /// </summary>
+        public static string FileWasChanged {
+            get {
+                return ResourceManager.GetString("FileWasChanged", resourceCulture);
             }
         }
         
@@ -151,7 +178,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found, that contains {0} in its path. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found, that contains &quot;{0}&quot; in its path. ähnelt.
         /// </summary>
         public static string NoElementFound {
             get {
@@ -286,7 +313,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Unexpected error ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unexpected error: Try to save your work and restart the application. ähnelt.
         /// </summary>
         public static string UnexpectedError {
             get {

@@ -40,36 +40,48 @@ namespace Tsltn
             public static List<string> RecentFiles { get; } = new List<string>();
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-            public static void Load()
+            public static Task LoadAsync()
             {
-                if (File.Exists(_fileName))
+                return Task.Run(() =>
                 {
-                    string[] arr;
-                    try
+                    if (File.Exists(_fileName))
                     {
-                        arr = File.ReadAllLines(_fileName);
-                    }
-                    catch
-                    {
-                        return;
-                    }
+                        string[] arr;
+                        try
+                        {
+                            arr = File.ReadAllLines(_fileName);
+                        }
+                        catch
+                        {
+                            return;
+                        }
 
-                    RecentFiles.Clear();
-                    RecentFiles.AddRange(arr);
-                }
+                        lock (RecentFiles)
+                        {
+                            RecentFiles.Clear();
+                            RecentFiles.AddRange(arr);
+                        }
+                    }
+                });
             }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-            public static void Save()
+            public static Task SaveAsync()
             {
-                try
+                return Task.Run(() =>
                 {
-                    File.WriteAllLines(_fileName, RecentFiles);
-                }
-                catch
-                {
+                    try
+                    {
+                        lock (RecentFiles)
+                        {
+                            File.WriteAllLines(_fileName, RecentFiles);
+                        }
+                    }
+                    catch
+                    {
 
-                }
+                    }
+                });
             }
         }
 
@@ -129,7 +141,7 @@ namespace Tsltn
         /// </summary>
         /// <param name="fileName">Ein hinzuzufügender Dateiname. Wenn <paramref name="fileName"/> null, 
         /// leer oder Whitespace ist, wird nichts hinzugefügt.</param>
-        public void AddRecentFile(string fileName)
+        public Task AddRecentFileAsync(string fileName)
         {
             if (_miRecentFiles is null)
             {
@@ -138,17 +150,21 @@ namespace Tsltn
 
             if (!string.IsNullOrWhiteSpace(fileName))
             {
-                RecentFilesPersistence.RecentFiles.Remove(fileName);
-                RecentFilesPersistence.RecentFiles.Insert(0, fileName);
-
-                if (RecentFilesPersistence.RecentFiles.Count > 10)
+                lock (RecentFilesPersistence.RecentFiles)
                 {
-                    RecentFilesPersistence.RecentFiles.RemoveAt(10);
+                    RecentFilesPersistence.RecentFiles.Remove(fileName);
+                    RecentFilesPersistence.RecentFiles.Insert(0, fileName);
+
+                    if (RecentFilesPersistence.RecentFiles.Count > 10)
+                    {
+                        RecentFilesPersistence.RecentFiles.RemoveAt(10);
+                    }
                 }
 
-
-                _miRecentFiles.Dispatcher.BeginInvoke(RecentFilesPersistence.Save, DispatcherPriority.ApplicationIdle);
+                return RecentFilesPersistence.SaveAsync();
             }
+
+            return Task.CompletedTask;
         }
 
 
@@ -158,15 +174,19 @@ namespace Tsltn
         /// </summary>
         /// <param name="fileName">Der Dateiname.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-        public void RemoveRecentFile(string fileName)
+        public Task RemoveRecentFileAsync(string fileName)
         {
             if (_miRecentFiles is null)
             {
                 throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
             }
 
-            RecentFilesPersistence.RecentFiles.Remove(fileName);
-            _miRecentFiles.Dispatcher.BeginInvoke(RecentFilesPersistence.Save, DispatcherPriority.ApplicationIdle);
+            lock (RecentFilesPersistence.RecentFiles)
+            {
+                RecentFilesPersistence.RecentFiles.Remove(fileName);
+            }
+
+            return RecentFilesPersistence.SaveAsync();
         }
 
 
@@ -176,7 +196,10 @@ namespace Tsltn
         /// <returns>Name der zuletzt geöffneten Datei zurück oder null, wenn dieser nicht existiert.</returns>
         public string? GetMostRecentFile()
         {
-            return RecentFilesPersistence.RecentFiles.FirstOrDefault();
+            lock (RecentFilesPersistence.RecentFiles)
+            {
+                return RecentFilesPersistence.RecentFiles.FirstOrDefault();
+            }
         }
 
         #endregion
@@ -195,11 +218,11 @@ namespace Tsltn
             }
 
             _miRecentFiles.Dispatcher.BeginInvoke(new Action(
-                () =>
+                async () =>
                 {
-                    RecentFilesPersistence.Load();
+                    await RecentFilesPersistence.LoadAsync().ConfigureAwait(true);
                     UpdateRecentFiles();
-                }));
+                }), DispatcherPriority.Send);
         }
 
 
@@ -224,18 +247,21 @@ namespace Tsltn
 
                     var recentFiles = RecentFilesPersistence.RecentFiles;
 
-                    for (int i = 0; i < recentFiles.Count; i++)
+                    lock (recentFiles)
                     {
-                        if (recentFiles[i] == null) continue;
-
-                        var mi = new MenuItem
+                        for (int i = 0; i < recentFiles.Count; i++)
                         {
-                            Header = GetMenuItemHeaderFromFilename(recentFiles[i], i),
-                            Command = _openRecentFileCommand,
-                            CommandParameter = recentFiles[i]
-                        };
+                            if (recentFiles[i] == null) continue;
 
-                        _miRecentFiles.Items.Add(mi);
+                            var mi = new MenuItem
+                            {
+                                Header = GetMenuItemHeaderFromFilename(recentFiles[i], i),
+                                Command = _openRecentFileCommand,
+                                CommandParameter = recentFiles[i]
+                            };
+
+                            _miRecentFiles.Items.Add(mi);
+                        }
                     }
 
                     var menuItemClearList = new MenuItem
@@ -251,14 +277,18 @@ namespace Tsltn
                 {
                     _miRecentFiles.Items.Clear();
                     _miRecentFiles.IsEnabled = false;
-                    RecentFilesPersistence.RecentFiles.Clear();
-                    RecentFilesPersistence.Save();
+
+                    lock (RecentFilesPersistence.RecentFiles)
+                    {
+                        RecentFilesPersistence.RecentFiles.Clear();
+                    }
+                    RecentFilesPersistence.SaveAsync();
                 }
             }
         }
 
 
-        private string GetMenuItemHeaderFromFilename(string fileName, int i)
+        private static string GetMenuItemHeaderFromFilename(string fileName, int i)
         {
             if (fileName.Length > MAX_DISPLAYED_FILE_PATH_LENGTH)
             {
@@ -299,8 +329,11 @@ namespace Tsltn
                 throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
             }
 
-            RecentFilesPersistence.RecentFiles.Clear();
-            _miRecentFiles.Dispatcher.BeginInvoke(RecentFilesPersistence.Save, DispatcherPriority.ApplicationIdle);
+            lock (RecentFilesPersistence.RecentFiles)
+            {
+                RecentFilesPersistence.RecentFiles.Clear();
+            }
+            RecentFilesPersistence.SaveAsync();
         }
 
         #endregion
@@ -324,7 +357,7 @@ namespace Tsltn
 
     public class OpenRecentFile : ICommand
     {
-        private Action<object> _executeHandler;
+        private readonly Action<object> _executeHandler;
 
         public OpenRecentFile(Action<object> execute)
         {
@@ -351,7 +384,7 @@ namespace Tsltn
 
     public class ClearRecentFiles : ICommand
     {
-        private Action _executeHandler;
+        private readonly Action _executeHandler;
 
         public ClearRecentFiles(Action execute)
         {

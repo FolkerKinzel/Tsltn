@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Tsltn
@@ -7,9 +8,9 @@ namespace Tsltn
     {
         event EventHandler<RecentFileSelectedEventArgs>? RecentFileSelected;
 
-        void AddRecentFile(string fileName);
+        Task AddRecentFileAsync(string fileName);
         string? GetMostRecentFile();
-        void RemoveRecentFile(string fileName);
+        Task RemoveRecentFileAsync(string fileName);
         void SetRecentFilesMenuItem(MenuItem miRecentFiles);
     }
 }

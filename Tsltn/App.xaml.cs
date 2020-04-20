@@ -19,6 +19,7 @@ namespace Tsltn
     public partial class App : Application
     {
         public const string PROGRAM_NAME = "Tsltn";
+        public const string TSLTN_FILE_EXTENSION = ".tsltn";
 
         //private void OnStartup(object sender, StartupEventArgs e)
         //{
@@ -39,12 +40,13 @@ namespace Tsltn
             new MainWindow(Document.Instance, new RecentFilesMenu()).Show();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show($"{Res.UnexpectedError}:{Environment.NewLine}{e.Exception.Message}",
+            MessageBox.Show($"{Res.UnexpectedError}{Environment.NewLine}{Environment.NewLine}{e.Exception.Message}",
                 App.PROGRAM_NAME, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 
-            e.Handled = false;
+            e.Handled = true;
         }
     }
 }

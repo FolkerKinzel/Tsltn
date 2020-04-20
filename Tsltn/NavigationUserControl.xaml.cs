@@ -34,8 +34,14 @@ namespace Tsltn
 
         public bool CaseSensitive { get; set; }
 
+        public bool WholeWord { get; set; } = true;
 
-        private void OnNavigationRequested(string pathFragment, bool caseSensitive) => NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(pathFragment, caseSensitive));
+
+
+        private void OnNavigationRequested(string pathFragment, bool caseSensitive, bool wholeWord) =>
+            NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(pathFragment, caseSensitive, wholeWord));
+
+
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -51,7 +57,7 @@ namespace Tsltn
                 return;
             }
 
-            OnNavigationRequested(PathFragment, CaseSensitive);
+            OnNavigationRequested(PathFragment, CaseSensitive, WholeWord);
 
             OnPropertyChanged(nameof(PathFragment));
 

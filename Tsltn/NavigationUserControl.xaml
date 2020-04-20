@@ -7,10 +7,20 @@
              xmlns:r ="clr-namespace:Tsltn.Resources"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             FontSize="16">
     <UserControl.CommandBindings>
         <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
     </UserControl.CommandBindings>
+    <UserControl.Resources>
+        <Style TargetType="ToggleButton">
+            <Style.Setters>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="MinWidth" Value="25"/>
+                <Setter Property="MinHeight" Value="25"/>
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
     <StackPanel>
         <Label Content="{x:Static r:Res.GoTo}"></Label>
         <DockPanel>
@@ -20,7 +30,12 @@
                      Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <StackPanel Orientation="Horizontal">
-            <ToggleButton IsThreeState="False" IsChecked="{Binding CaseSensitive}">Abc</ToggleButton>
+            <ToggleButton IsThreeState="False" IsChecked="{Binding CaseSensitive}" FontSize="16">Aa</ToggleButton>
+            <ToggleButton IsThreeState="False" IsChecked="{Binding WholeWord}">
+                <Border Margin="1" BorderBrush="Black" BorderThickness="0,1,1,1">
+                <TextBlock Margin="1" FontSize="10">Ab</TextBlock>
+                </Border>
+            </ToggleButton>
         </StackPanel>
     </StackPanel>
 </UserControl>

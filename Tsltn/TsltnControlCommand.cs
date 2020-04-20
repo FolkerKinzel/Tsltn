@@ -3,7 +3,7 @@ using Tsltn.Resources;
 
 namespace Tsltn
 {
-    public static class TsltnPageCommand
+    public static class TsltnControlCommand
     {
         private static readonly RoutedUICommand _copyText;
         private static readonly RoutedUICommand _copyXml;
@@ -11,14 +11,14 @@ namespace Tsltn
         private static readonly RoutedUICommand _browseAll;
 
 
-        static TsltnPageCommand()
+        static TsltnControlCommand()
         {
-            _copyText = new RoutedUICommand(Res.CopyText, "CopyText", typeof(TsltnPageCommand));
+            _copyText = new RoutedUICommand(Res.CopyText, "CopyText", typeof(TsltnControlCommand));
             //_copyText.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.Shift}+C"));
 
-            _copyXml = new RoutedUICommand(Res.CopyXml, "CopyXml", typeof(TsltnPageCommand));
+            _copyXml = new RoutedUICommand(Res.CopyXml, "CopyXml", typeof(TsltnControlCommand));
 
-            _browseAll = new RoutedUICommand(Res.BrowseAll, "BrowseAll", typeof(TsltnPageCommand));
+            _browseAll = new RoutedUICommand(Res.BrowseAll, "BrowseAll", typeof(TsltnControlCommand));
         }
 
 

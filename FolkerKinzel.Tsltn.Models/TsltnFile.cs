@@ -39,16 +39,25 @@ namespace FolkerKinzel.Tsltn.Models
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
-
+        /// <summary>
+        /// ctor für Deserialisierung: Nicht verwenden!
+        /// </summary>
         public TsltnFile() { }
 
-        internal string? SourceDocumentFileName
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="sourceDocumentFileName"></param>
+        public TsltnFile(string sourceDocumentFileName) { this.SourceDocumentFileName = sourceDocumentFileName; }
+
+        internal string SourceDocumentFileName
         {
-            get { return _sourceDocumentFileName; }
-            set 
-            { 
+            get { return _sourceDocumentFileName ?? throw new ArgumentNullException(nameof(SourceDocumentFileName)); }
+            private set
+            {
                 _sourceDocumentFileName = value;
-                this.Changed = true;
+                //this.Changed = true;
             }
         }
 
@@ -68,7 +77,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             get { return _targetLanguage; }
             set
-            { 
+            {
                 _targetLanguage = value;
                 this.Changed = true;
             }
@@ -77,7 +86,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal bool Changed { get; private set; }
 
-        
+
         internal void SetTranslation(long nodeID, string? transl)
         {
             if (transl is null)
@@ -94,7 +103,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
- 
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl) => _translations.TryGetValue(nodeID, out transl);
 
@@ -103,21 +112,16 @@ namespace FolkerKinzel.Tsltn.Models
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => this._translations;
-        
+
 
 
 
         internal void Save(string? tsltnFileName)
         {
-
-            if (this.SourceDocumentFileName != null)
+            if (Path.IsPathRooted(this.SourceDocumentFileName))
             {
-                if (Path.IsPathRooted(this.SourceDocumentFileName))
-                {
-                    this.SourceDocumentFileName = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this.SourceDocumentFileName);
-                }
+                this.SourceDocumentFileName = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this.SourceDocumentFileName);
             }
-
 
             var settings = new XmlWriterSettings
             {
@@ -126,10 +130,11 @@ namespace FolkerKinzel.Tsltn.Models
 
 
             using var writer = XmlWriter.Create(tsltnFileName, settings);
+
+            
             var serializer = new XmlSerializer(typeof(TsltnFile));
-
             serializer.Serialize(writer, this);
-
+           
             this.Changed = false;
         }
 
@@ -152,11 +157,18 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Argumente von öffentlichen Methoden validieren", Justification = "<Ausstehend>")]
+        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         public void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();
 
             _sourceDocumentFileName = reader.GetAttribute(SOURCE_FILE);
+
+            if(_sourceDocumentFileName is null)
+            {
+                throw new XmlException("Source document filename is missing.");
+            }
+
             _sourceLanguage = reader.GetAttribute(SOURCE_LANGUAGE);
             _targetLanguage = reader.GetAttribute(TARGET_LANGUAGE);
 
@@ -197,11 +209,8 @@ namespace FolkerKinzel.Tsltn.Models
         {
             writer.WriteAttributeString(FILE_VERSION_XML_STRING, FILE_VERSION);
 
-            if (SourceDocumentFileName != null)
-            {
-                writer.WriteAttributeString(SOURCE_FILE, SourceDocumentFileName);
-            }
-
+            writer.WriteAttributeString(SOURCE_FILE, SourceDocumentFileName);
+            
             if (SourceLanguage != null)
             {
                 writer.WriteAttributeString(SOURCE_LANGUAGE, SourceLanguage);

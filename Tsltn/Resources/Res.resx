@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
   <data name="AboutMenuItem" xml:space="preserve">
     <value>About</value>
   </data>
@@ -132,8 +135,14 @@
   <data name="CopyXml" xml:space="preserve">
     <value>Copy xml</value>
   </data>
+  <data name="DefaultFileName" xml:space="preserve">
+    <value>New Translation</value>
+  </data>
   <data name="FileMenuHeader" xml:space="preserve">
     <value>File</value>
+  </data>
+  <data name="FileWasChanged" xml:space="preserve">
+    <value>"The file "{0}" was changed.{1}Do you want to save the changes?"</value>
   </data>
   <data name="GoTo" xml:space="preserve">
     <value>Go to:</value>
@@ -148,7 +157,7 @@
     <value>Node path:</value>
   </data>
   <data name="NoElementFound" xml:space="preserve">
-    <value>No element was found, that contains {0} in its path.</value>
+    <value>No element was found, that contains "{0}" in its path.</value>
   </data>
   <data name="NotAXmlFile" xml:space="preserve">
     <value>The file {0} is empty{1}or not a {2}.</value>
@@ -193,7 +202,7 @@
     <value>Tsltn file</value>
   </data>
   <data name="UnexpectedError" xml:space="preserve">
-    <value>Unexpected error</value>
+    <value>Unexpected error: Try to save your work and restart the application.</value>
   </data>
   <data name="XmlDocumentationFile" xml:space="preserve">
     <value>Visual Studio XML documentation file</value>

@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace FolkerKinzel.Tsltn.Models.Intls
 {
@@ -15,6 +16,34 @@ namespace FolkerKinzel.Tsltn.Models.Intls
     {
         private static readonly StringBuilder _sb = new StringBuilder();
         private static readonly List<string> _list = new List<string>();
+
+
+        internal static bool ContainsPathFragment(string nodePath, string pathFragment, bool ignoreCase, bool wholeWord)
+        {
+            if(wholeWord)
+            {
+                _sb.Clear();
+                _sb.Append(@"\b").Append(Regex.Escape(pathFragment)).Append(@"\b");
+
+                string regex = _sb.ToString();
+
+                RegexOptions options = RegexOptions.Singleline | RegexOptions.CultureInvariant;
+
+                if(ignoreCase)
+                {
+                    options |= RegexOptions.IgnoreCase;
+                }
+
+                return Regex.IsMatch(nodePath, regex, options);
+            }
+            else
+            {
+                StringComparison comp = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+                return nodePath.Contains(pathFragment, comp);
+            }
+        }
+
+
 
 
         /// <summary>

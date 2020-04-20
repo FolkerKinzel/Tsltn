@@ -32,7 +32,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                node = node.NextNode;
+                node = node.GetDescendant();
             }
 
             for (int i = 0; i < 20; i++)
@@ -42,7 +42,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                node = node.PreviousNode;
+                node = node.GetAncestor();
             }
 
         }

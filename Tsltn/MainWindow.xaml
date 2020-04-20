@@ -13,7 +13,8 @@
         Title = "{x:Static local:App.PROGRAM_NAME}"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
-        Closed="Window_Closed">
+        Closed="Window_Closed"
+        Background="DarkGray">
     <Window.Resources>
         
     </Window.Resources>
@@ -88,12 +89,12 @@
         
         
 
-    <StatusBar DockPanel.Dock="Bottom">
-        <StatusBarItem HorizontalContentAlignment="Center" Background="CornflowerBlue" Foreground="Cornsilk">
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Text="{Binding FileName}" TextTrimming="CharacterEllipsis"/>
+    <StatusBar DockPanel.Dock="Bottom" FontSize="16" FontWeight="Bold">
+        <StatusBarItem Background="CornflowerBlue" Foreground="White">
+            <TextBlock Text="{Binding FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
         </StatusBarItem>
     </StatusBar>
 
-    <Frame Name="frmContent" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Background="DarkGray"/>
+    <ContentControl Name="_ccContent" DockPanel.Dock="Top" />
     </DockPanel>
 </Window>

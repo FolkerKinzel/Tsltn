@@ -1,9 +1,5 @@
-﻿using FolkerKinzel.Tsltn.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,14 +10,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FolkerKinzel.Tsltn.Models;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Tsltn.Resources;
 
 namespace Tsltn
 {
     /// <summary>
-    /// Interaktionslogik für <see cref="TsltnPage"/>.xaml
+    /// Interaktionslogik für TsltnControl.xaml
     /// </summary>
-    public partial class TsltnPage : Page, INotifyPropertyChanged
+    public partial class TsltnControl : UserControl, INotifyPropertyChanged
     {
         private readonly Window _owner;
         private INode _node;
@@ -33,13 +33,17 @@ namespace Tsltn
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Argumentausnahmen korrekt instanziieren", Justification = "<Ausstehend>")]
-        public TsltnPage(Window owner, IDocument doc)
+        public TsltnControl(Window owner, IDocument doc)
         {
             if (owner is null || doc?.FirstNode is null)
             {
                 throw new ArgumentNullException();
             }
+
+            this.DataContext = this;
 
             this._owner = owner;
             this._doc = doc;
@@ -51,24 +55,31 @@ namespace Tsltn
                 this._hasTranslation = true;
             }
             this.SourceFileName = System.IO.Path.GetFileName(_doc.SourceDocumentFileName);
+            this.SourceLanguage = _doc.SourceLanguage;
+            this.TargetLanguage = _doc.TargetLanguage;
+
+
 
             InitializeComponent();
 
-            this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
 
+
+            this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
         }
 
+
+        
 
 
         public bool HasTranslation
         {
             get { return _hasTranslation; }
-            set 
-            { 
+            set
+            {
                 _hasTranslation = value;
                 OnPropertyChanged(nameof(HasTranslation));
 
-                if(!value)
+                if (!value)
                 {
                     Translation = "";
                 }
@@ -87,23 +98,11 @@ namespace Tsltn
             }
         }
 
-        public string? SourceLanguage
-        {
-            get { return _doc.SourceLanguage; }
-            set
-            {
-                _doc.SourceLanguage = value;
-            }
-        }
+        public string? SourceLanguage { get; set; }
 
-        public string? TargetLanguage
-        {
-            get { return _doc.TargetLanguage; }
-            set
-            {
-                _doc.TargetLanguage = value;
-            }
-        }
+
+        public string? TargetLanguage { get; set; }
+
 
         public string? SourceFileName { get; }
 
@@ -129,10 +128,25 @@ namespace Tsltn
             }
 
             this._tbSourceLanguage.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            _doc.SourceLanguage = SourceLanguage;
 
-            this._tbSourceLanguage.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            _doc.TargetLanguage = TargetLanguage;
+
+            SourceLanguage = string.IsNullOrWhiteSpace(SourceLanguage) ? null : SourceLanguage.Replace(" ", "", StringComparison.Ordinal);
+
+
+            if(SourceLanguage != _doc.SourceLanguage)
+            {
+                _doc.SourceLanguage = SourceLanguage;
+            }
+
+
+            this._tbTargetLanguage.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+
+            TargetLanguage = string.IsNullOrWhiteSpace(TargetLanguage) ? null : TargetLanguage.Replace(" ", "", StringComparison.Ordinal);
+
+            if (TargetLanguage != _doc.TargetLanguage)
+            {
+                _doc.TargetLanguage = TargetLanguage;
+            }
         }
 
 
@@ -152,7 +166,10 @@ namespace Tsltn
             }
         }
 
-        private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
+        private void _btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            this.HasTranslation = false;
+        }
 
         private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -167,7 +184,7 @@ namespace Tsltn
         private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Navigate(_node.GetAncestor());
-            
+
 
             e.Handled = true;
         }
@@ -229,7 +246,7 @@ namespace Tsltn
 
         private void Navigate(INode? node)
         {
-            if(node is null)
+            if (node is null)
             {
                 return;
             }
@@ -251,7 +268,12 @@ namespace Tsltn
             OnPropertyChanged(nameof(NodePath));
         }
 
-        private void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    
+
+        private void OnPropertyChanged(string propName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
 
         
     }

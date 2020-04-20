@@ -37,16 +37,16 @@ namespace FolkerKinzel.Tsltn.Models
         public string? TsltnFileName { get; private set; }
 
 
-        public string? SourceDocumentFileName
+        public string SourceDocumentFileName
         {
-            get => _tsltn?.SourceDocumentFileName;
-            set
-            {
-                if (_tsltn != null)
-                {
-                    _tsltn.SourceDocumentFileName = value;
-                }
-            }
+            get => _tsltn?.SourceDocumentFileName ?? "";
+            //set
+            //{
+            //    if (_tsltn != null)
+            //    {
+            //        _tsltn.SourceDocumentFileName = value;
+            //    }
+            //}
         }
 
         public string? SourceLanguage
@@ -100,11 +100,9 @@ namespace FolkerKinzel.Tsltn.Models
             Close();
 
             _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
-        
-            _tsltn = new TsltnFile
-            {
-                SourceDocumentFileName = sourceDocumentFileName
-            };
+
+            _tsltn = new TsltnFile(sourceDocumentFileName);
+            
 
             InitFirstNode();
         }
@@ -156,7 +154,7 @@ namespace FolkerKinzel.Tsltn.Models
                 throw new ArgumentNullException(nameof(tsltnFileName));
             }
 
-            _tsltn?.Save(TsltnFileName);
+            _tsltn?.Save(tsltnFileName);
             this.TsltnFileName = tsltnFileName;
         }
 

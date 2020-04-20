@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TsltnPage.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="HistoryTable_16x.png" />
     <None Remove="pics\CloseDocument_16x.png" />
     <None Remove="pics\Help_16x.png" />
@@ -20,6 +24,10 @@
     <None Remove="pics\Open_16x.png" />
     <None Remove="pics\SaveAs_16x.png" />
     <None Remove="pics\ShutDown_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="TsltnPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>

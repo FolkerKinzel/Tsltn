@@ -1,24 +1,17 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
-
-namespace FolkerKinzel.Tsltn.Models
+﻿namespace FolkerKinzel.Tsltn.Models
 {
     public interface INode
     {
-        //long ID { get; }
+        bool HasAncestor { get; }
+        bool HasDescendant { get; }
         string InnerText { get; }
         string InnerXml { get; }
-        //bool IsManualTranslation { get; }
-        INode? NextNode { get; }
-        INode? NextUntranslated { get; }
         string NodePath { get; }
-        INode? PreviousNode { get; }
-
-        //public Regex WhitespaceRegex { get; }
-
-        INode? FindNode(string nodePathFragment, bool ignoreCase);
-        
         string? Translation { get; set; }
 
+        INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord);
+        INode? GetAncestor();
+        INode? GetDescendant();
+        INode? GetNextUntranslated();
     }
 }

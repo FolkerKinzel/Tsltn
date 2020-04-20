@@ -8,7 +8,7 @@ namespace FolkerKinzel.Tsltn.Models
         bool Changed { get; }
         INode? FirstNode { get; }
         bool SourceDocumentExists { get; }
-        string? SourceDocumentFileName { get; set; }
+        string? SourceDocumentFileName { get; }
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
         string? TsltnFileName { get; }
