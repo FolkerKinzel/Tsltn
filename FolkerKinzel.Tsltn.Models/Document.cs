@@ -162,25 +162,16 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        //public void SaveTsltn()
-        //{
-        //    SaveTsltnAs(this.TsltnFileName!);
-        //}
-
-
         public void Translate(
             string outFileName,
             out List<(XmlException Exception, INode Node)> errors,
-            out List<(bool IsManualTranslation, int Hash, string Text)> unused)
+            out List<KeyValuePair<long, string>> unused)
         {
-
-            //this.SaveTsltnAs(TsltnFileName);
-
             var node = ((Node?)FirstNode)?.XmlNode;
 
             errors = new List<(XmlException Exception, INode Node)>();
 
-            var used = new List<(bool IsManualTranslation, int Hash, string Text)>();
+            var used = new List<KeyValuePair<long, string>>();
 
             while (node != null)
             {
@@ -191,12 +182,12 @@ namespace FolkerKinzel.Tsltn.Models
                     if (trans.HasValue)
                     {
                         used.Add(trans.Value);
-                        Utility.Translate(node, trans.Value.Text);
+                        Utility.Translate(node, trans.Value.Value);
                     }
                 }
                 catch (XmlException e)
                 {
-                    errors.Add((e, Node.GetNode(node)));
+                    errors.Add((e, new Node(node)));
                 }
                 node = GetNextNode(node);
             }
@@ -205,54 +196,40 @@ namespace FolkerKinzel.Tsltn.Models
 
             this.Open(this.TsltnFileName);
 
-
-
-            unused = GetAllTranslations().Except(used, new TranslationTupleComparer()).ToList();
-
+            unused = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
 
             /////////////////////////////////////////////
 
-            static (bool IsManualTranslation, int Hash, string Text)? GetTranslation(XElement node)
+            static KeyValuePair<long, string>? GetTranslation(XElement node)
             {
-                int nodePathHash = Utility.GetNodePathHash(node);
+                long nodePathHash = Utility.GetNodeID(node);
 
-                if (TryGetManualTranslation(nodePathHash, out string? manualTransl))
+                if (TryGetTranslation(nodePathHash, out string? manualTransl))
                 {
-                    return (true, nodePathHash, manualTransl);
+                    return new KeyValuePair<long, string>(nodePathHash, manualTransl);
                 }
 
-                int contentHash = Utility.GetContentHash(node, out string _);
-
-                string? autoTransl = GetAutoTranslation(contentHash);
-
-                return autoTransl is null ? ((bool IsManualTranslation, int Hash, string Text)?)null : (IsManualTranslation: false, Hash: contentHash, Text: autoTransl);
+                return null;
             }
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
-        public List<(bool IsManualTranslation, int Hash, string Text)> GetAllTranslations() => _tsltn?.GetAllTranslations() ?? new List<(bool IsManualTranslation, int Hash, string Text)>();
+        public IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => _tsltn?.GetAllTranslations() ?? Array.Empty<KeyValuePair<long, string>>();
 
 
         [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
-        public void RemoveUnusedTranslations(IEnumerable<(bool IsManualTranslation, int Hash, string Text)> unused)
+        public void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused)
         {
             if (unused is null)
             {
                 throw new ArgumentNullException(nameof(unused));
             }
 
-            foreach (var (IsManualTranslation, Hash, _) in unused)
+            foreach (var kvp in unused)
             {
-                if (IsManualTranslation)
-                {
-                    SetManualTranslation(Hash, null);
-                }
-                else
-                {
-                    SetAutoTranslation(Hash, null);
-                }
+                SetTranslation(kvp.Key, null);
             }
         }
 
@@ -263,7 +240,7 @@ namespace FolkerKinzel.Tsltn.Models
             this.TsltnFileName = null;
             this.SourceDocumentExists = false;
             FirstNode = null;
-            Node.ClearNodeContainer();
+            //Node.ClearNodeContainer();
         }
 
         #endregion
@@ -357,16 +334,17 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-
-
-
-
         internal static XElement? GetNextUntranslated(XElement node)
         {
+            if(_tsltn is null)
+            {
+                return null;
+            }
+
             XElement? unTrans = GetNextNode(node);
             while (unTrans != null)
             {
-                if (HasTranslation(node))
+                if (_tsltn.HasTranslation(Utility.GetNodeID(node)))
                 {
                     return unTrans;
                 }
@@ -378,7 +356,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             while (unTrans != null && !object.ReferenceEquals(unTrans, node))
             {
-                if (HasTranslation(unTrans))
+                if (_tsltn.HasTranslation(Utility.GetNodeID(unTrans)))
                 {
                     return unTrans;
                 }
@@ -387,25 +365,14 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
             return null;
-
-            /////////////////////////////////////////
-
-            static bool HasTranslation(XElement node) =>
-                HasManualTranslation(Utility.GetNodePathHash(node)) || HasAutoTranslation(Utility.GetContentHash(node, out string _));
         }
 
 
-
-
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void SetAutoTranslation(int contentHash, string? transl) => _tsltn?.SetAutoTranslation(contentHash, transl);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void SetManualTranslation(int nodePathHash, string? transl) => _tsltn?.SetManualTranslation(nodePathHash, transl);
+        internal static void SetTranslation(long nodeID, string? transl) => _tsltn?.SetTranslation(nodeID, transl);
 
 
-        internal static bool TryGetManualTranslation(int nodePathHash, [NotNullWhen(true)] out string? transl)
+        internal static bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
         {
             if (_tsltn is null)
             {
@@ -414,19 +381,11 @@ namespace FolkerKinzel.Tsltn.Models
             }
             else
             {
-                return _tsltn.TryGetManualTranslation(nodePathHash, out transl);
+                return _tsltn.TryGetTranslation(nodeID, out transl);
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool HasManualTranslation(int nodePathHash) => _tsltn?.HasManualTranslation(nodePathHash) ?? false;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool HasAutoTranslation(int contentHash) => _tsltn?.HasAutoTranslation(contentHash) ?? false;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static string? GetAutoTranslation(int contentHash) => _tsltn?.GetAutoTranslation(contentHash);
-
+        
 
         #endregion
 

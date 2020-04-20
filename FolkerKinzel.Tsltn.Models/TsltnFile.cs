@@ -18,11 +18,13 @@ namespace FolkerKinzel.Tsltn.Models
     {
         private const string FILE_VERSION = "1.0";
 
-        private const string MANUAL_TRANSLATION_XML_NAME = "MT";
-        private const string ELEMENT = "Node";
+        //private const string MANUAL_TRANSLATION_XML_NAME = "MT";
+        //private const string ELEMENT = "Node";
 
         internal const string TRANSLATION_XML_NAME = "T";
-        internal const string HASH = "Hash";
+        //internal const string HASH = "Hash";
+        internal const string ID = "ID";
+
 
         private const string FILE_VERSION_XML_STRING = "Version";
         private const string SOURCE_LANGUAGE = "SourceLanguage";
@@ -30,8 +32,8 @@ namespace FolkerKinzel.Tsltn.Models
         private const string SOURCE_FILE = "SourceFile";
 
 
-        private readonly Dictionary<int, string> _autoTranslations = new Dictionary<int, string>();
-        private readonly Dictionary<int, string> _manualTranslations = new Dictionary<int, string>();
+        //private readonly Dictionary<int, string> _autoTranslations = new Dictionary<int, string>();
+        private readonly Dictionary<long, string> _translations = new Dictionary<long, string>();
 
         private string? _sourceDocumentFileName;
         private string? _sourceLanguage;
@@ -75,77 +77,35 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal bool Changed { get; private set; }
 
-
         
-
-        
-        internal void SetManualTranslation(int nodePathHash, string? transl)
+        internal void SetTranslation(long nodeID, string? transl)
         {
             if (transl is null)
             {
-                if (this._manualTranslations.Remove(nodePathHash))
+                if (this._translations.Remove(nodeID))
                 {
                     Changed = true;
                 }
             }
             else
             {
-                this._manualTranslations[nodePathHash] = transl;
-                Changed = true;
-            }
-        }
-
-        
-
-        internal void SetAutoTranslation(int contentHash, string? transl)
-        {
-            if (transl is null)
-            {
-                if (this._autoTranslations.Remove(contentHash))
-                {
-                    Changed = true;
-                }
-            }
-            else
-            {
-                this._autoTranslations[contentHash] = transl;
-
+                this._translations[nodeID] = transl;
                 Changed = true;
             }
         }
 
  
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool TryGetManualTranslation(int nodePathHash, [NotNullWhen(true)] out string? transl) => _manualTranslations.TryGetValue(nodePathHash, out transl);
+        internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl) => _translations.TryGetValue(nodeID, out transl);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool HasManualTranslation(int nodePathHash) => _manualTranslations.ContainsKey(nodePathHash);
+        internal bool HasTranslation(long nodeID) => _translations.ContainsKey(nodeID);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool HasAutoTranslation(int contentHash) => _autoTranslations.ContainsKey(contentHash);
+        internal IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => this._translations;
+        
 
-        internal string? GetAutoTranslation(int contentHash)
-        {
-            _autoTranslations.TryGetValue(contentHash, out string? transl);
-            return transl;
-        }
 
-        internal List<(bool IsManualTranslation, int Hash, string Text)> GetAllTranslations()
-        {
-            var all = new List<(bool IsManualTranslation, int Hash, string Text)>();
-
-            foreach (var kvp in _autoTranslations)
-            {
-                all.Add((false, kvp.Key, kvp.Value));
-            }
-
-            foreach (var kvp in _manualTranslations)
-            {
-                all.Add((true, kvp.Key, kvp.Value));
-            }
-
-            return all;
-        }
 
         internal void Save(string? tsltnFileName)
         {
@@ -212,17 +172,8 @@ namespace FolkerKinzel.Tsltn.Models
                             {
                                 if (XNode.ReadFrom(reader) is XElement el)
                                 {
-                                    int hash = int.Parse(el.Attribute(HASH).Value, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                                    this.SetAutoTranslation(hash, el.Value);
-                                }
-                            }
-                            break;
-                        case MANUAL_TRANSLATION_XML_NAME:
-                            {
-                                if (XNode.ReadFrom(reader) is XElement el)
-                                {
-                                    int elementHash = int.Parse(el.Attribute(ELEMENT).Value, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                                    this.SetManualTranslation(elementHash, el.Value);
+                                    long id = long.Parse(el.Attribute(ID).Value, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+                                    this.SetTranslation(id, el.Value);
                                 }
                             }
                             break;
@@ -261,19 +212,10 @@ namespace FolkerKinzel.Tsltn.Models
                 writer.WriteAttributeString(TARGET_LANGUAGE, TargetLanguage);
             }
 
-            foreach (KeyValuePair<int, string> kvp in _autoTranslations)
+            foreach (KeyValuePair<long, string> kvp in _translations)
             {
                 writer.WriteStartElement(TRANSLATION_XML_NAME);
-                writer.WriteAttributeString(HASH, kvp.Key.ToString("X", CultureInfo.InvariantCulture));
-                writer.WriteString(kvp.Value);
-                writer.WriteEndElement();
-            }
-
-
-            foreach (KeyValuePair<int, string> kvp in _manualTranslations)
-            {
-                writer.WriteStartElement(MANUAL_TRANSLATION_XML_NAME);
-                writer.WriteAttributeString(ELEMENT, kvp.Key.ToString("X", CultureInfo.InvariantCulture));
+                writer.WriteAttributeString(ID, kvp.Key.ToString("X", CultureInfo.InvariantCulture));
                 writer.WriteString(kvp.Value);
                 writer.WriteEndElement();
             }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace FolkerKinzel.Tsltn.Models
@@ -14,15 +13,12 @@ namespace FolkerKinzel.Tsltn.Models
         string? TargetLanguage { get; set; }
         string? TsltnFileName { get; }
 
-      
-
         void Close();
-        List<(bool IsManualTranslation, int Hash, string Text)> GetAllTranslations();
+        IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
         void NewTsltn(string sourceDocumentFileName);
         void Open(string? tsltnFileName);
-        void RemoveUnusedTranslations(IEnumerable<(bool IsManualTranslation, int Hash, string Text)> unused);
-        //void SaveTsltn();
+        void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused);
         void SaveTsltnAs(string tsltnFileName);
-        void Translate(string outFileName, out List<(XmlException Exception, INode Node)> errors, out List<(bool IsManualTranslation, int Hash, string Text)> unused);
+        void Translate(string outFileName, out List<(XmlException Exception, INode Node)> errors, out List<KeyValuePair<long, string>> unused);
     }
 }

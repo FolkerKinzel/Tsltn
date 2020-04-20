@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml;
+using System.Runtime.CompilerServices;
 
 namespace FolkerKinzel.Tsltn.Models.Intls
 {
@@ -49,8 +50,8 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
                 clone.Source.ReplaceNodes(clone.Nodes());
             }
-
         }
+
 
         [return: NotNullIfNotNull("node")]
         internal static XElement? MaskCodeBlock(XElement? node)
@@ -71,17 +72,36 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         }
 
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static long GetNodeID(XElement node)
+        {
+            int nodePathHash = GetNodePathHash(node);
+            int contentHash = GetContentHash(node, out _);
+            return ComputeNodeID(nodePathHash, contentHash);
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static long GetNodeID(XElement node, out string innerXml, out string nodePath)
+        {
+            nodePath = GetNodePath(node);
+            int nodePathHash = GetNodePathHash(nodePath);
+            int contentHash = GetContentHash(node, out innerXml);
+            return ComputeNodeID(nodePathHash, contentHash);
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetNodePath(XElement? node)
         {
             FillStringBuilder(node);
             return _sb.ToString();
         }
 
-        internal static long CreateNodeID(XElement node, out string innerXml)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static long ComputeNodeID(int nodePathHash, int contentHash)
         {
-            int nodePathHash = GetNodePathHash(node);
-            int contentHash = GetContentHash(node, out innerXml);
-
             long id = (uint)nodePathHash;
 
             id <<= 32;
@@ -91,22 +111,23 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             return id;
         }
 
-        internal static int GetNodePathHash(XElement? node)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetNodePathHash(XElement? node)
         {
             FillStringBuilder(node);
             return _sb.GetStableHashCode(HashType.Ordinal);
         }
 
-        internal static int GetNodePathHash(string nodePath) => nodePath.GetStableHashCode(HashType.Ordinal);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetNodePathHash(string nodePath) => nodePath.GetStableHashCode(HashType.Ordinal);
 
 
-        internal static int GetContentHash(XElement node, out string innerXml)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetContentHash(XElement node, out string innerXml)
         {
             innerXml = node.InnerXml();
             return innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
         }
-
-        //internal static int GetContentHash(string innerXml) => innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
 
 
         private static void FillStringBuilder(XElement? node)
