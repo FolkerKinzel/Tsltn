@@ -114,7 +114,7 @@
 
         <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"/>
 
-        <ListBox Grid.Row="3" ItemsSource="{Binding Errors}">
+        <ListBox Grid.Row="3" ItemsSource="{Binding Errors}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -125,7 +125,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Image Width="16" Height="16">
+                        <Image Width="16" Height="16" VerticalAlignment="Top" Margin="5">
                             <Image.Style>
                                 <Style TargetType="Image">
                                     <Style.Setters>
@@ -142,7 +142,7 @@
                                 </Style>
                             </Image.Style>
                         </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Message}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="WrapWithOverflow"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

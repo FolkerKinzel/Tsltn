@@ -115,7 +115,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file{0}&quot;{1}&quot;{0}is empty or not a{0}{2}. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file{0}&quot;{1}&quot;{0}is empty or not a{0}{2}! ähnelt.
         /// </summary>
         public static string EmptyOrInvalidFile {
             get {

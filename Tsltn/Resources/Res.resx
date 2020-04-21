@@ -136,7 +136,7 @@
     <value>Copy xml</value>
   </data>
   <data name="EmptyOrInvalidFile" xml:space="preserve">
-    <value>The file{0}"{1}"{0}is empty or not a{0}{2}.</value>
+    <value>The file{0}"{1}"{0}is empty or not a{0}{2}!</value>
   </data>
   <data name="FileAlreadyOpen" xml:space="preserve">
     <value>The file is already open.</value>
