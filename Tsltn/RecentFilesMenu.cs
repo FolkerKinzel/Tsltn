@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Globalization;
+using System.Threading;
 
 namespace Tsltn
 {
@@ -34,22 +35,26 @@ namespace Tsltn
     {
         private static class RecentFilesPersistence
         {
-            private static readonly string _fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, $"{Environment.MachineName}.{Environment.UserName}.RF.txt");
+            public static string FileName { get; } = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, $"{Environment.MachineName}.{Environment.UserName}.RF.txt");
 
+            public static string MutexName { get; } = $"Global\\{FileName.Replace('\\', '_')}";
 
             public static List<string> RecentFiles { get; } = new List<string>();
+
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
             public static Task LoadAsync()
             {
                 return Task.Run(() =>
                 {
-                    if (File.Exists(_fileName))
+                    if (File.Exists(FileName))
                     {
                         string[] arr;
                         try
                         {
-                            arr = File.ReadAllLines(_fileName);
+                            using var mutex = new Mutex(false, MutexName);
+                            mutex.WaitOne();
+                            arr = File.ReadAllLines(FileName);
                         }
                         catch
                         {
@@ -74,7 +79,9 @@ namespace Tsltn
                     {
                         lock (RecentFiles)
                         {
-                            File.WriteAllLines(_fileName, RecentFiles);
+                            using var mutex = new Mutex(false, MutexName);
+                            mutex.WaitOne();
+                            File.WriteAllLines(FileName, RecentFiles);
                         }
                     }
                     catch
@@ -110,6 +117,16 @@ namespace Tsltn
         {
             _openRecentFileCommand = new OpenRecentFile(new Action<object>(OpenRecentFile_Executed));
             _clearRecentFilesCommand = new ClearRecentFiles(new Action(ClearRecentFiles_Executed));
+
+            //try
+            //{
+            //    if (!File.Exists(RecentFilesPersistence.FileName))
+            //    {
+            //        File.Create(RecentFilesPersistence.FileName).Close();
+            //    }
+            //}
+            //catch { }
+            
         }
 
         #endregion

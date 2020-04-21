@@ -115,11 +115,20 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die New Translation ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file{0}&quot;{1}&quot;{0}is empty or not a{0}{2}. ähnelt.
         /// </summary>
-        public static string DefaultFileName {
+        public static string EmptyOrInvalidFile {
             get {
-                return ResourceManager.GetString("DefaultFileName", resourceCulture);
+                return ResourceManager.GetString("EmptyOrInvalidFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file is already open. ähnelt.
+        /// </summary>
+        public static string FileAlreadyOpen {
+            get {
+                return ResourceManager.GetString("FileAlreadyOpen", resourceCulture);
             }
         }
         
@@ -160,6 +169,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The translation contains invalid XML ähnelt.
+        /// </summary>
+        public static string InvalidXml {
+            get {
+                return ResourceManager.GetString("InvalidXml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Next &gt; ähnelt.
         /// </summary>
         public static string Next {
@@ -183,15 +201,6 @@ namespace Tsltn.Resources {
         public static string NoElementFound {
             get {
                 return ResourceManager.GetString("NoElementFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file {0} is empty{1}or not a {2}. ähnelt.
-        /// </summary>
-        public static string NotAXmlFile {
-            get {
-                return ResourceManager.GetString("NotAXmlFile", resourceCulture);
             }
         }
         
@@ -255,6 +264,15 @@ namespace Tsltn.Resources {
         public static string Shift {
             get {
                 return ResourceManager.GetString("Shift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The source document{0}&quot;{1}&quot;{0}was not found! ähnelt.
+        /// </summary>
+        public static string SourceDocumentNotFound {
+            get {
+                return ResourceManager.GetString("SourceDocumentNotFound", resourceCulture);
             }
         }
         

@@ -22,7 +22,7 @@
         <Style TargetType="Button">
             <Style.Setters>
                 <Setter Property="Padding" Value="7,2,7,2"/>
-                <Setter Property="MinWidth" Value="85"/>
+                <Setter Property="MinWidth" Value="90"/>
             </Style.Setters>
         </Style>
         <Style TargetType="Label">
@@ -47,9 +47,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.ColumnSpan="2">
@@ -93,14 +92,8 @@
 
                 <ScrollViewer Grid.Column="3" Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible" CanContentScroll="True">
                     <TextBlock Text="{Binding NodePath}" VerticalAlignment="Top"/>
-
                 </ScrollViewer>
-
-
-
             </Grid>
-
-
         </DockPanel>
 
         <TextBlock Grid.Row="1" Style="{StaticResource HeaderTextBlock}" Text="{x:Static r:Res.Original}"/>
@@ -121,8 +114,6 @@
         <Button Name="_btnReset" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
                 Content="{x:Static r:Res.Reset}" Click="_btnReset_Click" IsEnabled="{Binding HasTranslation}"/>
 
-
-
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
             <TextBlock Text="{Binding InnerXml}" TextWrapping="WrapWithOverflow"/>
 
@@ -135,16 +126,16 @@
 
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Command="local:TsltnControlCommand.CopyXml" Content="{x:Static r:Res.CopyXml}"/>
                 <Button Command="local:TsltnControlCommand.CopyText" Content="{x:Static r:Res.CopyText}"/>
+                <Button Command="local:TsltnControlCommand.CopyXml" Content="{x:Static r:Res.CopyXml}"/>
             </StackPanel>
             <Button Command="PreviousPage" Content="{x:Static r:Res.Previous}" HorizontalAlignment="Left"></Button>
             <Button Command="NextPage" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
         </Grid>
 
-        <Button Grid.Column="1" Grid.Row="3" DockPanel.Dock="Top" HorizontalAlignment="Center" Command="local:TsltnControlCommand.BrowseAll" Content="{x:Static r:Res.BrowseAll}"></Button>
+        <Button Grid.Column="1" Grid.Row="3" DockPanel.Dock="Top" HorizontalAlignment="Center" Command="local:TsltnControlCommand.BrowseAll"
+                Content="{x:Static r:Res.BrowseAll}"></Button>
 
-        <GridSplitter Grid.Row="3" Grid.ColumnSpan="2"></GridSplitter>
-        <ListBox Grid.Row="4" Grid.ColumnSpan="2"></ListBox>
+        
     </Grid>
 </UserControl>

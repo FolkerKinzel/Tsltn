@@ -14,9 +14,10 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         Closed="Window_Closed"
-        Background="DarkGray">
+        Background="DarkGray"
+        FontSize="16">
     <Window.Resources>
-        
+
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Help" Executed="Help_Executed" />
@@ -27,74 +28,87 @@
         <CommandBinding Command="New" Executed="New_ExecutedAsync"/>
         <CommandBinding Command="local:TsltnCommand.Translate" Executed="Translate_ExecutedAsync"  CanExecute="Close_CanExecute"></CommandBinding>
     </Window.CommandBindings>
-    <DockPanel>
-        
-        <Menu DockPanel.Dock="Top" FontSize="16">
-        <MenuItem Header="{x:Static r:Res.FileMenuHeader}" Padding="8,4">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="3*" MinHeight="170"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="1*" MinHeight="50"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Menu FontSize="16">
+            <MenuItem Header="{x:Static r:Res.FileMenuHeader}" Padding="8,4">
                 <MenuItem Command="New">
-                    
+
                 </MenuItem>
                 <MenuItem Command="Open">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/Open_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="Close">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="Save">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="SaveAs">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/Open_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="Close">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="Save">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="SaveAs">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Command="local:TsltnCommand.Translate"/>
 
                 <Separator/>
                 <MenuItem Name="miRecentFiles" Header="{x:Static r:Res.RecentFilesMenuItem}">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/HistoryTable_16x.png"></Image>
-                </MenuItem.Icon>
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/HistoryTable_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="{x:Static r:Res.QuitMenuItem}" Click="miQuit_Click" Name="miQuit">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
-            <Separator/>
-            <MenuItem Header="{x:Static r:Res.QuitMenuItem}" Click="miQuit_Click" Name="miQuit">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
-        </MenuItem>
-        
-        <MenuItem Header="{x:Static r:Res.HelpMenuHeader}" Padding="8,4">
-            <MenuItem Command="ApplicationCommands.Help">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/Help_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
-            <Separator />
-            
-            <MenuItem Header="{x:Static r:Res.AboutMenuItem}" Click="Info_Click">
-                <MenuItem.Icon>
-                    <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"></Image>
-                </MenuItem.Icon>
-            </MenuItem>
-        </MenuItem>
-    </Menu>
-        
-        
 
-    <StatusBar DockPanel.Dock="Bottom" FontSize="16" FontWeight="Bold">
-        <StatusBarItem Background="CornflowerBlue" Foreground="White">
-            <TextBlock Text="{Binding FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
-        </StatusBarItem>
-    </StatusBar>
+            <MenuItem Header="{x:Static r:Res.HelpMenuHeader}" Padding="8,4">
+                <MenuItem Command="ApplicationCommands.Help">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/Help_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
 
-    <ContentControl Name="_ccContent" DockPanel.Dock="Top" />
-    </DockPanel>
+                <MenuItem Header="{x:Static r:Res.AboutMenuItem}" Click="Info_Click">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <ContentControl Grid.Row="1" Name="_ccContent" DockPanel.Dock="Top" />
+        
+        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"/>
+        
+        <ListBox Grid.Row="3"></ListBox>
+
+        <StatusBar Grid.Row="4" FontSize="16" FontWeight="Bold">
+            <StatusBarItem Background="CornflowerBlue" Foreground="White">
+                <TextBlock Text="{Binding FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
 </Window>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -37,17 +38,8 @@ namespace FolkerKinzel.Tsltn.Models
         public string? TsltnFileName { get; private set; }
 
 
-        public string SourceDocumentFileName
-        {
-            get => _tsltn?.SourceDocumentFileName ?? "";
-            //set
-            //{
-            //    if (_tsltn != null)
-            //    {
-            //        _tsltn.SourceDocumentFileName = value;
-            //    }
-            //}
-        }
+        public string? SourceDocumentFileName => _tsltn?.SourceDocumentFileName;
+
 
         public string? SourceLanguage
         {
@@ -84,7 +76,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         public INode? FirstNode { get; private set; }
 
-        public bool SourceDocumentExists { get; private set; }
 
         #endregion
 
@@ -101,14 +92,17 @@ namespace FolkerKinzel.Tsltn.Models
 
             _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
 
-            _tsltn = new TsltnFile(sourceDocumentFileName);
+            _tsltn = new TsltnFile()
+            {
+                SourceDocumentFileName = sourceDocumentFileName
+            };
             
-
             InitFirstNode();
         }
 
 
-        public void Open(string? tsltnFileName)
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        public bool Open(string? tsltnFileName)
         {
             if (Changed)
             {
@@ -119,30 +113,55 @@ namespace FolkerKinzel.Tsltn.Models
 
             if (tsltnFileName is null)
             {
-                return;
+                throw new ArgumentNullException(nameof(tsltnFileName));
             }
 
             _tsltn = TsltnFile.Load(tsltnFileName);
 
             this.TsltnFileName = tsltnFileName;
 
-            
+
+            string xmlFileName;
+            try
+            {
+                xmlFileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), _tsltn.SourceDocumentFileName));
+            }
+            catch
+            {
+                return false;
+            }
+
+            return LoadSourceDocument(xmlFileName);
+        }
 
 
-            string xmlFileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), _tsltn.SourceDocumentFileName));
-
+        private bool LoadSourceDocument(string xmlFileName)
+        {
             if (!File.Exists(xmlFileName))
             {
-                return;
+                return false;
             }
-            else
-            {
-                this.SourceDocumentExists = true;
-            }
+            
 
             _xmlDocument = XDocument.Load(xmlFileName, LoadOptions.None);
 
             InitFirstNode();
+
+            return true;
+        }
+
+
+        public bool ReloadSourceDocument(string fileName)
+        {
+            Debug.Assert(_tsltn != null);
+
+            if(LoadSourceDocument(fileName))
+            {
+                _tsltn.SourceDocumentFileName = fileName;
+                return true;
+            }
+
+            return false;
         }
 
 
@@ -162,12 +181,13 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void Translate(
             string outFileName,
-            out List<(XmlException Exception, INode Node)> errors,
-            out List<KeyValuePair<long, string>> unused)
+            string invalidXml,
+            out List<Error> errors,
+            out List<KeyValuePair<long, string>> unusedTranslations)
         {
             var node = ((Node?)FirstNode)?.XmlNode;
 
-            errors = new List<(XmlException Exception, INode Node)>();
+            errors = new List<Error>();
 
             var used = new List<KeyValuePair<long, string>>();
 
@@ -185,7 +205,7 @@ namespace FolkerKinzel.Tsltn.Models
                 }
                 catch (XmlException e)
                 {
-                    errors.Add((e, new Node(node)));
+                    errors.Add(new Error(ErrorLevel.Error, $"{invalidXml}: {e.Message}", node));
                 }
                 node = GetNextNode(node);
             }
@@ -194,7 +214,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             this.Open(this.TsltnFileName);
 
-            unused = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
+            unusedTranslations = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
 
             /////////////////////////////////////////////
 
@@ -236,9 +256,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             _tsltn = null;
             this.TsltnFileName = null;
-            this.SourceDocumentExists = false;
             FirstNode = null;
-            //Node.ClearNodeContainer();
         }
 
         #endregion

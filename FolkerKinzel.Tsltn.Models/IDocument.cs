@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace FolkerKinzel.Tsltn.Models
 {
@@ -7,7 +8,6 @@ namespace FolkerKinzel.Tsltn.Models
     {
         bool Changed { get; }
         INode? FirstNode { get; }
-        bool SourceDocumentExists { get; }
         string? SourceDocumentFileName { get; }
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
@@ -16,9 +16,14 @@ namespace FolkerKinzel.Tsltn.Models
         void Close();
         IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
         void NewTsltn(string sourceDocumentFileName);
-        void Open(string? tsltnFileName);
+        bool Open(string? tsltnFileName);
         void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused);
         void SaveTsltnAs(string tsltnFileName);
-        void Translate(string outFileName, out List<(XmlException Exception, INode Node)> errors, out List<KeyValuePair<long, string>> unused);
+        void Translate(
+            string outFileName,
+            string invalidXml,
+            out List<Error> errors,
+            out List<KeyValuePair<long, string>> unusedTranslations);
+        bool ReloadSourceDocument(string fileName);
     }
 }

@@ -8,7 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             FontSize="16">
+             FontSize="16"
+             MinWidth="220">
     <UserControl.CommandBindings>
         <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
     </UserControl.CommandBindings>
@@ -22,11 +23,10 @@
         </Style>
     </UserControl.Resources>
     <StackPanel>
-        <Label Content="{x:Static r:Res.GoTo}"></Label>
+        <Label Content="{x:Static r:Res.GoTo}" Padding="0"></Label>
         <DockPanel>
-            <Button DockPanel.Dock="Right" Command="BrowseForward">&#x2192;</Button>
-            <TextBox Grid.Row="1" Grid.ColumnSpan="2"
-                     MinWidth="160" AcceptsReturn="False" AcceptsTab="False"
+            <Button DockPanel.Dock="Right" Command="BrowseForward" MinWidth="25" MinHeight="25">&#x2192;</Button>
+            <TextBox AcceptsReturn="False" AcceptsTab="False"
                      Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <StackPanel Orientation="Horizontal">

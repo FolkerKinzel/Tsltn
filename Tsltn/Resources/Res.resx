@@ -135,8 +135,11 @@
   <data name="CopyXml" xml:space="preserve">
     <value>Copy xml</value>
   </data>
-  <data name="DefaultFileName" xml:space="preserve">
-    <value>New Translation</value>
+  <data name="EmptyOrInvalidFile" xml:space="preserve">
+    <value>The file{0}"{1}"{0}is empty or not a{0}{2}.</value>
+  </data>
+  <data name="FileAlreadyOpen" xml:space="preserve">
+    <value>The file is already open.</value>
   </data>
   <data name="FileMenuHeader" xml:space="preserve">
     <value>File</value>
@@ -150,6 +153,9 @@
   <data name="HelpMenuHeader" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="InvalidXml" xml:space="preserve">
+    <value>The translation contains invalid XML</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Next &gt;</value>
   </data>
@@ -158,9 +164,6 @@
   </data>
   <data name="NoElementFound" xml:space="preserve">
     <value>No element was found, that contains "{0}" in its path.</value>
-  </data>
-  <data name="NotAXmlFile" xml:space="preserve">
-    <value>The file {0} is empty{1}or not a {2}.</value>
   </data>
   <data name="OpenSourceFile" xml:space="preserve">
     <value>Open the file to translate</value>
@@ -182,6 +185,9 @@
   </data>
   <data name="Shift" xml:space="preserve">
     <value>Shift</value>
+  </data>
+  <data name="SourceDocumentNotFound" xml:space="preserve">
+    <value>The source document{0}"{1}"{0}was not found!</value>
   </data>
   <data name="SourceFile" xml:space="preserve">
     <value>Source file:</value>

@@ -18,11 +18,7 @@ namespace FolkerKinzel.Tsltn.Models
     {
         private const string FILE_VERSION = "1.0";
 
-        //private const string MANUAL_TRANSLATION_XML_NAME = "MT";
-        //private const string ELEMENT = "Node";
-
         internal const string TRANSLATION_XML_NAME = "T";
-        //internal const string HASH = "Hash";
         internal const string ID = "ID";
 
 
@@ -31,35 +27,33 @@ namespace FolkerKinzel.Tsltn.Models
         private const string TARGET_LANGUAGE = "TargetLanguage";
         private const string SOURCE_FILE = "SourceFile";
 
-
-        //private readonly Dictionary<int, string> _autoTranslations = new Dictionary<int, string>();
         private readonly Dictionary<long, string> _translations = new Dictionary<long, string>();
 
         private string? _sourceDocumentFileName;
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
-        /// <summary>
-        /// ctor für Deserialisierung: Nicht verwenden!
-        /// </summary>
-        public TsltnFile() { }
-
 
         /// <summary>
         /// ctor
         /// </summary>
-        /// <param name="sourceDocumentFileName"></param>
-        public TsltnFile(string sourceDocumentFileName) { this.SourceDocumentFileName = sourceDocumentFileName; }
+        public TsltnFile() { }
+
+
+        
 
         internal string SourceDocumentFileName
         {
             get { return _sourceDocumentFileName ?? throw new ArgumentNullException(nameof(SourceDocumentFileName)); }
-            private set
+            set
             {
                 _sourceDocumentFileName = value;
-                //this.Changed = true;
+                Changed = true;
             }
         }
+
+
+        
 
 
         internal string? SourceLanguage
@@ -120,7 +114,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             if (Path.IsPathRooted(this.SourceDocumentFileName))
             {
-                this.SourceDocumentFileName = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this.SourceDocumentFileName);
+                this._sourceDocumentFileName = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this.SourceDocumentFileName);
             }
 
             var settings = new XmlWriterSettings

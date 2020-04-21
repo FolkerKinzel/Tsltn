@@ -67,10 +67,6 @@ namespace Tsltn
             this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
         }
 
-
-        
-
-
         public bool HasTranslation
         {
             get { return _hasTranslation; }
