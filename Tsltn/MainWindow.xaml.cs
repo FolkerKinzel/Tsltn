@@ -55,7 +55,7 @@ namespace Tsltn
         }
 
 
-        public ObservableCollection<Error> Errors { get; } = new ObservableCollection<Error>();
+        public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
 
 
         #region EventHandler
@@ -193,9 +193,6 @@ namespace Tsltn
             await DoCloseTsltnAsync().ConfigureAwait(false);
         }
 
-
- 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e) => _ = DoSaveAsync(_doc.TsltnFileName);
 
@@ -215,7 +212,7 @@ namespace Tsltn
 
             if(GetXmlOutFileName(out string? fileName))
             {
-                (List<Error> Errors, List<KeyValuePair<long, string>> UnusedTranslations) result;
+                (List<DataError> Errors, List<KeyValuePair<long, string>> UnusedTranslations) result;
 
                 try
                 {
@@ -260,14 +257,7 @@ namespace Tsltn
 
         
 
-        private Task<(List<Error> Errors, List<KeyValuePair<long, string>> UnusedTranslations)> DoTranslateAsync(string fileName)
-        {
-            return Task.Run(() =>
-            {
-                _doc.Translate(fileName, Res.InvalidXml, out List<Error> errors, out List<KeyValuePair<long, string>> unusedTranslations);
-                return (Errors: errors, UnusedTranslations: unusedTranslations);
-            });
-        }
+       
 
 
         #endregion
@@ -584,6 +574,17 @@ namespace Tsltn
             }
         }
 
+
+        private Task<(List<DataError> Errors, List<KeyValuePair<long, string>> UnusedTranslations)> DoTranslateAsync(string fileName)
+        {
+            return Task.Run(() =>
+            {
+                _doc.Translate(fileName, Res.InvalidXml, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
+                return (Errors: errors, UnusedTranslations: unusedTranslations);
+            });
+        }
+
+
         private void RemoveUnusedTranslations(List<KeyValuePair<long, string>> unusedTranslations)
         {
 
@@ -594,5 +595,6 @@ namespace Tsltn
 
         #endregion
 
+        
     }
 }

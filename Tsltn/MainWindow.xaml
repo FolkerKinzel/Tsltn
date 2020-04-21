@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsltn"
+        xmlns:models="clr-namespace:FolkerKinzel.Tsltn.Models;assembly=FolkerKinzel.Tsltn.Models"
         xmlns:r ="clr-namespace:Tsltn.Resources"
         mc:Ignorable="d"
-        Height="450" Width="800"
+        Height="650" Width="1200"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         WindowStyle="ThreeDBorderWindow"  ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
@@ -17,7 +18,12 @@
         Background="DarkGray"
         FontSize="16">
     <Window.Resources>
-
+        <Style TargetType="MenuItem">
+            <Style.Setters>
+                <Setter Property="MinWidth" Value="85"/>
+                <Setter Property="Padding" Value="3"/>
+            </Style.Setters>
+        </Style>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Help" Executed="Help_Executed" />
@@ -43,41 +49,47 @@
         <Menu FontSize="16">
             <MenuItem Header="{x:Static r:Res.FileMenuHeader}" Padding="8,4">
                 <MenuItem Command="New">
-
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/NewFile_16x.png"/>
+                    </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Command="Open">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/Open_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/Open_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Command="Close">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Command="Save">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Command="SaveAs">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Command="local:TsltnCommand.Translate"/>
+                <MenuItem Command="local:TsltnCommand.Translate">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/TranslateDocument_16x.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
 
                 <Separator/>
                 <MenuItem Name="miRecentFiles" Header="{x:Static r:Res.RecentFilesMenuItem}">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/HistoryTable_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/HistoryTable_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="{x:Static r:Res.QuitMenuItem}" Click="miQuit_Click" Name="miQuit">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -85,24 +97,56 @@
             <MenuItem Header="{x:Static r:Res.HelpMenuHeader}" Padding="8,4">
                 <MenuItem Command="ApplicationCommands.Help">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/Help_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/Help_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
 
                 <MenuItem Header="{x:Static r:Res.AboutMenuItem}" Click="Info_Click">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"></Image>
+                        <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
         </Menu>
 
         <ContentControl Grid.Row="1" Name="_ccContent" DockPanel.Dock="Top" />
-        
+
         <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"/>
-        
-        <ListBox Grid.Row="3"></ListBox>
+
+        <ListBox Grid.Row="3" ItemsSource="{Binding Errors}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Image Width="16" Height="16">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Setters>
+                                        <Setter Property="Source" Value="pics/StatusCriticalError_16x.png"/>
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Level}" Value="{x:Static models:ErrorLevel.Warning}">
+                                            <Setter Property="Source" Value="pics/StatusWarning_16x.png"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="{x:Static models:ErrorLevel.Information}">
+                                            <Setter Property="Source" Value="pics/StatusInformation_16x.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                        <TextBlock Grid.Column="1" Text="{Binding Message}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <StatusBar Grid.Row="4" FontSize="16" FontWeight="Bold">
             <StatusBarItem Background="CornflowerBlue" Foreground="White">

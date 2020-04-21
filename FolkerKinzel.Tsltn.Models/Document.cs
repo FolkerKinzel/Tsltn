@@ -182,12 +182,12 @@ namespace FolkerKinzel.Tsltn.Models
         public void Translate(
             string outFileName,
             string invalidXml,
-            out List<Error> errors,
+            out List<DataError> errors,
             out List<KeyValuePair<long, string>> unusedTranslations)
         {
             var node = ((Node?)FirstNode)?.XmlNode;
 
-            errors = new List<Error>();
+            errors = new List<DataError>();
 
             var used = new List<KeyValuePair<long, string>>();
 
@@ -205,7 +205,7 @@ namespace FolkerKinzel.Tsltn.Models
                 }
                 catch (XmlException e)
                 {
-                    errors.Add(new Error(ErrorLevel.Error, $"{invalidXml}: {e.Message}", node));
+                    errors.Add(new DataError(ErrorLevel.Error, $"{invalidXml}: {e.Message}", node));
                 }
                 node = GetNextNode(node);
             }

@@ -5,9 +5,9 @@ using System.Xml.Linq;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public class Error
+    public class DataError
     {
-        public Error(ErrorLevel level, string message, XElement node)
+        public DataError(ErrorLevel level, string message, XElement node)
         {
             this.Level = level;
             this.Message = message;

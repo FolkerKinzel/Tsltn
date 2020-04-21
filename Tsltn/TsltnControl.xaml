@@ -9,7 +9,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="WhiteSmoke"
-             FontSize="16">
+             FontSize="16"
+             Padding="5,0">
     <UserControl.Resources>
         <Style x:Key="HeaderTextBlock" TargetType="TextBlock">
             <Style.Setters>
@@ -39,7 +40,7 @@
         <CommandBinding Command="{x:Static local:TsltnControlCommand.CopyText}" Executed="CopyText_Executed"/>
         <CommandBinding Command="{x:Static local:TsltnControlCommand.BrowseAll}" Executed="BrowseAll_Executed"/>
     </UserControl.CommandBindings>
-    <Grid Margin="10,0,10,0">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -81,13 +82,13 @@
                 <Label Content="{x:Static r:Res.SourceLanguage}"/>
                 <Label Grid.Row="1" Content="{x:Static r:Res.TargetLanguage}" VerticalAlignment="Top"/>
                 <TextBox Name="_tbSourceLanguage" Grid.Column="1" Text="{Binding SourceLanguage, UpdateSourceTrigger=Explicit}" VerticalAlignment="Center"
-                         AcceptsReturn="False" AcceptsTab="False"/>
+                         AcceptsReturn="False" AcceptsTab="False" Padding="3,0"/>
                 <TextBox Name="_tbTargetLanguage" Grid.Column="1" Grid.Row="1" Text="{Binding TargetLanguage, UpdateSourceTrigger=Explicit}" VerticalAlignment="Top"
-                         AcceptsReturn="False" AcceptsTab="False"/>
+                         AcceptsReturn="False" AcceptsTab="False" Padding="3,0"/>
 
                 <TextBlock Grid.Column="2" DockPanel.Dock="Left" VerticalAlignment="Center" Text="{x:Static r:Res.SourceFile}"/>
                 <TextBlock Grid.Column="2" Grid.Row="1" DockPanel.Dock="Left" VerticalAlignment="Top" Text="{x:Static r:Res.NodePath}"/>
-                <TextBlock Grid.Column="3" TextTrimming="CharacterEllipsis" Text="{Binding SourceFileName, Mode=OneTime}" VerticalAlignment="Top"/>
+                <TextBlock Grid.Column="3" TextTrimming="CharacterEllipsis" Text="{Binding SourceFileName, Mode=OneTime}" VerticalAlignment="Center"/>
 
 
                 <ScrollViewer Grid.Column="3" Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible" CanContentScroll="True">
@@ -115,14 +116,14 @@
                 Content="{x:Static r:Res.Reset}" Click="_btnReset_Click" IsEnabled="{Binding HasTranslation}"/>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
-            <TextBlock Text="{Binding InnerXml}" TextWrapping="WrapWithOverflow"/>
-
+            <TextBlock Text="{Binding InnerXml}" TextWrapping="WrapWithOverflow" Padding="10" FontSize="22"/>
         </ScrollViewer>
         <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=Explicit}"
                  GotKeyboardFocus="_tbTranslation_GotKeyboardFocus"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 ScrollViewer.CanContentScroll="True"/>
+                 ScrollViewer.CanContentScroll="True"
+                 Padding="10" FontSize="22" Background="WhiteSmoke"/>
 
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

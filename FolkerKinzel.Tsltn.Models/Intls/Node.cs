@@ -29,7 +29,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             // Das Replacement des geschützten Leerzeichens soll beim Hashen
             // ignoriert werden:
             this.ID = Utility.GetNodeID(el, out _innerXml, out _nodePath);
-            _innerXml = _whitespaceRegex.Replace(_innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal), " ");
+            _innerXml = _whitespaceRegex.Replace(_innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim(), " ");
 
             var firstNode = (Node?)Document.Instance.FirstNode;
             this.HasAncestor = !(firstNode is null || this.ID == firstNode.ID);

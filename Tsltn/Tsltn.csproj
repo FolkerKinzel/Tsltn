@@ -21,9 +21,15 @@
     <None Remove="pics\CloseDocument_16x.png" />
     <None Remove="pics\Help_16x.png" />
     <None Remove="pics\InformationSymbol_16x.png" />
+    <None Remove="pics\NewFile_16x.png" />
     <None Remove="pics\Open_16x.png" />
     <None Remove="pics\SaveAs_16x.png" />
+    <None Remove="pics\Save_16x.png" />
     <None Remove="pics\ShutDown_16x.png" />
+    <None Remove="pics\StatusCriticalError_16x.png" />
+    <None Remove="pics\StatusInformation_16x.png" />
+    <None Remove="pics\StatusWarning_16x.png" />
+    <None Remove="pics\TranslateDocument_16x.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,9 +71,15 @@
     <Resource Include="pics\HistoryTable_16x.png" />
     <Resource Include="pics\CloseDocument_16x.png" />
     <Resource Include="pics\InformationSymbol_16x.png" />
+    <Resource Include="pics\NewFile_16x.png" />
     <Resource Include="pics\Open_16x.png" />
     <Resource Include="pics\SaveAs_16x.png" />
+    <Resource Include="pics\Save_16x.png" />
     <Resource Include="pics\ShutDown_16x.png" />
+    <Resource Include="pics\StatusCriticalError_16x.png" />
+    <Resource Include="pics\StatusInformation_16x.png" />
+    <Resource Include="pics\StatusWarning_16x.png" />
+    <Resource Include="pics\TranslateDocument_16x.png" />
   </ItemGroup>
 
 </Project>
