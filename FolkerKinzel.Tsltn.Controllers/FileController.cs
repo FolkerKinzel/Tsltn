@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,13 +16,13 @@ namespace FolkerKinzel.Tsltn.Controllers
 {
     public partial class FileController : INotifyPropertyChanged, IFileController
     {
-        private readonly IDocument _doc;
+        private readonly IFileAccess _doc;
 
         public const string TSLTN_FILE_EXTENSION = ".tsltn";
 
         
 
-        public FileController(IDocument document)
+        public FileController(IFileAccess document)
         {
             this._doc = document;
         }
@@ -39,10 +40,10 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 string? filename = _doc.TsltnFileName;
 
-                if (filename is null)
+                if (filename is null && _doc.SourceDocumentFileName != null)
                 {
                     this.OnRefreshData();
-                    return $"{System.IO.Path.GetFileNameWithoutExtension(_doc.SourceDocumentFileName)}.{_doc.TargetLanguage ?? "<Language>"}{TSLTN_FILE_EXTENSION}";
+                    return $"{System.IO.Path.GetFileNameWithoutExtension(_doc.SourceDocumentFileName)}.{_doc.TargetLanguage ?? Res.Language}{TSLTN_FILE_EXTENSION}";
                 }
 
                 return filename ?? "";
@@ -54,8 +55,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         #region Methods
 
-        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        public async Task<bool> DoCloseTsltnAsync()
+        public async Task<bool> CloseTsltnAsync()
         {
             if (_doc.SourceDocumentFileName is null)
             {
@@ -76,7 +76,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 {
                     case MessageBoxResult.Yes:
                         {
-                            await DoSaveAsync(FileName).ConfigureAwait(true);
+                            await DoSaveTsltnAsync(FileName).ConfigureAwait(true);
                         }
                         break;
                     case MessageBoxResult.No:
@@ -93,45 +93,15 @@ namespace FolkerKinzel.Tsltn.Controllers
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<bool> SaveTsltnAsync() => DoSaveTsltnAsync(_doc.TsltnFileName);
 
-
-        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        public async Task<bool> DoSaveAsync(string? fileName)
-        {
-            if (fileName is null || _doc.TsltnFileName is null)
-            {
-                fileName = _doc.TsltnFileName ?? this.FileName;
-                if (!GetTsltnOutFileName(ref fileName))
-                {
-                    return false;
-                }
-            }
-
-            OnRefreshData();
-
-            try
-            {
-                var task = Task.Run(() => _doc.SaveTsltnAs(fileName));
-                this.Tasks.Add(task);
-                await task.ConfigureAwait(false);
-
-                OnNewFileName(FileName);
-            }
-            catch (AggregateException e)
-            {
-                OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                OnPropertyChanged(nameof(FileName));
-
-                return false;
-            }
-
-            OnPropertyChanged(nameof(FileName));
-            return true;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
 
 
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-        public async Task DoOpenAsync(string? fileName)
+        public async Task OpenTsltnAsync(string? fileName)
         {
             if (StringComparer.OrdinalIgnoreCase.Equals(fileName, this.FileName))
             {
@@ -155,7 +125,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     {
                         case MessageBoxResult.Yes:
                             {
-                                await DoSaveAsync(FileName).ConfigureAwait(true);
+                                await DoSaveTsltnAsync(FileName).ConfigureAwait(true);
                             }
                             break;
                         case MessageBoxResult.No:
@@ -168,7 +138,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             if (fileName is null)
             {
-                if (!GetTsltnInFileName(ref fileName))
+                if (!GetTsltnInFileName(out fileName))
                 {
                     return;
                 }
@@ -239,9 +209,9 @@ namespace FolkerKinzel.Tsltn.Controllers
         }
 
 
-        public async Task DoNewTsltnAsync()
+        public async Task NewTsltnAsync()
         {
-            await DoCloseTsltnAsync().ConfigureAwait(true);
+            await CloseTsltnAsync().ConfigureAwait(true);
 
             string? xmlFileName = null;
 
@@ -283,7 +253,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
         {
-            if (!await DoSaveAsync(_doc.TsltnFileName).ConfigureAwait(true))
+            if (!await DoSaveTsltnAsync(_doc.TsltnFileName).ConfigureAwait(true))
             {
                 return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
             }
@@ -335,18 +305,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         }
 
 
-        public void RemoveUnusedTranslations(IEnumerable<long> unusedTranslations)
-        {
-            if (unusedTranslations is null)
-            {
-                throw new ArgumentNullException(nameof(unusedTranslations));
-            }
-
-            foreach (var id in unusedTranslations)
-            {
-                _doc.RemoveTranslation(id);
-            }
-        }
+        
 
 
         #endregion

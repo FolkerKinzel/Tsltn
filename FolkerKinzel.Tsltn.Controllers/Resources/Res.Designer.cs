@@ -97,6 +97,15 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Language ähnelt.
+        /// </summary>
+        internal static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Open the source file to translate ähnelt.
         /// </summary>
         internal static string OpenSourceFile {

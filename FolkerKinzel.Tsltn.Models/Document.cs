@@ -15,7 +15,7 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public class Document : IDocument
+    public class Document : IDocument, IFileAccess
     {
         private static TsltnFile? _tsltn;
         private static XDocument? _xmlDocument;
@@ -83,11 +83,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void NewTsltn(string sourceDocumentFileName)
         {
-            if (Changed)
-            {
-                throw new InvalidOperationException();
-            }
-
             Close();
 
             _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
@@ -104,11 +99,6 @@ namespace FolkerKinzel.Tsltn.Models
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public bool Open(string? tsltnFileName)
         {
-            if (Changed)
-            {
-                throw new InvalidOperationException();
-            }
-
             Close();
 
             if (tsltnFileName is null)
@@ -233,26 +223,9 @@ namespace FolkerKinzel.Tsltn.Models
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
         public IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => _tsltn?.GetAllTranslations() ?? Array.Empty<KeyValuePair<long, string>>();
 
 
-        //[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
-        //public void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused)
-        //{
-        //    if (unused is null)
-        //    {
-        //        throw new ArgumentNullException(nameof(unused));
-        //    }
-
-        //    foreach (var kvp in unused)
-        //    {
-        //        SetTranslation(kvp.Key, null);
-        //    }
-        //}
-
-
-        [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveTranslation(long id) => SetTranslation(id, null);
 

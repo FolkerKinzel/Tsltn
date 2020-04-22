@@ -20,11 +20,11 @@ namespace FolkerKinzel.Tsltn.Controllers
         event EventHandler? RefreshData;
         event EventHandler<ShowFileDialogEventArgs>? ShowFileDialog;
 
-        Task<bool> DoCloseTsltnAsync();
-        Task DoNewTsltnAsync();
-        Task DoOpenAsync(string? fileName);
-        Task<bool> DoSaveAsync(string? fileName);
+        Task<bool> CloseTsltnAsync();
+        Task NewTsltnAsync();
+        Task OpenTsltnAsync(string? fileName);
+        Task<bool> SaveTsltnAsync();
+        Task<bool> SaveAsTsltnAsync();
         Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync();
-        void RemoveUnusedTranslations(IEnumerable<long> unusedTranslations);
     }
 }

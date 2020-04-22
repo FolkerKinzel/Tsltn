@@ -99,6 +99,8 @@ namespace Tsltn
             }
         }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_NewFileName(object? sender, NewFileNameEventArgs e)
         {
             _fileController.Tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
@@ -124,7 +126,7 @@ namespace Tsltn
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
-            if(!await _fileController.DoCloseTsltnAsync().ConfigureAwait(true))
+            if(!await _fileController.CloseTsltnAsync().ConfigureAwait(true))
             {
                 e.Cancel = true;
             }
@@ -144,7 +146,7 @@ namespace Tsltn
         {
             if (System.IO.File.Exists(e.FileName))
             {
-                _ = _fileController.DoOpenAsync(e.FileName);
+                _ = _fileController.OpenTsltnAsync(e.FileName);
             }
             else
             {
@@ -180,17 +182,11 @@ namespace Tsltn
         }
 
 
-        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
-        {
-            _= _fileController.DoNewTsltnAsync();
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.NewTsltnAsync();
 
-        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
-        {
-            _ = _fileController.DoOpenAsync(null);
-
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.OpenTsltnAsync(null);
 
 
         private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -200,21 +196,21 @@ namespace Tsltn
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async void Close_Executed(object sender, ExecutedRoutedEventArgs? e)
+        private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e) => _ = _fileController.CloseTsltnAsync();
+
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            await _fileController.DoCloseTsltnAsync().ConfigureAwait(false);
+            e.CanExecute = _doc.Changed;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e) => _ = _fileController.DoSaveAsync(_doc.TsltnFileName);
+        private void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e) => _ = _fileController.SaveTsltnAsync();
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.DoSaveAsync(null);
+        private void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.SaveAsTsltnAsync();
 
 
-        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             var result = await _fileController.TranslateAsync().ConfigureAwait(true);
@@ -229,20 +225,16 @@ namespace Tsltn
 
             if (result.UnusedTranslations.Any())
             {
-                RemoveUnusedTranslations(result.UnusedTranslations);
+                
+
+                foreach (var kvp in result.UnusedTranslations)
+                {
+                    _doc.RemoveTranslation(kvp.Key);
+                }
             }
         }
 
-        private void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unusedTranslations)
-        {
-
-        }
-
-
-
-
-
-
+        
         #endregion
 
 

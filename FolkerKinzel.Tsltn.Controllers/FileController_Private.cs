@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
@@ -47,11 +50,11 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
 
-        private bool GetTsltnInFileName([NotNullWhen(true)] ref string? fileName)
+        private bool GetTsltnInFileName([NotNullWhen(true)] out string? fileName)
         {
             var dlg = new OpenFileDialog()
             {
-                FileName = fileName,
+                //FileName = fileName,
                 AddExtension = true,
                 CheckFileExists = true,
                 CheckPathExists = true,
@@ -77,21 +80,24 @@ namespace FolkerKinzel.Tsltn.Controllers
                 fileName = dlg.FileName ?? "";
                 return true;
             }
-
-            return false;
+            else
+            {
+                fileName = null;
+                return false;
+            }
         }
 
-        private bool GetTsltnOutFileName([NotNullWhen(true)] ref string? fileName)
+        private bool GetTsltnOutFileName([NotNullWhen(true)] ref string fileName)
         {
             var dlg = new SaveFileDialog()
             {
-                FileName = fileName,
+                FileName = Path.GetFileName(fileName),
                 AddExtension = true,
                 CheckFileExists = false,
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.TsltnFile} (*{TSLTN_FILE_EXTENSION})|*{TSLTN_FILE_EXTENSION}",
-                InitialDirectory = _doc.TsltnFileName != null ? System.IO.Path.GetDirectoryName(_doc.TsltnFileName) : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                InitialDirectory = _doc.TsltnFileName != null ? Path.GetDirectoryName(_doc.TsltnFileName) : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 DefaultExt = TSLTN_FILE_EXTENSION,
                 DereferenceLinks = true
             };
@@ -145,6 +151,45 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return false;
             }
         }
+
+
+
+
+        private async Task<bool> DoSaveTsltnAsync(string? fileName)
+        {
+            if (fileName is null)
+            {
+                fileName = _doc.TsltnFileName ?? this.FileName;
+
+                if (!GetTsltnOutFileName(ref fileName))
+                {
+                    return false;
+                }
+            }
+            
+            OnRefreshData();
+
+            try
+            {
+                var task = Task.Run(() => _doc.SaveTsltnAs(fileName));
+                this.Tasks.Add(task);
+                await task.ConfigureAwait(false);
+
+                OnNewFileName(FileName);
+            }
+            catch (AggregateException e)
+            {
+                OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+                OnPropertyChanged(nameof(FileName));
+
+                return false;
+            }
+
+            OnPropertyChanged(nameof(FileName));
+            return true;
+        }
+
+
 
     }
 }
