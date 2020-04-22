@@ -15,6 +15,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         event EventHandler<HasContentChangedEventArgs>? HasContentChanged;
         event EventHandler<MessageEventArgs>? Message;
         event EventHandler<NewFileNameEventArgs>? NewFileName;
+        public event EventHandler<BadFileNameEventArgs>? BadFileName;
         event PropertyChangedEventHandler? PropertyChanged;
         event EventHandler? RefreshData;
         event EventHandler<ShowFileDialogEventArgs>? ShowFileDialog;
@@ -23,7 +24,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         Task DoNewTsltnAsync();
         Task DoOpenAsync(string? fileName);
         Task<bool> DoSaveAsync(string? fileName);
-        Task<(List<DataError> Errors, List<KeyValuePair<long, string>> UnusedTranslations)> DoTranslateAsync(string fileName);
+        Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync();
         void RemoveUnusedTranslations(IEnumerable<long> unusedTranslations);
     }
 }

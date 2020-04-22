@@ -29,6 +29,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         #region Properties
 
+
         public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
 
 
@@ -233,6 +234,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 OnHasContentChanged(false);
                 _doc.Close();
                 OnPropertyChanged(nameof(FileName));
+                OnBadFileName(fileName);
             }
         }
 
@@ -276,6 +278,50 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             }
 
+        }
+
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
+        {
+            if (!await DoSaveAsync(_doc.TsltnFileName).ConfigureAwait(true))
+            {
+                return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
+            }
+
+            if (GetXmlOutFileName(out string? fileName))
+            {
+                try
+                {
+                    return await Task.Run(() =>
+                    {
+                        _doc.Translate(fileName, Res.InvalidXml, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
+                        return (Errors: errors, UnusedTranslations: unusedTranslations);
+                    }).ConfigureAwait(false);
+
+                    
+                }
+                catch (AggregateException ex)
+                {
+                    OnMessage(new MessageEventArgs(ex.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+
+                    try
+                    {
+                        await Task.Run(() => _doc.ReloadSourceDocument(_doc.SourceDocumentFileName!)).ConfigureAwait(false);
+                    }
+                    catch
+                    {
+                        OnHasContentChanged(false);
+                        _doc.Close();
+                        OnPropertyChanged(nameof(FileName));
+                    }
+
+                    return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
+                }//catch
+
+
+            }//if
+
+            return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
         }
 
 

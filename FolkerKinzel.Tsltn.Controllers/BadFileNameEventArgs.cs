@@ -2,10 +2,9 @@
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-
-    public class NewFileNameEventArgs : EventArgs
+    public class BadFileNameEventArgs : EventArgs
     {
-        internal NewFileNameEventArgs(string fileName)
+        internal BadFileNameEventArgs(string fileName)
         {
             this.FileName = fileName;
         }

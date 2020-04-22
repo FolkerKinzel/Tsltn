@@ -145,8 +145,8 @@ namespace Tsltn
         }
 
         /// <summary>
-        /// Fügt <paramref name="fileName"/> zu Properties.Settings.Default.RecentFiles hinzu, wenn 
-        /// <paramref name="fileName"/> einen Dateinamen enthält und speichert die Settings.
+        /// Fügt <paramref name="fileName"/> zur Liste hinzu, wenn 
+        /// <paramref name="fileName"/> einen Dateinamen enthält.
         /// </summary>
         /// <param name="fileName">Ein hinzuzufügender Dateiname. Wenn <paramref name="fileName"/> null, 
         /// leer oder Whitespace ist, wird nichts hinzugefügt.</param>
@@ -190,12 +190,13 @@ namespace Tsltn
                 throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
+            bool result;
             lock (RecentFilesPersistence.RecentFiles)
             {
-                RecentFilesPersistence.RecentFiles.Remove(fileName);
+                result = RecentFilesPersistence.RecentFiles.Remove(fileName);
             }
 
-            return RecentFilesPersistence.SaveAsync();
+            return result ? RecentFilesPersistence.SaveAsync() : Task.CompletedTask;
         }
 
 

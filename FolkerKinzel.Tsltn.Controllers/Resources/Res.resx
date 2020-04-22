@@ -117,98 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="About" xml:space="preserve">
-    <value>About</value>
-  </data>
-  <data name="AboutMenuItem" xml:space="preserve">
-    <value>About</value>
-  </data>
-  <data name="BrowseAll" xml:space="preserve">
-    <value>Browse all</value>
-  </data>
-  <data name="Cntrl" xml:space="preserve">
-    <value>Cntrl</value>
-  </data>
-  <data name="CopyText" xml:space="preserve">
-    <value>Copy text</value>
-  </data>
-  <data name="CopyXml" xml:space="preserve">
-    <value>Copy xml</value>
-  </data>
   <data name="EmptyOrInvalidFile" xml:space="preserve">
     <value>The file{0}"{1}"{0}is empty or not a{0}{2}!</value>
   </data>
   <data name="FileAlreadyOpen" xml:space="preserve">
     <value>The file is already open.</value>
   </data>
-  <data name="FileMenuHeader" xml:space="preserve">
-    <value>File</value>
-  </data>
   <data name="FileWasChanged" xml:space="preserve">
     <value>"The file "{0}" was changed.{1}Do you want to save the changes?"</value>
-  </data>
-  <data name="GoTo" xml:space="preserve">
-    <value>Go to:</value>
-  </data>
-  <data name="HelpMenuHeader" xml:space="preserve">
-    <value>Help</value>
   </data>
   <data name="InvalidXml" xml:space="preserve">
     <value>The translation contains invalid XML</value>
   </data>
-  <data name="Next" xml:space="preserve">
-    <value>Next &gt;</value>
-  </data>
-  <data name="NodePath" xml:space="preserve">
-    <value>Node path:</value>
-  </data>
-  <data name="NoElementFound" xml:space="preserve">
-    <value>No element was found, that contains "{0}" in its path.</value>
-  </data>
   <data name="OpenSourceFile" xml:space="preserve">
-    <value>Open the file to translate</value>
-  </data>
-  <data name="Original" xml:space="preserve">
-    <value>Original</value>
-  </data>
-  <data name="Previous" xml:space="preserve">
-    <value>&lt; Previous</value>
-  </data>
-  <data name="QuitMenuItem" xml:space="preserve">
-    <value>Quit</value>
-  </data>
-  <data name="RecentFilesMenuItem" xml:space="preserve">
-    <value>Recent files</value>
-  </data>
-  <data name="Reset" xml:space="preserve">
-    <value>Reset</value>
-  </data>
-  <data name="Shift" xml:space="preserve">
-    <value>Shift</value>
+    <value>Open the source file to translate</value>
   </data>
   <data name="SourceDocumentNotFound" xml:space="preserve">
     <value>The source document{0}"{1}"{0}was not found!</value>
   </data>
-  <data name="SourceFile" xml:space="preserve">
-    <value>Source file:</value>
-  </data>
-  <data name="SourceLanguage" xml:space="preserve">
-    <value>Source language:</value>
-  </data>
-  <data name="TargetLanguage" xml:space="preserve">
-    <value>Target language:</value>
-  </data>
-  <data name="Translate" xml:space="preserve">
-    <value>Translate</value>
-  </data>
-  <data name="Translation" xml:space="preserve">
-    <value>Translation</value>
-  </data>
   <data name="TsltnFile" xml:space="preserve">
     <value>Tsltn file</value>
-  </data>
-  <data name="UnexpectedError" xml:space="preserve">
-    <value>Unexpected error: Try to save your work and restart the application.</value>
   </data>
   <data name="XmlDocumentationFile" xml:space="preserve">
     <value>Visual Studio XML documentation file</value>

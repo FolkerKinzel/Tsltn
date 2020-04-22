@@ -1,4 +1,5 @@
-﻿using FolkerKinzel.Tsltn.Models;
+﻿using FolkerKinzel.Tsltn.Controllers;
+using FolkerKinzel.Tsltn.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,7 +20,7 @@ namespace Tsltn
     public partial class App : Application
     {
         public const string PROGRAM_NAME = "Tsltn";
-        public const string TSLTN_FILE_EXTENSION = ".tsltn";
+        //public const string TSLTN_FILE_EXTENSION = ".tsltn";
 
         //private void OnStartup(object sender, StartupEventArgs e)
         //{
@@ -37,7 +38,7 @@ namespace Tsltn
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            new MainWindow(Document.Instance, new RecentFilesMenu()).Show();
+            new MainWindow(Document.Instance, new FileController(Document.Instance), new RecentFilesMenu()).Show();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]

@@ -48,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FolkerKinzel.Tsltn.Controllers\FolkerKinzel.Tsltn.Controllers.csproj" />
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
   </ItemGroup>
 

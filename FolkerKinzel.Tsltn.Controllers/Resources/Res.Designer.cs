@@ -61,60 +61,6 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die About ähnelt.
-        /// </summary>
-        internal static string About {
-            get {
-                return ResourceManager.GetString("About", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die About ähnelt.
-        /// </summary>
-        internal static string AboutMenuItem {
-            get {
-                return ResourceManager.GetString("AboutMenuItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Browse all ähnelt.
-        /// </summary>
-        internal static string BrowseAll {
-            get {
-                return ResourceManager.GetString("BrowseAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Cntrl ähnelt.
-        /// </summary>
-        internal static string Cntrl {
-            get {
-                return ResourceManager.GetString("Cntrl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Copy text ähnelt.
-        /// </summary>
-        internal static string CopyText {
-            get {
-                return ResourceManager.GetString("CopyText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Copy xml ähnelt.
-        /// </summary>
-        internal static string CopyXml {
-            get {
-                return ResourceManager.GetString("CopyXml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The file{0}&quot;{1}&quot;{0}is empty or not a{0}{2}! ähnelt.
         /// </summary>
         internal static string EmptyOrInvalidFile {
@@ -133,38 +79,11 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
-        /// </summary>
-        internal static string FileMenuHeader {
-            get {
-                return ResourceManager.GetString("FileMenuHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &quot;The file &quot;{0}&quot; was changed.{1}Do you want to save the changes?&quot; ähnelt.
         /// </summary>
         internal static string FileWasChanged {
             get {
                 return ResourceManager.GetString("FileWasChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Go to: ähnelt.
-        /// </summary>
-        internal static string GoTo {
-            get {
-                return ResourceManager.GetString("GoTo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Help ähnelt.
-        /// </summary>
-        internal static string HelpMenuHeader {
-            get {
-                return ResourceManager.GetString("HelpMenuHeader", resourceCulture);
             }
         }
         
@@ -178,92 +97,11 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Next &gt; ähnelt.
-        /// </summary>
-        internal static string Next {
-            get {
-                return ResourceManager.GetString("Next", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Node path: ähnelt.
-        /// </summary>
-        internal static string NodePath {
-            get {
-                return ResourceManager.GetString("NodePath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found, that contains &quot;{0}&quot; in its path. ähnelt.
-        /// </summary>
-        internal static string NoElementFound {
-            get {
-                return ResourceManager.GetString("NoElementFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Open the file to translate ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Open the source file to translate ähnelt.
         /// </summary>
         internal static string OpenSourceFile {
             get {
                 return ResourceManager.GetString("OpenSourceFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Original ähnelt.
-        /// </summary>
-        internal static string Original {
-            get {
-                return ResourceManager.GetString("Original", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt; Previous ähnelt.
-        /// </summary>
-        internal static string Previous {
-            get {
-                return ResourceManager.GetString("Previous", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Quit ähnelt.
-        /// </summary>
-        internal static string QuitMenuItem {
-            get {
-                return ResourceManager.GetString("QuitMenuItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Recent files ähnelt.
-        /// </summary>
-        internal static string RecentFilesMenuItem {
-            get {
-                return ResourceManager.GetString("RecentFilesMenuItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
-        /// </summary>
-        internal static string Reset {
-            get {
-                return ResourceManager.GetString("Reset", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Shift ähnelt.
-        /// </summary>
-        internal static string Shift {
-            get {
-                return ResourceManager.GetString("Shift", resourceCulture);
             }
         }
         
@@ -277,65 +115,11 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Source file: ähnelt.
-        /// </summary>
-        internal static string SourceFile {
-            get {
-                return ResourceManager.GetString("SourceFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Source language: ähnelt.
-        /// </summary>
-        internal static string SourceLanguage {
-            get {
-                return ResourceManager.GetString("SourceLanguage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Target language: ähnelt.
-        /// </summary>
-        internal static string TargetLanguage {
-            get {
-                return ResourceManager.GetString("TargetLanguage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Translate ähnelt.
-        /// </summary>
-        internal static string Translate {
-            get {
-                return ResourceManager.GetString("Translate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Translation ähnelt.
-        /// </summary>
-        internal static string Translation {
-            get {
-                return ResourceManager.GetString("Translation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Tsltn file ähnelt.
         /// </summary>
         internal static string TsltnFile {
             get {
                 return ResourceManager.GetString("TsltnFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Unexpected error: Try to save your work and restart the application. ähnelt.
-        /// </summary>
-        internal static string UnexpectedError {
-            get {
-                return ResourceManager.GetString("UnexpectedError", resourceCulture);
             }
         }
         

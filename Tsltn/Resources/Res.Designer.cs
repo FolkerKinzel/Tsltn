@@ -115,38 +115,11 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file{0}&quot;{1}&quot;{0}is empty or not a{0}{2}! ähnelt.
-        /// </summary>
-        public static string EmptyOrInvalidFile {
-            get {
-                return ResourceManager.GetString("EmptyOrInvalidFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file is already open. ähnelt.
-        /// </summary>
-        public static string FileAlreadyOpen {
-            get {
-                return ResourceManager.GetString("FileAlreadyOpen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
         /// </summary>
         public static string FileMenuHeader {
             get {
                 return ResourceManager.GetString("FileMenuHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &quot;The file &quot;{0}&quot; was changed.{1}Do you want to save the changes?&quot; ähnelt.
-        /// </summary>
-        public static string FileWasChanged {
-            get {
-                return ResourceManager.GetString("FileWasChanged", resourceCulture);
             }
         }
         
@@ -165,15 +138,6 @@ namespace Tsltn.Resources {
         public static string HelpMenuHeader {
             get {
                 return ResourceManager.GetString("HelpMenuHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The translation contains invalid XML ähnelt.
-        /// </summary>
-        public static string InvalidXml {
-            get {
-                return ResourceManager.GetString("InvalidXml", resourceCulture);
             }
         }
         
@@ -201,15 +165,6 @@ namespace Tsltn.Resources {
         public static string NoElementFound {
             get {
                 return ResourceManager.GetString("NoElementFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Open the file to translate ähnelt.
-        /// </summary>
-        public static string OpenSourceFile {
-            get {
-                return ResourceManager.GetString("OpenSourceFile", resourceCulture);
             }
         }
         
@@ -268,15 +223,6 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The source document{0}&quot;{1}&quot;{0}was not found! ähnelt.
-        /// </summary>
-        public static string SourceDocumentNotFound {
-            get {
-                return ResourceManager.GetString("SourceDocumentNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Source file: ähnelt.
         /// </summary>
         public static string SourceFile {
@@ -322,29 +268,11 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Tsltn file ähnelt.
-        /// </summary>
-        public static string TsltnFile {
-            get {
-                return ResourceManager.GetString("TsltnFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Unexpected error: Try to save your work and restart the application. ähnelt.
         /// </summary>
         public static string UnexpectedError {
             get {
                 return ResourceManager.GetString("UnexpectedError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Visual Studio XML documentation file ähnelt.
-        /// </summary>
-        public static string XmlDocumentationFile {
-            get {
-                return ResourceManager.GetString("XmlDocumentationFile", resourceCulture);
             }
         }
     }
