@@ -17,7 +17,7 @@ namespace FolkerKinzel.Tsltn.Models
         IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
         void NewTsltn(string sourceDocumentFileName);
         bool Open(string? tsltnFileName);
-        void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused);
+        void RemoveTranslation(long id);
         void SaveTsltnAs(string tsltnFileName);
         void Translate(
             string outFileName,

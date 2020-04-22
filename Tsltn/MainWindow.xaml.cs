@@ -1,6 +1,7 @@
 ﻿using FolkerKinzel.Tsltn.Models;
 using Microsoft.Win32;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -26,7 +27,6 @@ namespace Tsltn
         private readonly IDocument _doc;
         private readonly IRecentFilesMenu _recentFilesMenu;
 
-        private Task? _currentTask;
 
 
         public MainWindow(IDocument doc, IRecentFilesMenu recentFilesMenu)
@@ -55,6 +55,9 @@ namespace Tsltn
         }
 
 
+        public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
+
+
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
         //{ 
         //    new DataError(ErrorLevel.Error, "Das ist ein Fehler.", null!),
@@ -68,7 +71,7 @@ namespace Tsltn
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _recentFilesMenu.SetRecentFilesMenuItem(miRecentFiles);
+            _recentFilesMenu.InitializeAsync(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
         }
 
@@ -81,30 +84,25 @@ namespace Tsltn
         }
 
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-        private void Window_Closed(object sender, EventArgs e)
+        private async void Window_Closed(object sender, EventArgs e)
         {
             try
             {
-                _currentTask?.Wait();
+                await Task.WhenAll(Tasks.ToArray()).ConfigureAwait(false);
             }
             catch { }
             
         }
 
-        private async void RecentFilesMenu_RecentFileSelected(object? sender, RecentFileSelectedEventArgs e)
+        private void RecentFilesMenu_RecentFileSelected(object? sender, RecentFileSelectedEventArgs e)
         {
             if (System.IO.File.Exists(e.FileName))
             {
-                await DoOpenAsync(e.FileName).ConfigureAwait(false);
-
-                if(FileName != null)
-                {
-                    _currentTask = _recentFilesMenu.AddRecentFileAsync(e.FileName);
-                }
+                _ = DoOpenAsync(e.FileName);
             }
             else
             {
-                _currentTask = _recentFilesMenu.RemoveRecentFileAsync(e.FileName);
+                Tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
             }
         }
 
@@ -403,7 +401,7 @@ namespace Tsltn
 
             if (_doc.Changed)
             {
-                var res = MessageBox.Show(
+                var res = MessageBox.Show(this,
                     string.Format(CultureInfo.CurrentCulture, Res.FileWasChanged, System.IO.Path.GetFileName(this.FileName), Environment.NewLine),
                     App.PROGRAM_NAME,
                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
@@ -450,10 +448,11 @@ namespace Tsltn
 
             try
             {
-                _currentTask = Task.Run(() => _doc.SaveTsltnAs(fileName));
-                await _currentTask.ConfigureAwait(false);
+                var task = Task.Run(() => _doc.SaveTsltnAs(fileName));
+                this.Tasks.Add(task);
+                await task.ConfigureAwait(false);
 
-                _currentTask = _recentFilesMenu.AddRecentFileAsync(FileName);
+                this.Tasks.Add(_recentFilesMenu.AddRecentFileAsync(FileName));
             }
             catch (AggregateException e)
             {
@@ -466,6 +465,7 @@ namespace Tsltn
             OnPropertyChanged(nameof(FileName));
             return true;
         }
+
 
 
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
@@ -568,7 +568,7 @@ namespace Tsltn
 
                 OnPropertyChanged(nameof(FileName));
 
-                _currentTask = _recentFilesMenu.AddRecentFileAsync(FileName);
+                Tasks.Add(_recentFilesMenu.AddRecentFileAsync(FileName));
             }
             catch (AggregateException e)
             {

@@ -11,6 +11,6 @@ namespace Tsltn
         Task AddRecentFileAsync(string fileName);
         string? GetMostRecentFile();
         Task RemoveRecentFileAsync(string fileName);
-        void SetRecentFilesMenuItem(MenuItem miRecentFiles);
+        Task InitializeAsync(MenuItem miRecentFiles);
     }
 }

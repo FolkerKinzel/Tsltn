@@ -23,10 +23,11 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         [TestMethod()]
         public void XmlSerializationTest()
         {
-            var tsltn = new TsltnFile("Test.tsltn")
+            var tsltn = new TsltnFile()
             {
                 SourceLanguage = "de",
-                TargetLanguage = "en"
+                TargetLanguage = "en",
+                SourceDocumentFileName = "Test.tsltn"
             };
 
             const string SUMMARY = "summary";

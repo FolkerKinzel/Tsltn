@@ -237,19 +237,24 @@ namespace FolkerKinzel.Tsltn.Models
         public IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => _tsltn?.GetAllTranslations() ?? Array.Empty<KeyValuePair<long, string>>();
 
 
-        [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
-        public void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused)
-        {
-            if (unused is null)
-            {
-                throw new ArgumentNullException(nameof(unused));
-            }
+        //[SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
+        //public void RemoveUnusedTranslations(IEnumerable<KeyValuePair<long, string>> unused)
+        //{
+        //    if (unused is null)
+        //    {
+        //        throw new ArgumentNullException(nameof(unused));
+        //    }
 
-            foreach (var kvp in unused)
-            {
-                SetTranslation(kvp.Key, null);
-            }
-        }
+        //    foreach (var kvp in unused)
+        //    {
+        //        SetTranslation(kvp.Key, null);
+        //    }
+        //}
+
+
+        [SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveTranslation(long id) => SetTranslation(id, null);
 
 
         public void Close()

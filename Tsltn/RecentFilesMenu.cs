@@ -117,16 +117,6 @@ namespace Tsltn
         {
             _openRecentFileCommand = new OpenRecentFile(new Action<object>(OpenRecentFile_Executed));
             _clearRecentFilesCommand = new ClearRecentFiles(new Action(ClearRecentFiles_Executed));
-
-            //try
-            //{
-            //    if (!File.Exists(RecentFilesPersistence.FileName))
-            //    {
-            //        File.Create(RecentFilesPersistence.FileName).Close();
-            //    }
-            //}
-            //catch { }
-            
         }
 
         #endregion
@@ -141,7 +131,7 @@ namespace Tsltn
         /// <param name="miRecentFiles">Das <see cref="MenuItem"/> zu, als dessen Child das
         /// <see cref="RecentFilesMenu"/> angezeigt wird.</param>
         /// <exception cref="ArgumentNullException"><paramref name="miRecentFiles"/> ist <c>null</c>.</exception>
-        public void SetRecentFilesMenuItem(MenuItem miRecentFiles)
+        public Task InitializeAsync(MenuItem miRecentFiles)
         {
             if (miRecentFiles is null)
             {
@@ -150,6 +140,8 @@ namespace Tsltn
 
             _miRecentFiles = miRecentFiles;
             _miRecentFiles.Loaded += miRecentFiles_Loaded;
+
+            return RecentFilesPersistence.LoadAsync();
         }
 
         /// <summary>
@@ -162,7 +154,7 @@ namespace Tsltn
         {
             if (_miRecentFiles is null)
             {
-                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
+                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
             if (!string.IsNullOrWhiteSpace(fileName))
@@ -195,7 +187,7 @@ namespace Tsltn
         {
             if (_miRecentFiles is null)
             {
-                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
+                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
             lock (RecentFilesPersistence.RecentFiles)
@@ -231,7 +223,7 @@ namespace Tsltn
         {
             if (_miRecentFiles is null)
             {
-                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
+                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
             _miRecentFiles.Dispatcher.BeginInvoke(new Action(
@@ -247,7 +239,7 @@ namespace Tsltn
         {
             if (_miRecentFiles is null)
             {
-                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
+                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
             _miRecentFiles.Items.Clear();
@@ -295,11 +287,7 @@ namespace Tsltn
                     _miRecentFiles.Items.Clear();
                     _miRecentFiles.IsEnabled = false;
 
-                    lock (RecentFilesPersistence.RecentFiles)
-                    {
-                        RecentFilesPersistence.RecentFiles.Clear();
-                    }
-                    RecentFilesPersistence.SaveAsync();
+                    ClearRecentFiles_Executed();
                 }
             }
         }
@@ -343,7 +331,7 @@ namespace Tsltn
         {
             if (_miRecentFiles is null)
             {
-                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(SetRecentFilesMenuItem)} first!");
+                throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
             lock (RecentFilesPersistence.RecentFiles)
