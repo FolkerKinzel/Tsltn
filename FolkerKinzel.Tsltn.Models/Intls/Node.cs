@@ -100,9 +100,53 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public INode? GetNextUntranslated()
         {
-            var el = Document.GetNextUntranslated(XmlNode);
-            return el is null ? null : new Node(el);
+            if (!Document.GetHasTranslation(this.ID))
+            {
+                return this;
+            }
+
+            XElement? unTrans = Document.GetNextNode(this.XmlNode);
+            while (unTrans != null)
+            {
+                if (!Document.GetHasTranslation(Utility.GetNodeID(unTrans)))
+                {
+                    return new Node(unTrans);
+                }
+
+                unTrans = Document.GetNextNode(unTrans);
+            }
+
+            Node? firstNode = (Node?)Document.Instance.FirstNode;
+
+            if (firstNode != null)
+            {
+                if (!Document.GetHasTranslation((firstNode.ID)))
+                {
+                    return firstNode;
+                }
+            }
+            else
+            {
+                return null; // Kann nur sein, wenn ein anderer Thread derweil Document.CloseTsltn aufgerufen hat.
+            }
+
+
+            unTrans = Document.GetNextNode(firstNode.XmlNode);
+
+
+            while (unTrans != null && !object.ReferenceEquals(unTrans, this.XmlNode))
+            {
+                if (!Document.GetHasTranslation(Utility.GetNodeID(unTrans)))
+                {
+                    return new Node(unTrans);
+                }
+
+                unTrans = Document.GetNextNode(unTrans);
+            }
+
+            return null;
         }
+
 
 
         public INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord)

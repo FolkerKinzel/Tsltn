@@ -83,7 +83,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void NewTsltn(string sourceDocumentFileName)
         {
-            Close();
+            CloseTsltn();
 
             _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
 
@@ -97,9 +97,9 @@ namespace FolkerKinzel.Tsltn.Models
 
 
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-        public bool Open(string? tsltnFileName)
+        public bool OpenTsltn(string? tsltnFileName)
         {
-            Close();
+            CloseTsltn();
 
             if (tsltnFileName is null)
             {
@@ -195,14 +195,14 @@ namespace FolkerKinzel.Tsltn.Models
                 }
                 catch (XmlException e)
                 {
-                    errors.Add(new DataError(ErrorLevel.Error, $"{invalidXml}: {e.Message}", node));
+                    errors.Add(new DataError(ErrorLevel.Error, $"{invalidXml}: {e.Message}", new Node(node)));
                 }
                 node = GetNextNode(node);
             }
 
             _xmlDocument?.Save(outFileName);
 
-            this.Open(this.TsltnFileName);
+            this.OpenTsltn(this.TsltnFileName);
 
             unusedTranslations = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
 
@@ -230,7 +230,7 @@ namespace FolkerKinzel.Tsltn.Models
         public void RemoveTranslation(long id) => SetTranslation(id, null);
 
 
-        public void Close()
+        public void CloseTsltn()
         {
             _tsltn = null;
             this.TsltnFileName = null;
@@ -328,38 +328,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal static XElement? GetNextUntranslated(XElement node)
-        {
-            if(_tsltn is null)
-            {
-                return null;
-            }
-
-            XElement? unTrans = GetNextNode(node);
-            while (unTrans != null)
-            {
-                if (_tsltn.HasTranslation(Utility.GetNodeID(node)))
-                {
-                    return unTrans;
-                }
-
-                unTrans = GetNextNode(unTrans);
-            }
-
-            unTrans = GetFirstNode();
-
-            while (unTrans != null && !object.ReferenceEquals(unTrans, node))
-            {
-                if (_tsltn.HasTranslation(Utility.GetNodeID(unTrans)))
-                {
-                    return unTrans;
-                }
-
-                unTrans = GetNextNode(unTrans);
-            }
-
-            return null;
-        }
+        
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -379,7 +348,9 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        
+
+        internal static bool GetHasTranslation(long id) => _tsltn?.HasTranslation(id) ?? false;
+
 
         #endregion
 

@@ -35,7 +35,6 @@
     <UserControl.CommandBindings>
         <CommandBinding Command="PreviousPage" CanExecute="PreviousPage_CanExecute" Executed="PreviousPage_Executed"/>
         <CommandBinding Command="NextPage" CanExecute="NextPage_CanExecute" Executed="NextPage_Executed"/>
-        <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
         <CommandBinding Command="{x:Static local:TsltnControlCommand.CopyXml}" Executed="CopyXml_Executed"/>
         <CommandBinding Command="{x:Static local:TsltnControlCommand.CopyText}" Executed="CopyText_Executed"/>
         <CommandBinding Command="{x:Static local:TsltnControlCommand.BrowseAll}" Executed="BrowseAll_Executed"/>
@@ -92,7 +91,7 @@
 
 
                 <ScrollViewer Grid.Column="3" Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible" CanContentScroll="True">
-                    <TextBlock Text="{Binding NodePath}" VerticalAlignment="Top"/>
+                    <TextBlock Text="{Binding CurrentNode.NodePath}" VerticalAlignment="Top"/>
                 </ScrollViewer>
             </Grid>
         </DockPanel>
@@ -116,7 +115,7 @@
                 Content="{x:Static r:Res.Reset}" Click="_btnReset_Click" IsEnabled="{Binding HasTranslation}"/>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
-            <TextBlock Text="{Binding InnerXml}" TextWrapping="WrapWithOverflow" Padding="10" FontSize="22"/>
+            <TextBlock Text="{Binding CurrentNode.InnerXml}" TextWrapping="WrapWithOverflow" Padding="10" FontSize="22"/>
         </ScrollViewer>
         <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=Explicit}"
                  GotKeyboardFocus="_tbTranslation_GotKeyboardFocus"

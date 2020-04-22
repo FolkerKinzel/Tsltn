@@ -189,4 +189,7 @@
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected error: Try to save your work and restart the application.</value>
   </data>
+  <data name="UntranslatedElement" xml:space="preserve">
+    <value>At least one Element has no translation.</value>
+  </data>
 </root>

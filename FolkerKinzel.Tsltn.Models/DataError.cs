@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FolkerKinzel.Tsltn.Models.Intls;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
@@ -7,7 +8,7 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public class DataError
     {
-        public DataError(ErrorLevel level, string message, XElement node)
+        public DataError(ErrorLevel level, string message, INode node)
         {
             this.Level = level;
             this.Message = message;
@@ -16,6 +17,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         public ErrorLevel Level { get; }
         public string Message { get; }
-        public XElement Node { get; }
+        public INode Node { get; set; }
     }
 }

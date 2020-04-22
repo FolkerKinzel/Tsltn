@@ -25,7 +25,7 @@ namespace Tsltn
     {
         private readonly Window _owner;
         private INode _node;
-        private bool _hasDocumentUntranslatedNodes;
+        //private bool _hasDocumentUntranslatedNodes;
         private string _translation = "";
         private readonly IDocument _doc;
         private bool _hasTranslation;
@@ -58,18 +58,14 @@ namespace Tsltn
             this.SourceLanguage = _doc.SourceLanguage;
             this.TargetLanguage = _doc.TargetLanguage;
 
-
-
             InitializeComponent();
-
-
 
             this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
         }
 
         public bool HasTranslation
         {
-            get { return _hasTranslation; }
+            get => _hasTranslation;
             set
             {
                 _hasTranslation = value;
@@ -102,14 +98,50 @@ namespace Tsltn
 
         public string? SourceFileName { get; }
 
-        public bool HasNodeAncestor => _node.HasAncestor;
+        //public bool HasNodeAncestor => _node.HasAncestor;
 
-        public bool HasNodeDescendant => _node.HasDescendant;
+        //public bool HasNodeDescendant => _node.HasDescendant;
 
-        public string InnerXml => _node.InnerXml;
+        //public string InnerXml => _node.InnerXml;
 
-        public string NodePath => _node.NodePath;
+        //public string NodePath => _node.NodePath;
 
+
+        public INode CurrentNode
+        {
+            get => _node;
+
+            set
+            {
+                _node = value;
+                OnPropertyChanged(nameof(CurrentNode));
+            }
+        }
+
+
+        internal void Navigate(INode? node)
+        {
+            if (node is null)
+            {
+                return;
+            }
+
+            UpdateSource();
+
+            this.CurrentNode = node;
+
+            var transl = node.Translation;
+            this.Translation = transl;
+
+            // Die lokale Variable muss benutzt werden,
+            // da Translation nie null zurückgibt.
+            this.HasTranslation = transl != null;
+
+            //OnPropertyChanged(nameof(InnerXml));
+            //OnPropertyChanged(nameof(HasNodeAncestor));
+            //OnPropertyChanged(nameof(HasNodeDescendant));
+            //OnPropertyChanged(nameof(NodePath));
+        }
 
         internal void UpdateSource()
         {
@@ -174,7 +206,7 @@ namespace Tsltn
 
         private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNodeAncestor;
+            e.CanExecute = CurrentNode.HasAncestor;
         }
 
         private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -187,49 +219,49 @@ namespace Tsltn
 
         private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNodeDescendant;
+            e.CanExecute = CurrentNode.HasDescendant;
         }
 
         private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Navigate(_node.GetDescendant());
+            Navigate(CurrentNode.GetDescendant());
 
             e.Handled = true;
         }
 
 
-        private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = _hasDocumentUntranslatedNodes;
-        }
+        //private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        //{
+        //    e.CanExecute = _hasDocumentUntranslatedNodes;
+        //}
 
-        private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            e.Handled = true;
+        //private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
+        //{
+        //    e.Handled = true;
 
-            var nextUntranslated = _node?.GetNextUntranslated();
+        //    var nextUntranslated = _node?.GetNextUntranslated();
 
-            if (nextUntranslated is null)
-            {
-                _hasDocumentUntranslatedNodes = false;
-            }
-            else
-            {
-                Navigate(nextUntranslated);
-            }
-        }
+        //    if (nextUntranslated is null)
+        //    {
+        //        _hasDocumentUntranslatedNodes = false;
+        //    }
+        //    else
+        //    {
+        //        Navigate(nextUntranslated);
+        //    }
+        //}
 
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Clipboard.Clear();
-            Clipboard.SetText(InnerXml);
+            Clipboard.SetText(CurrentNode.InnerXml);
         }
 
 
         private void CopyText_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Clipboard.Clear();
-            Clipboard.SetText(_node.InnerText);
+            Clipboard.SetText(CurrentNode.InnerText);
         }
 
 
@@ -240,29 +272,7 @@ namespace Tsltn
         }
 
 
-        private void Navigate(INode? node)
-        {
-            if (node is null)
-            {
-                return;
-            }
-
-            UpdateSource();
-
-            this._node = node;
-
-            var transl = node.Translation;
-            this.Translation = node.Translation;
-
-            // Die lokale Variable muss benutzt werden,
-            // da Translation nie null zurückgibt.
-            this.HasTranslation = transl != null;
-
-            OnPropertyChanged(nameof(InnerXml));
-            OnPropertyChanged(nameof(HasNodeAncestor));
-            OnPropertyChanged(nameof(HasNodeDescendant));
-            OnPropertyChanged(nameof(NodePath));
-        }
+        
 
     
 

@@ -1,4 +1,6 @@
-﻿namespace FolkerKinzel.Tsltn.Models
+﻿using System.Xml.Linq;
+
+namespace FolkerKinzel.Tsltn.Models
 {
     public interface INode
     {

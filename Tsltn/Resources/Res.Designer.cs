@@ -275,5 +275,14 @@ namespace Tsltn.Resources {
                 return ResourceManager.GetString("UnexpectedError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die At least one Element has no translation. ähnelt.
+        /// </summary>
+        public static string UntranslatedElement {
+            get {
+                return ResourceManager.GetString("UntranslatedElement", resourceCulture);
+            }
+        }
     }
 }

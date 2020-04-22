@@ -87,7 +87,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             }
 
             OnHasContentChanged(false);
-            _doc.Close();
+            _doc.CloseTsltn();
             OnPropertyChanged(nameof(FileName));
 
             return true;
@@ -146,7 +146,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                if (!await Task.Run(() => _doc.Open(fileName)).ConfigureAwait(true))
+                if (!await Task.Run(() => _doc.OpenTsltn(fileName)).ConfigureAwait(true))
                 {
                     OnHasContentChanged(false);
                     OnPropertyChanged(nameof(FileName));
@@ -168,7 +168,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     {
                         if (!GetXmlInFileName(ref xmlFileName))
                         {
-                            _doc.Close();
+                            _doc.CloseTsltn();
                             return;
                         }
 
@@ -202,7 +202,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
                 OnHasContentChanged(false);
-                _doc.Close();
+                _doc.CloseTsltn();
                 OnPropertyChanged(nameof(FileName));
                 OnBadFileName(fileName);
             }
@@ -229,7 +229,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                             MessageBoxImage.Exclamation,
                             MessageBoxResult.OK));
 
-                        _doc.Close();
+                        _doc.CloseTsltn();
                     }
                     else
                     {
@@ -281,7 +281,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     catch
                     {
                         OnHasContentChanged(false);
-                        _doc.Close();
+                        _doc.CloseTsltn();
                         OnPropertyChanged(nameof(FileName));
                     }
 

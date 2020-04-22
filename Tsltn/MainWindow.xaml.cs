@@ -29,8 +29,7 @@ namespace Tsltn
         private readonly IDocument _doc;
         private readonly IFileController _fileController;
         private readonly IRecentFilesMenu _recentFilesMenu;
-
-
+        private DataError? _missingTranslation;
 
         public MainWindow(IDocument doc, IFileController fileController, IRecentFilesMenu recentFilesMenu)
         {
@@ -43,8 +42,15 @@ namespace Tsltn
 
 
         public string FileName => _fileController.FileName;
-        
 
+
+        private DataError GetMissingTranslationWarning(INode node)
+        {
+            this._missingTranslation ??= new DataError(ErrorLevel.Warning, Res.UntranslatedElement, node);
+            this._missingTranslation.Node = node;
+
+            return this._missingTranslation;
+        }
 
 
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
@@ -106,17 +112,47 @@ namespace Tsltn
             _fileController.Tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
         }
 
+
         private void _fileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
         {
             if(e.HasContent)
             {
-                _ccContent.Content = new TsltnControl(this, _doc);
+                var cntr = new TsltnControl(this, _doc);
+                _ccContent.Content = cntr;
+                cntr.PropertyChanged += TsltnControl_PropertyChanged;
+                CheckUntranslatedNodesAsync(cntr);
             }
             else
             {
                 _ccContent.Content = null;
+                Errors.Clear();
             }
         }
+
+        private void TsltnControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(TsltnControl.HasTranslation))
+            {
+                if(sender is TsltnControl cntr)
+                {
+                    CheckUntranslatedNodesAsync(cntr);
+                }
+            }
+        }
+
+        private void DataError_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataError? err = (e.OriginalSource as FrameworkElement)?.DataContext as DataError;
+
+            if(_ccContent.Content is TsltnControl control)
+            {
+                control.Navigate(err?.Node);
+            }
+        }
+
+
+        
+
 
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void _fileController_Message(object? sender, MessageEventArgs e)
@@ -244,5 +280,26 @@ namespace Tsltn
         private void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 
+        private async void CheckUntranslatedNodesAsync(TsltnControl cntr)
+        {
+            INode? result = cntr.HasTranslation ? await Task.Run(cntr.CurrentNode.GetNextUntranslated).ConfigureAwait(true) : cntr.CurrentNode;
+
+            if (_doc.SourceDocumentFileName != null)
+            {
+                var err = this.GetMissingTranslationWarning(result!);
+
+                if (result is null)
+                {
+                    Errors.Remove(err);
+                }
+                else
+                {
+                    if (!Errors.Contains(err))
+                    {
+                        Errors.Add(err);
+                    }
+                }
+            }
+        }
     }
 }

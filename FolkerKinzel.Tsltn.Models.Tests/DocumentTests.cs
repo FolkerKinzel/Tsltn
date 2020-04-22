@@ -51,7 +51,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
            
             doc.SaveTsltnAs(tsltnPath);
 
-            doc.Open(tsltnPath);
+            doc.OpenTsltn(tsltnPath);
 
             XElement? section = Document.GetFirstNode();
 

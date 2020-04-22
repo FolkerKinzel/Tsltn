@@ -7,9 +7,9 @@ namespace FolkerKinzel.Tsltn.Models
     public interface IFileAccess : IDocument
     {
         string? TsltnFileName { get; }
-        void Close();
+        void CloseTsltn();
         void NewTsltn(string sourceDocumentFileName);
-        bool Open(string? tsltnFileName);
+        bool OpenTsltn(string? tsltnFileName);
         void SaveTsltnAs(string tsltnFileName);
 
         bool ReloadSourceDocument(string fileName);
