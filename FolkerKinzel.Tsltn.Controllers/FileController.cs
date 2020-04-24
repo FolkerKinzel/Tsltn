@@ -168,7 +168,10 @@ namespace FolkerKinzel.Tsltn.Controllers
                     {
                         if (!GetXmlInFileName(ref xmlFileName))
                         {
+                            OnHasContentChanged(false);
                             _doc.CloseTsltn();
+                            OnPropertyChanged(nameof(FileName));
+
                             return;
                         }
 

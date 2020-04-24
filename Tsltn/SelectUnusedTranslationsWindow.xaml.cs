@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +26,10 @@ namespace Tsltn
         {
             foreach (var item in unusedTranslations)
             {
-                Controls.Add(new UnusedTranslationUserControl(item));
+                var cntr = new UnusedTranslationUserControl(item);
+                Controls.Add(cntr);
+                cntr._cbSelected.Unchecked += _cbSelected_Unchecked;
+                cntr._cbSelected.Checked += _cbSelected_Checked;
             }
 
             Controls.Sort((a, b) => StringComparer.Ordinal.Compare(a.Kvp.Value, b.Kvp.Value));
@@ -36,6 +40,31 @@ namespace Tsltn
 
 
             InitializeComponent();
+        }
+
+        private void _cbSelected_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if(Controls.Any(x => x.Remove))
+            {
+                _cbAlleKeine.IsChecked = null;
+            }
+            else
+            {
+                _cbAlleKeine.IsChecked = false;
+            }
+        }
+
+
+        private void _cbSelected_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Controls.Any(x => !x.Remove))
+            {
+                _cbAlleKeine.IsChecked = null;
+            }
+            else
+            {
+                _cbAlleKeine.IsChecked = true;
+            }
         }
 
         //public event PropertyChangedEventHandler? PropertyChanged;
@@ -55,26 +84,22 @@ namespace Tsltn
             this.DialogResult = true;
         }
 
-        internal void ShowDialog(Window owner)
+        internal bool? ShowDialog(Window owner)
         {
             this.Owner = owner;
-            ShowDialog();
+            return ShowDialog();
         }
 
-        private void AlleKeine_Unchecked(object sender, RoutedEventArgs e)
+        private void AlleKeine_CheckedChanged(object sender, RoutedEventArgs e)
         {
-            foreach (var cnt in Controls)
+            bool newVal = (_cbAlleKeine.IsChecked == true);
+
+            foreach (var cntr in Controls)
             {
-                cnt.Remove = false;
+                cntr.Remove = newVal;
             }
         }
 
-        private void AlleKeine_Checked(object sender, RoutedEventArgs e)
-        {
-            foreach (var cnt in Controls)
-            {
-                cnt.Remove = true;
-            }
-        }
+        
     }
 }

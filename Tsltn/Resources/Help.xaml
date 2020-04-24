@@ -1,0 +1,43 @@
+﻿<FlowDocument xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:local="clr-namespace:Tsltn"
+              ColumnWidth="300" FontSize="16" FontFamily="Georgia">
+    <FlowDocument.Resources>
+        <Style x:Key="Header" TargetType="Paragraph">
+            <Style.Setters>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+            </Style.Setters>
+        </Style>
+        <Style TargetType="ListItem">
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+    </FlowDocument.Resources>
+    <Paragraph Style="{StaticResource Header}">
+        Tsltn
+    </Paragraph>
+    <Paragraph>Tsltn is a tool to translate the Visual Studio XML documentation file to other languages.</Paragraph>
+    <Paragraph>It enables you to</Paragraph>
+    <List>
+        <ListItem>
+            <Paragraph>keep your translated files in sync with the original file - even if this has been changed,
+            </Paragraph>
+        </ListItem>
+        <ListItem>
+            <Paragraph>translate only the required sections (skip attributes and code sections),</Paragraph>
+        </ListItem>
+        <ListItem>
+            <Paragraph>prompts you to retranslate a section only, if the original file on that section has changed significantly.</Paragraph>
+        </ListItem>
+    </List>
+    <Paragraph>To create a new translation, select "File → New" and then choose the Visual Studio XML documentation file to translate.</Paragraph>
+    <Paragraph>After that, you are able to navigate through the sections of the original file and assign translations to them, by entering the text box
+                    on the right side of the window and putting text to it (or leave it empty for a translation that contains no text).</Paragraph>
+    <Paragraph>If no translation is assigned to a section, the original text will appear in the translated file. (If the header "Translation" 
+                    is gray, no translation is assigned.)</Paragraph>
+    <Paragraph>You can untranslate a section by pressing the "Reset"-button.</Paragraph>
+    <Paragraph>It might be, that former translations are not assigned, if the original document has been changed. You can select and reassign those
+                translations by clicking the "Browse All" button.</Paragraph>
+    <Paragraph>You should not forget to specify the source language and the target language of your translation in the upper right corner
+                of the window. Use IETF language tags for that (RFC 4646).</Paragraph>
+</FlowDocument>

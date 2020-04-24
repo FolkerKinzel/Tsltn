@@ -9,6 +9,7 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <FileVersion>1.0.10.0</FileVersion>
+    <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="IRecentFilesMenu.cs" />
@@ -31,10 +32,12 @@
     <None Remove="pics\TranslateDocument_16x.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Remove="Resources\Help.xaml" />
     <Page Remove="TsltnPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="Resources\Help.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">

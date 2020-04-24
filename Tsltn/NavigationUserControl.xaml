@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinWidth="220"
-            TextOptions.TextFormattingMode="Display">
+            TextOptions.TextFormattingMode="Ideal">
     <UserControl.CommandBindings>
         <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
     </UserControl.CommandBindings>

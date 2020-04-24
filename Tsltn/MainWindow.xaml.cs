@@ -30,7 +30,6 @@ namespace Tsltn
         private readonly IDocument _doc;
         private readonly IFileController _fileController;
         private readonly IRecentFilesMenu _recentFilesMenu;
-        private DataError? _missingTranslation;
         private bool _isCommandEnabled = true;
 
         public MainWindow(IDocument doc, IFileController fileController, IRecentFilesMenu recentFilesMenu)
@@ -43,7 +42,7 @@ namespace Tsltn
         }
 
 
-        private static readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
+        private readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
 
         public string FileName => _fileController.FileName;
 
@@ -60,6 +59,8 @@ namespace Tsltn
 
 
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
+
+
         //{ 
         //    new DataError(ErrorLevel.Error, "Das ist ein Fehler.", null!),
         //    new DataError(ErrorLevel.Warning, "Das ist eine Warnung. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", null!),
@@ -70,7 +71,7 @@ namespace Tsltn
 
         #region EventHandler
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _fileController.HasContentChanged += _fileController_HasContentChanged;
             _fileController.Message += _fileController_Message;
@@ -80,11 +81,14 @@ namespace Tsltn
             _fileController.ShowFileDialog += _fileController_ShowFileDialog;
             _fileController.BadFileName += _fileController_BadFileName;
 
-
-            _recentFilesMenu.InitializeAsync(miRecentFiles);
+            await _recentFilesMenu.InitializeAsync(miRecentFiles).ConfigureAwait(false);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
+
+            await ProcessCommandLineArgs().ConfigureAwait(false);
+
         }
 
+        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_BadFileName(object? sender, BadFileNameEventArgs e)
@@ -216,7 +220,7 @@ namespace Tsltn
 
         private void Help_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            new HelpWindow().Show();
         }
 
 
@@ -287,13 +291,14 @@ namespace Tsltn
                 {
                     var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(_fileController.FileName), result.UnusedTranslations);
 
-                    wnd.ShowDialog(this);
-
-                    foreach (var cntr in wnd.Controls)
+                    if (true == wnd.ShowDialog(this))
                     {
-                        if (cntr.Remove)
+                        foreach (var cntr in wnd.Controls)
                         {
-                            _doc.RemoveTranslation(cntr.Kvp.Key);
+                            if (cntr.Remove)
+                            {
+                                _doc.RemoveTranslation(cntr.Kvp.Key);
+                            }
                         }
                     }
                 }
@@ -356,6 +361,31 @@ namespace Tsltn
             if (_ccContent.Content is TsltnControl control)
             {
                 control.UpdateSource();
+            }
+        }
+
+
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        private async Task ProcessCommandLineArgs()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+
+
+            if (args.Length > 1)
+            {
+                try
+                {
+                    string fileName = System.IO.Path.GetFullPath(args[1]);
+
+                    if (System.IO.File.Exists(fileName))
+                    {
+                        IsCommandEnabled = false;
+                        await _fileController.OpenTsltnAsync(fileName).ConfigureAwait(false);
+                    }
+
+                }
+                catch { }
+                finally { IsCommandEnabled = true; }
             }
         }
 

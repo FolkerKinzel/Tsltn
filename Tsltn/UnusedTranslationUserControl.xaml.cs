@@ -21,6 +21,8 @@ namespace Tsltn
     {
         private bool _remove;
 
+        //public UnusedTranslationUserControl() { }
+
         public UnusedTranslationUserControl(KeyValuePair<long, string> item)
         {
             Kvp = item;
@@ -41,7 +43,7 @@ namespace Tsltn
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnPropertyChanged(string propName)
         {

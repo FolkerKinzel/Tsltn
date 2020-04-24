@@ -17,7 +17,7 @@
         Closed="Window_Closed"
         Background="Gray"
         FontSize="16"
-        TextOptions.TextFormattingMode="Display" >
+        TextOptions.TextFormattingMode="Ideal" >
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Style.Setters>

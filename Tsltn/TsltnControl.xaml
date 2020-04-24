@@ -12,18 +12,20 @@
              Padding="5,0"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              FontSize="16"
-             TextOptions.TextFormattingMode="Display">
+             TextOptions.TextFormattingMode="Ideal">
     <UserControl.Resources>
         <Style x:Key="HeaderTextBlock" TargetType="TextBlock">
             <Style.Setters>
                 <Setter Property="TextAlignment" Value="Center"/>
                 <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Background" Value="Black"/>
                 <Setter Property="Foreground" Value="White"/>
             </Style.Setters>
         </Style>
         <Style TargetType="Button" BasedOn="{StaticResource StdButton}"/>
 
+        <Style x:Key="headerBorder" TargetType="Border">
+            <Setter Property="Background" Value="Black"/>
+        </Style>
 
         <Style TargetType="Label">
             <Style.Setters>
@@ -95,21 +97,36 @@
             </Grid>
         </DockPanel>
 
-        <TextBlock Grid.Row="1" Style="{StaticResource HeaderTextBlock}" Text="{x:Static r:Res.Original}"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Static r:Res.Translation}">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock" BasedOn="{StaticResource HeaderTextBlock}">
+        <Border Style="{StaticResource headerBorder}" Grid.Row="1">
+        <TextBlock  Style="{StaticResource HeaderTextBlock}" Text="{x:Static r:Res.Original}" VerticalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource headerBorder}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding HasTranslation, Mode=OneWay}" Value="False">
                             <DataTrigger.Setters>
                                 <Setter Property="Background" Value="Gray"/>
-                                <Setter Property="Foreground" Value="Black"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            
+        <TextBlock  Text="{x:Static r:Res.Translation}" VerticalAlignment="Center">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource HeaderTextBlock}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasTranslation, Mode=OneWay}" Value="False">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Foreground" Value="Black"/>
                             </DataTrigger.Setters>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        </Border>
         <Button Name="_btnReset" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
                 Content="{x:Static r:Res.Reset}" Click="_btnReset_Click" IsEnabled="{Binding HasTranslation}"/>
 

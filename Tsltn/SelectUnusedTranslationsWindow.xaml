@@ -11,7 +11,7 @@
         WindowStyle="ThreeDBorderWindow"
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         FontSize="16"
-        TextOptions.TextFormattingMode="Display">
+        TextOptions.TextFormattingMode="Ideal">
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource StdButton}"/>
         <Style TargetType="TextBlock">
@@ -21,36 +21,37 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <TextBlock x:Name="_tblExplanation" DockPanel.Dock="Top" Text="{Binding Explanation, Mode=OneTime}"/>
+        
+        <TextBlock x:Name="_tblExplanation" DockPanel.Dock="Top" Text="{Binding Explanation, Mode=OneTime}" Margin="20" TextAlignment="Justify"/>
 
-        <Grid DockPanel.Dock="Top" Background="Black">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5" IsThreeState="False" Checked="AlleKeine_Checked" Unchecked="AlleKeine_Unchecked"/>
-            <TextBlock TextAlignment="Justify"/>
-        </Grid>
-        <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <ItemsControl ItemsSource="{Binding Controls}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel IsItemsHost="True"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-        </ScrollViewer>
+        <Border DockPanel.Dock="Top" Background="Black" BorderBrush="Black" BorderThickness="0,2">
+            <Grid VerticalAlignment="Center" Margin="10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <CheckBox Name="_cbAlleKeine" HorizontalAlignment="Center" VerticalAlignment="Center" IsThreeState="True" Checked="AlleKeine_CheckedChanged"  Unchecked="AlleKeine_CheckedChanged"/>
+            </Grid>
+        </Border>
+        
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" IsCancel="True" Content="{x:Static r:Res.Cancel}"/>
             <Button DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="OK_Click"/>
-
-
         </DockPanel>
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" DockPanel.Dock="Top">
-            <StackPanel x:Name="_stpContent" />
+        
+        <ScrollViewer DockPanel.Dock="Top" CanContentScroll="True" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+            <ItemsControl ItemsSource="{Binding Controls}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </ScrollViewer>
+
+
     </DockPanel>
 </Window>

@@ -142,6 +142,22 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;FlowDocument xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+        ///              xmlns:local=&quot;clr-namespace:Tsltn.Resources&quot;
+        ///              ColumnWidth=&quot;400&quot; FontSize=&quot;14&quot; FontFamily=&quot;Georgia&quot;&gt;
+        ///    &lt;Paragraph&gt;
+        ///        
+        ///    &lt;/Paragraph&gt;
+        ///&lt;/FlowDocument&gt;
+        /// ähnelt.
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Help ähnelt.
         /// </summary>
         public static string HelpMenuHeader {
