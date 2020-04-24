@@ -143,13 +143,15 @@ namespace Tsltn.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die &lt;FlowDocument xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
-        ///              xmlns:local=&quot;clr-namespace:Tsltn.Resources&quot;
-        ///              ColumnWidth=&quot;400&quot; FontSize=&quot;14&quot; FontFamily=&quot;Georgia&quot;&gt;
-        ///    &lt;Paragraph&gt;
-        ///        
-        ///    &lt;/Paragraph&gt;
-        ///&lt;/FlowDocument&gt;
-        /// ähnelt.
+        ///              xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        ///              xmlns:local=&quot;clr-namespace:Tsltn&quot;
+        ///              ColumnWidth=&quot;300&quot; FontSize=&quot;16&quot; FontFamily=&quot;Georgia&quot;&gt;
+        ///    &lt;FlowDocument.Resources&gt;
+        ///        &lt;Style x:Key=&quot;Header&quot; TargetType=&quot;Paragraph&quot;&gt;
+        ///            &lt;Style.Setters&gt;
+        ///                &lt;Setter Property=&quot;FontSize&quot; Value=&quot;20&quot;/&gt;
+        ///                &lt;Setter Property=&quot;FontWeight&quot; Value=&quot;Bold&quot;/&gt;
+        ///          [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Help {
             get {
@@ -163,6 +165,24 @@ namespace Tsltn.Resources {
         public static string HelpMenuHeader {
             get {
                 return ResourceManager.GetString("HelpMenuHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Source Language is not a valid IETF language tag. ähnelt.
+        /// </summary>
+        public static string InvalidSourceLanguage {
+            get {
+                return ResourceManager.GetString("InvalidSourceLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Target Language is not a valid IETF language tag. ähnelt.
+        /// </summary>
+        public static string InvalidTargetLanguage {
+            get {
+                return ResourceManager.GetString("InvalidTargetLanguage", resourceCulture);
             }
         }
         

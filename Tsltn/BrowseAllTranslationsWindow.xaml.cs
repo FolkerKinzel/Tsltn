@@ -37,13 +37,13 @@ namespace Tsltn
         //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         //}
 
-        internal void ShowDialog(Window owner)
+        internal bool? ShowDialog(Window owner)
         {
             this.Owner = owner;
-            ShowDialog();
+            return ShowDialog();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void OK_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
         }

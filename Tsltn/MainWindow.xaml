@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Tsltn"
         xmlns:models="clr-namespace:FolkerKinzel.Tsltn.Models;assembly=FolkerKinzel.Tsltn.Models"
         xmlns:r ="clr-namespace:Tsltn.Resources"
+        xmlns:cmd ="clr-namespace:Tsltn.Commands"
         mc:Ignorable="d"
         Height="650" Width="1200"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
@@ -33,7 +34,7 @@
         <CommandBinding Command="Save" Executed="Save_ExecutedAsync" CanExecute="Save_CanExecute"/>
         <CommandBinding Command="SaveAs" Executed="SaveAs_ExecutedAsync"  CanExecute="Close_CanExecute"/>
         <CommandBinding Command="New" Executed="New_ExecutedAsync"/>
-        <CommandBinding Command="local:TsltnCommand.Translate" Executed="Translate_ExecutedAsync"  CanExecute="Close_CanExecute"></CommandBinding>
+        <CommandBinding Command="{x:Static cmd:TsltnCommand.Translate}" Executed="Translate_ExecutedAsync"  CanExecute="Close_CanExecute"></CommandBinding>
     </Window.CommandBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -75,7 +76,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Command="local:TsltnCommand.Translate">
+                <MenuItem Command="{x:Static cmd:TsltnCommand.Translate}">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/TranslateDocument_16x.png"/>
                     </MenuItem.Icon>

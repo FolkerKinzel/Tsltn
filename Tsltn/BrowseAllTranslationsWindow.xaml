@@ -20,7 +20,7 @@
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" IsCancel="True" Content="{x:Static r:Res.Cancel}"/>
-            <Button DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="Button_Click">
+            <Button DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="OK_Click">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                         <Style.Triggers>

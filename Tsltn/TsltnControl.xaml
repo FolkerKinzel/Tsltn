@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Tsltn"
              xmlns:r ="clr-namespace:Tsltn.Resources"
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+             xmlns:cmd ="clr-namespace:Tsltn.Commands"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="WhiteSmoke"
@@ -36,9 +37,9 @@
     <UserControl.CommandBindings>
         <CommandBinding Command="PreviousPage" CanExecute="PreviousPage_CanExecute" Executed="PreviousPage_Executed"/>
         <CommandBinding Command="NextPage" CanExecute="NextPage_CanExecute" Executed="NextPage_Executed"/>
-        <CommandBinding Command="{x:Static local:TsltnControlCommand.CopyXml}" Executed="CopyXml_Executed"/>
-        <CommandBinding Command="{x:Static local:TsltnControlCommand.CopyText}" Executed="CopyText_Executed"/>
-        <CommandBinding Command="{x:Static local:TsltnControlCommand.BrowseAll}" Executed="BrowseAll_Executed"/>
+        <CommandBinding Command="{x:Static cmd:TsltnControlCommand.CopyXml}" Executed="CopyXml_Executed"/>
+        <CommandBinding Command="{x:Static cmd:TsltnControlCommand.CopyText}" Executed="CopyText_Executed"/>
+        <CommandBinding Command="{x:Static cmd:TsltnControlCommand.BrowseAll}" Executed="BrowseAll_Executed"/>
     </UserControl.CommandBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -55,7 +56,7 @@
         <DockPanel Grid.ColumnSpan="2">
             <local:NavigationUserControl x:Name="NavCtrl" DockPanel.Dock="Right" Margin="5"/>
 
-            <Grid DockPanel.Dock="Left" VerticalAlignment="Center">
+            <Grid DockPanel.Dock="Left" VerticalAlignment="Center" Validation.Error="Language_Error">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -81,9 +82,13 @@
                 </Grid.Resources>
                 <Label Content="{x:Static r:Res.SourceLanguage}"/>
                 <Label Grid.Row="1" Content="{x:Static r:Res.TargetLanguage}" VerticalAlignment="Top"/>
-                <TextBox Name="_tbSourceLanguage" Grid.Column="1" Text="{Binding SourceLanguage, UpdateSourceTrigger=Explicit}" VerticalAlignment="Center"
+                <TextBox Name="_tbSourceLanguage" Grid.Column="1" 
+                         Text="{Binding SourceLanguage, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                         VerticalAlignment="Center"
                          AcceptsReturn="False" AcceptsTab="False" Padding="3,0"/>
-                <TextBox Name="_tbTargetLanguage" Grid.Column="1" Grid.Row="1" Text="{Binding TargetLanguage, UpdateSourceTrigger=Explicit}" VerticalAlignment="Top"
+                <TextBox Name="_tbTargetLanguage" Grid.Column="1" Grid.Row="1"
+                         Text="{Binding TargetLanguage, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                         VerticalAlignment="Top"
                          AcceptsReturn="False" AcceptsTab="False" Padding="3,0"/>
 
                 <TextBlock Grid.Column="2" DockPanel.Dock="Left" VerticalAlignment="Center" Text="{x:Static r:Res.SourceFile}"/>
@@ -142,14 +147,14 @@
 
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Command="local:TsltnControlCommand.CopyText" Content="{x:Static r:Res.CopyText}"/>
-                <Button Command="local:TsltnControlCommand.CopyXml" Content="{x:Static r:Res.CopyXml}"/>
+                <Button Command="{x:Static cmd:TsltnControlCommand.CopyText}" Content="{x:Static r:Res.CopyText}"/>
+                <Button Command="{x:Static cmd:TsltnControlCommand.CopyXml}" Content="{x:Static r:Res.CopyXml}"/>
             </StackPanel>
             <Button Command="PreviousPage" Content="{x:Static r:Res.Previous}" HorizontalAlignment="Left"></Button>
             <Button Command="NextPage" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
         </Grid>
 
-        <Button Grid.Column="1" Grid.Row="3" DockPanel.Dock="Top" HorizontalAlignment="Center" Command="local:TsltnControlCommand.BrowseAll"
+        <Button Grid.Column="1" Grid.Row="3" DockPanel.Dock="Top" HorizontalAlignment="Center" Command="{x:Static cmd:TsltnControlCommand.BrowseAll}"
                 Content="{x:Static r:Res.BrowseAll}"></Button>
 
         

@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Tsltn.Resources;
+using System.Runtime.CompilerServices;
 
 namespace Tsltn
 {
@@ -29,10 +30,14 @@ namespace Tsltn
         private string _translation = "";
         private readonly IDocument _doc;
         private bool _hasTranslation;
+        private string? _sourceLanguage;
+        private string? _targetLanguage;
+
+        
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
+        public event EventHandler<ValidationErrorEventArgs>? LanguageErrorChanged;
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Argumentausnahmen korrekt instanziieren", Justification = "<Ausstehend>")]
@@ -69,7 +74,7 @@ namespace Tsltn
             set
             {
                 _hasTranslation = value;
-                OnPropertyChanged(nameof(HasTranslation));
+                OnPropertyChanged();
 
                 if (!value)
                 {
@@ -86,25 +91,54 @@ namespace Tsltn
             set
             {
                 _translation = value ?? "";
-                OnPropertyChanged(nameof(Translation));
+                OnPropertyChanged();
             }
         }
 
-        public string? SourceLanguage { get; set; }
+        public string? SourceLanguage
+        {
+            get => _sourceLanguage;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    _sourceLanguage = null;
+                }
+                else
+                {
+                    _sourceLanguage = value.Replace(" ","", StringComparison.Ordinal);
+                    OnPropertyChanged();
+
+                    // wirft ggf. CultureNotFoundException
+                    CultureInfo.GetCultureInfoByIetfLanguageTag(_sourceLanguage);
+                }
+            }
+        }
 
 
-        public string? TargetLanguage { get; set; }
+        public string? TargetLanguage
+        {
+            get => _targetLanguage;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    _targetLanguage = null;
+                }
+                else
+                {
+                    _targetLanguage = value.Replace(" ", "", StringComparison.Ordinal);
+                    OnPropertyChanged();
+
+                    // wirft ggf. CultureNotFoundException
+                    CultureInfo.GetCultureInfoByIetfLanguageTag(_targetLanguage);
+                }
+            }
+        }
 
 
         public string? SourceFileName { get; }
 
-        //public bool HasNodeAncestor => _node.HasAncestor;
-
-        //public bool HasNodeDescendant => _node.HasDescendant;
-
-        //public string InnerXml => _node.InnerXml;
-
-        //public string NodePath => _node.NodePath;
 
 
         public INode CurrentNode
@@ -114,7 +148,7 @@ namespace Tsltn
             set
             {
                 _node = value;
-                OnPropertyChanged(nameof(CurrentNode));
+                OnPropertyChanged();
             }
         }
 
@@ -151,25 +185,22 @@ namespace Tsltn
                 _node.Translation = null;
             }
 
-            this._tbSourceLanguage.GetBindingExpression(TextBox.TextProperty).UpdateSource();
 
-
-            SourceLanguage = string.IsNullOrWhiteSpace(SourceLanguage) ? null : SourceLanguage.Replace(" ", "", StringComparison.Ordinal);
-
-
-            if(SourceLanguage != _doc.SourceLanguage)
+            if (!Validation.GetHasError(_tbSourceLanguage))
             {
-                _doc.SourceLanguage = SourceLanguage;
+                if (SourceLanguage != _doc.SourceLanguage)
+                {
+                    _doc.SourceLanguage = SourceLanguage;
+                }
             }
 
 
-            this._tbTargetLanguage.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-
-            TargetLanguage = string.IsNullOrWhiteSpace(TargetLanguage) ? null : TargetLanguage.Replace(" ", "", StringComparison.Ordinal);
-
-            if (TargetLanguage != _doc.TargetLanguage)
+            if (!Validation.GetHasError(_tbTargetLanguage))
             {
-                _doc.TargetLanguage = TargetLanguage;
+                if (TargetLanguage != _doc.TargetLanguage)
+                {
+                    _doc.TargetLanguage = TargetLanguage;
+                }
             }
         }
 
@@ -247,6 +278,7 @@ namespace Tsltn
         //    }
         //}
 
+
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Clipboard.Clear();
@@ -266,25 +298,29 @@ namespace Tsltn
         {
             var allWnd = new BrowseAllTranslationsWindow(_doc.GetAllTranslations());
 
-            allWnd.ShowDialog(_owner);
-
-            if(allWnd._lbTranslations.SelectedItem is KeyValuePair<long, string> kvp)
+            if (true == allWnd.ShowDialog(_owner))
             {
-                this.HasTranslation = true;
-                this.Translation = kvp.Value;
+                if (allWnd._lbTranslations.SelectedItem is KeyValuePair<long, string> kvp)
+                {
+                    this.HasTranslation = true;
+                    this.Translation = kvp.Value;
+                }
             }
         }
 
 
-        
 
-    
-
-        private void OnPropertyChanged(string propName)
+        private void OnPropertyChanged([CallerMemberName] string propName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
-        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void OnLanguageErrorChanged(ValidationErrorEventArgs e) => LanguageErrorChanged?.Invoke(this, e);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Language_Error(object sender, ValidationErrorEventArgs e) => OnLanguageErrorChanged(e);
     }
 }

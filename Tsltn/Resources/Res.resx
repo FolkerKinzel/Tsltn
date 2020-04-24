@@ -151,6 +151,12 @@
   <data name="HelpMenuHeader" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="InvalidSourceLanguage" xml:space="preserve">
+    <value>Source Language is not a valid IETF language tag.</value>
+  </data>
+  <data name="InvalidTargetLanguage" xml:space="preserve">
+    <value>Target Language is not a valid IETF language tag.</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Next &gt;</value>
   </data>

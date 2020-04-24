@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Tsltn.Resources;
 
@@ -43,6 +44,9 @@ namespace Tsltn
 
 
         private readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
+        private readonly DataError InvalidSourceLanguage = new DataError(ErrorLevel.Error, Res.InvalidSourceLanguage, null);
+        private readonly DataError InvalidTargetLanguage = new DataError(ErrorLevel.Error, Res.InvalidTargetLanguage, null);
+
 
         public string FileName => _fileController.FileName;
 
@@ -129,6 +133,7 @@ namespace Tsltn
                 var cntr = new TsltnControl(this, _doc);
                 _ccContent.Content = cntr;
                 cntr.PropertyChanged += TsltnControl_PropertyChanged;
+                cntr.LanguageErrorChanged += TsltnControl_LanguageErrorChanged;
                 _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
             }
             else
@@ -138,6 +143,7 @@ namespace Tsltn
             }
         }
 
+        
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void _fileController_Message(object? sender, MessageEventArgs e)
         {
@@ -151,6 +157,34 @@ namespace Tsltn
                 if (sender is TsltnControl cntr)
                 {
                     _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
+                }
+            }
+        }
+
+        private void TsltnControl_LanguageErrorChanged(object? sender, System.Windows.Controls.ValidationErrorEventArgs e)
+        {
+            if(e.OriginalSource is TextBox tb)
+            {
+                if (_ccContent.Content is TsltnControl cntr)
+                {
+                    if (tb.Name == nameof(TsltnControl._tbSourceLanguage))
+                    {
+                        this.Errors.Remove(InvalidSourceLanguage);
+
+                        if (Validation.GetHasError(cntr._tbSourceLanguage))
+                        {
+                            this.Errors.Insert(0, InvalidSourceLanguage);
+                        }
+                    }
+                    else
+                    {
+                        this.Errors.Remove(InvalidTargetLanguage);
+
+                        if (Validation.GetHasError(cntr._tbTargetLanguage))
+                        {
+                            this.Errors.Insert(0, InvalidTargetLanguage);
+                        }
+                    }
                 }
             }
         }
@@ -337,7 +371,7 @@ namespace Tsltn
                 {
                     if (!Errors.Contains(err))
                     {
-                        Errors.Add(err);
+                        Errors.Insert(0, err);
                     }
                 }
             }
