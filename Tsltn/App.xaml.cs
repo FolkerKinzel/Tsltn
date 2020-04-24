@@ -1,11 +1,14 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
+using FolkerKinzel.WpfTools;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,7 +41,7 @@ namespace Tsltn
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            new MainWindow(Document.Instance, new FileController(Document.Instance), new RecentFilesMenu()).Show();
+            new MainWindow(Document.Instance, new FileController(Document.Instance), new RecentFilesMenu(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!)).Show();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]

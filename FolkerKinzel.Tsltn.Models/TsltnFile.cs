@@ -29,7 +29,8 @@ namespace FolkerKinzel.Tsltn.Models
 
         private readonly Dictionary<long, string> _translations = new Dictionary<long, string>();
 
-        private string? _sourceDocumentFileName;
+        private string? _sourceDocumentRelativePath;
+        private string? _sourceDocumentAbsolutePath;
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
@@ -44,16 +45,15 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal string SourceDocumentFileName
         {
-            get { return _sourceDocumentFileName ?? throw new ArgumentNullException(nameof(SourceDocumentFileName)); }
+            get { return _sourceDocumentAbsolutePath ?? throw new ArgumentNullException(nameof(SourceDocumentFileName)); }
             set
             {
-                _sourceDocumentFileName = value;
+                // Der relative Pfad wird beim Speichern wieder in einen solchen 
+                // umgewandelt. In der Anwendung wird nur der absolute Pfad benutzt.
+                _sourceDocumentRelativePath = _sourceDocumentAbsolutePath = value;
                 Changed = true;
             }
         }
-
-
-        
 
 
         internal string? SourceLanguage
@@ -112,9 +112,9 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal void Save(string? tsltnFileName)
         {
-            if (Path.IsPathRooted(this.SourceDocumentFileName))
+            if (Path.IsPathRooted(this._sourceDocumentRelativePath))
             {
-                this._sourceDocumentFileName = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this.SourceDocumentFileName);
+                this._sourceDocumentRelativePath = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this._sourceDocumentRelativePath);
             }
 
             var settings = new XmlWriterSettings
@@ -125,7 +125,6 @@ namespace FolkerKinzel.Tsltn.Models
 
             using var writer = XmlWriter.Create(tsltnFileName, settings);
 
-            
             var serializer = new XmlSerializer(typeof(TsltnFile));
             serializer.Serialize(writer, this);
            
@@ -133,13 +132,22 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal static TsltnFile Load(string fileName)
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        internal static TsltnFile Load(string tsltnFileName)
         {
-            using var reader = XmlReader.Create(fileName);
+            using var reader = XmlReader.Create(tsltnFileName);
 
             var serializer = new XmlSerializer(typeof(TsltnFile));
 
-            return (TsltnFile)serializer.Deserialize(reader);
+            var tsltn = (TsltnFile)serializer.Deserialize(reader);
+
+            try
+            {
+                tsltn._sourceDocumentAbsolutePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), tsltn._sourceDocumentRelativePath));
+            }
+            catch { }
+
+            return tsltn;
         }
 
 
@@ -156,9 +164,9 @@ namespace FolkerKinzel.Tsltn.Models
         {
             reader.MoveToContent();
 
-            _sourceDocumentFileName = reader.GetAttribute(SOURCE_FILE);
+            _sourceDocumentRelativePath = reader.GetAttribute(SOURCE_FILE);
 
-            if(_sourceDocumentFileName is null)
+            if(_sourceDocumentRelativePath is null)
             {
                 throw new XmlException("Source document filename is missing.");
             }
@@ -203,7 +211,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             writer.WriteAttributeString(FILE_VERSION_XML_STRING, FILE_VERSION);
 
-            writer.WriteAttributeString(SOURCE_FILE, SourceDocumentFileName);
+            writer.WriteAttributeString(SOURCE_FILE, _sourceDocumentRelativePath);
             
             if (SourceLanguage != null)
             {

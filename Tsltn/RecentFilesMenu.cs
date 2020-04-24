@@ -1,49 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Input;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.IO;
-using System.Windows.Threading;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Reflection;
-using System.Globalization;
-using System.Threading;
+using System.Windows.Input;
 
-namespace Tsltn
+namespace FolkerKinzel.WpfTools
 {
     /// <summary>
-    /// Klasse, die der Anwendung ein RecentFiles-Menü hinzufügt.
+    /// Klasse, die der Anwendung ein <see cref="RecentFilesMenu"/> hinzufügt.
     /// </summary>
     /// <remarks>
-    /// <para>Der Namespace dieser Datei muss der Root-Namespace der Anwendung sein.</para>
-    /// 
-    /// 
-    /// <para>Um einen Dateinamen zu Properties.Settings.Default.RecentFiles hinzuzufügen muss RecentFilesMenu.AddRecentFile(string)
+    /// <para>Um einen Dateinamen hinzuzufügen muss <see cref="AddRecentFile(string)"/>
     /// aufgerufen werden. Das sollte immer nach dem Öffnen einer Datei geschehen (z.B. in einer Property "CurrentFileName").</para>
-    /// 
-    /// <para>Um eine Datei zu öffnen, muss das Event "RecentFileSelected" abonniert werden. Der Dateiname wird in den 
-    /// RecentFileSelectedEventArgs geliefert.</para>
+    /// <para>Um eine Datei zu öffnen, muss das Event <see cref="RecentFileSelected"/> abonniert werden. Der Dateiname wird in den 
+    /// <see cref="RecentFileSelectedEventArgs"/> geliefert.</para>
     /// </remarks>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
     internal class RecentFilesMenu : IRecentFilesMenu
     {
-        private static class RecentFilesPersistence
+        private class RecentFilesPersistence
         {
-            public static string FileName { get; } = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, $"{Environment.MachineName}.{Environment.UserName}.RF.txt");
+            public RecentFilesPersistence(string persistenceDirectoryPath)
+            {
+                FileName = Path.Combine(persistenceDirectoryPath, $"{Environment.MachineName}.{Environment.UserName}.RF.txt");
+                MutexName = $"Global\\{FileName.Replace('\\', '_')}";
+            }
 
-            public static string MutexName { get; } = $"Global\\{FileName.Replace('\\', '_')}";
+            private string FileName { get; }
 
-            public static List<string> RecentFiles { get; } = new List<string>();
+            private string MutexName { get; }
+
+            public List<string> RecentFiles { get; } = new List<string>();
 
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-            public static Task LoadAsync()
+            public Task LoadAsync()
             {
                 return Task.Run(() =>
                 {
@@ -71,7 +69,7 @@ namespace Tsltn
             }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-            public static Task SaveAsync()
+            public Task SaveAsync()
             {
                 return Task.Run(() =>
                 {
@@ -99,8 +97,10 @@ namespace Tsltn
         public event EventHandler<RecentFileSelectedEventArgs>? RecentFileSelected;
 
 
+
         #region private fields
 
+        private readonly RecentFilesPersistence _persistence;
         readonly ICommand _openRecentFileCommand;
         readonly ICommand _clearRecentFilesCommand;
         MenuItem? _miRecentFiles;
@@ -111,10 +111,11 @@ namespace Tsltn
         #region ctor
 
         /// <summary>
-        /// Initialisiert ein neues RecentFilesMenu.
+        /// Initialisiert ein neues <see cref="RecentFilesMenu"/>.
         /// </summary>
-        public RecentFilesMenu()
+        public RecentFilesMenu(string persistenceDirectoryPath)
         {
+            _persistence = new RecentFilesPersistence(persistenceDirectoryPath);
             _openRecentFileCommand = new OpenRecentFile(new Action<object>(OpenRecentFile_Executed));
             _clearRecentFilesCommand = new ClearRecentFiles(new Action(ClearRecentFiles_Executed));
         }
@@ -141,7 +142,7 @@ namespace Tsltn
             _miRecentFiles = miRecentFiles;
             _miRecentFiles.Loaded += miRecentFiles_Loaded;
 
-            return RecentFilesPersistence.LoadAsync();
+            return _persistence.LoadAsync();
         }
 
         /// <summary>
@@ -159,18 +160,20 @@ namespace Tsltn
 
             if (!string.IsNullOrWhiteSpace(fileName))
             {
-                lock (RecentFilesPersistence.RecentFiles)
-                {
-                    RecentFilesPersistence.RecentFiles.Remove(fileName);
-                    RecentFilesPersistence.RecentFiles.Insert(0, fileName);
+                var recentFiles = _persistence.RecentFiles;
 
-                    if (RecentFilesPersistence.RecentFiles.Count > 10)
+                lock (recentFiles)
+                {
+                    recentFiles.Remove(fileName);
+                    recentFiles.Insert(0, fileName);
+
+                    if (recentFiles.Count > 10)
                     {
-                        RecentFilesPersistence.RecentFiles.RemoveAt(10);
+                        recentFiles.RemoveAt(10);
                     }
                 }
 
-                return RecentFilesPersistence.SaveAsync();
+                return _persistence.SaveAsync();
             }
 
             return Task.CompletedTask;
@@ -191,12 +194,12 @@ namespace Tsltn
             }
 
             bool result;
-            lock (RecentFilesPersistence.RecentFiles)
+            lock (_persistence.RecentFiles)
             {
-                result = RecentFilesPersistence.RecentFiles.Remove(fileName);
+                result = _persistence.RecentFiles.Remove(fileName);
             }
 
-            return result ? RecentFilesPersistence.SaveAsync() : Task.CompletedTask;
+            return result ? _persistence.SaveAsync() : Task.CompletedTask;
         }
 
 
@@ -206,9 +209,9 @@ namespace Tsltn
         /// <returns>Name der zuletzt geöffneten Datei zurück oder null, wenn dieser nicht existiert.</returns>
         public string? GetMostRecentFile()
         {
-            lock (RecentFilesPersistence.RecentFiles)
+            lock (_persistence.RecentFiles)
             {
-                return RecentFilesPersistence.RecentFiles.FirstOrDefault();
+                return _persistence.RecentFiles.FirstOrDefault();
             }
         }
 
@@ -220,22 +223,26 @@ namespace Tsltn
 
         #region miRecentFiles_Loaded
 
-        private void miRecentFiles_Loaded(object sender, RoutedEventArgs e)
+        private async void miRecentFiles_Loaded(object sender, RoutedEventArgs e)
         {
             if (_miRecentFiles is null)
             {
                 throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
-            _miRecentFiles.Dispatcher.BeginInvoke(new Action(
-                async () =>
-                {
-                    await RecentFilesPersistence.LoadAsync().ConfigureAwait(true);
-                    UpdateRecentFiles();
-                }), DispatcherPriority.Send);
+            //_miRecentFiles.Dispatcher.BeginInvoke(new Action(
+            //    async () =>
+            //    {
+            //        await RecentFilesPersistence.LoadAsync().ConfigureAwait(true);
+            //        UpdateRecentFiles();
+            //    }), DispatcherPriority.Send);
+
+            await _persistence.LoadAsync().ConfigureAwait(true);
+            UpdateRecentFiles();
         }
 
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateRecentFiles()
         {
             if (_miRecentFiles is null)
@@ -245,7 +252,7 @@ namespace Tsltn
 
             _miRecentFiles.Items.Clear();
 
-            if (RecentFilesPersistence.RecentFiles.Count == 0)
+            if (_persistence.RecentFiles.Count == 0)
             {
                 _miRecentFiles.IsEnabled = false;
             }
@@ -255,7 +262,7 @@ namespace Tsltn
                 {
                     _miRecentFiles.IsEnabled = true;
 
-                    var recentFiles = RecentFilesPersistence.RecentFiles;
+                    var recentFiles = _persistence.RecentFiles;
 
                     lock (recentFiles)
                     {
@@ -335,11 +342,11 @@ namespace Tsltn
                 throw new InvalidOperationException($"The MenuItem has not been initialized. Call {nameof(InitializeAsync)} first!");
             }
 
-            lock (RecentFilesPersistence.RecentFiles)
+            lock (_persistence.RecentFiles)
             {
-                RecentFilesPersistence.RecentFiles.Clear();
+                _persistence.RecentFiles.Clear();
             }
-            RecentFilesPersistence.SaveAsync();
+            _persistence.SaveAsync();
         }
 
         #endregion

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Tsltn
+namespace FolkerKinzel.WpfTools
 {
     public interface IRecentFilesMenu
     {

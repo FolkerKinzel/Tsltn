@@ -73,6 +73,8 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                 section = Document.GetNextNode(section);
 
                 s = Utility.GetNodePath(section);
+
+                Assert.IsNotNull(s);
             }
 
             for (int i = 0; i < 20; i++)
@@ -85,6 +87,8 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                 section = Document.GetPreviousNode(section);
 
                 s = Utility.GetNodePath(section);
+
+                Assert.IsNotNull(s);
 
             }
 

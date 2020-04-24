@@ -253,6 +253,14 @@ namespace FolkerKinzel.Tsltn.Controllers
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
         {
+            try
+            {
+                await Task.WhenAll(this.Tasks.ToArray()).ConfigureAwait(true);
+            }
+            catch { }
+            
+            this.Tasks.Clear();
+
             if (!await DoSaveTsltnAsync(_doc.TsltnFileName).ConfigureAwait(true))
             {
                 return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
@@ -293,19 +301,6 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
         }
-
-
-        public Task<(List<DataError> Errors, List<KeyValuePair<long, string>> UnusedTranslations)> DoTranslateAsync(string fileName)
-        {
-            return Task.Run(() =>
-            {
-                _doc.Translate(fileName, Res.InvalidXml, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
-                return (Errors: errors, UnusedTranslations: unusedTranslations);
-            });
-        }
-
-
-        
 
 
         #endregion

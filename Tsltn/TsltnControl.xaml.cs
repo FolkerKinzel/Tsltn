@@ -43,7 +43,7 @@ namespace Tsltn
                 throw new ArgumentNullException();
             }
 
-            this.DataContext = this;
+            //this.DataContext = this;
 
             this._owner = owner;
             this._doc = doc;
@@ -136,12 +136,8 @@ namespace Tsltn
             // Die lokale Variable muss benutzt werden,
             // da Translation nie null zurückgibt.
             this.HasTranslation = transl != null;
-
-            //OnPropertyChanged(nameof(InnerXml));
-            //OnPropertyChanged(nameof(HasNodeAncestor));
-            //OnPropertyChanged(nameof(HasNodeDescendant));
-            //OnPropertyChanged(nameof(NodePath));
         }
+
 
         internal void UpdateSource()
         {
@@ -268,7 +264,15 @@ namespace Tsltn
 
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            var allWnd = new BrowseAllTranslationsWindow(_doc.GetAllTranslations());
 
+            allWnd.ShowDialog(_owner);
+
+            if(allWnd._lbTranslations.SelectedItem is KeyValuePair<long, string> kvp)
+            {
+                this.HasTranslation = true;
+                this.Translation = kvp.Value;
+            }
         }
 
 

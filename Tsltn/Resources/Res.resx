@@ -126,6 +126,9 @@
   <data name="BrowseAll" xml:space="preserve">
     <value>Browse all</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Cntrl" xml:space="preserve">
     <value>Cntrl</value>
   </data>
@@ -153,6 +156,9 @@
   <data name="NoElementFound" xml:space="preserve">
     <value>No element was found, that contains "{0}" in its path.</value>
   </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="Original" xml:space="preserve">
     <value>Original</value>
   </data>
@@ -167,6 +173,9 @@
   </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
+  </data>
+  <data name="SelectTranslation" xml:space="preserve">
+    <value>Select translation</value>
   </data>
   <data name="Shift" xml:space="preserve">
     <value>Shift</value>
@@ -191,5 +200,11 @@
   </data>
   <data name="UntranslatedElement" xml:space="preserve">
     <value>At least one Element has no translation.</value>
+  </data>
+  <data name="UnusedTranslations" xml:space="preserve">
+    <value>Unused translations</value>
+  </data>
+  <data name="UnusedTranslationsExplanation" xml:space="preserve">
+    <value>The file "{0}" contains unused translations. Check the boxes next to them, to remove the selected ones.</value>
   </data>
 </root>

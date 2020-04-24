@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,15 +6,15 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Copyright>Copyright © 2020 Folker Kinzel</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <FileVersion>1.0.10.0</FileVersion>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Remove="IRecentFilesMenu.cs" />
+    <Compile Remove="RecentFilesMenu.cs" />
     <Compile Remove="TsltnPage.xaml.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="HistoryTable_16x.png" />
     <None Remove="pics\CloseDocument_16x.png" />
@@ -31,27 +30,27 @@
     <None Remove="pics\StatusWarning_16x.png" />
     <None Remove="pics\TranslateDocument_16x.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Page Remove="TsltnPage.xaml" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Controllers\FolkerKinzel.Tsltn.Controllers.csproj" />
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="FolkerKinzel.WpfTools">
+      <HintPath>deps\netcoreapp3.1\FolkerKinzel.WpfTools.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Res.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -59,14 +58,12 @@
       <DependentUpon>Res.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Resources\Res.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Res.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <Resource Include="pics\Help_16x.png" />
     <Resource Include="pics\HistoryTable_16x.png" />
@@ -82,5 +79,7 @@
     <Resource Include="pics\StatusWarning_16x.png" />
     <Resource Include="pics\TranslateDocument_16x.png" />
   </ItemGroup>
-
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName)" />
+  </Target>
 </Project>

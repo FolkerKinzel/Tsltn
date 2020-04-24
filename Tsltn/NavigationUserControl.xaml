@@ -8,8 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             FontSize="16"
-             MinWidth="220">
+             MinWidth="220"
+            TextOptions.TextFormattingMode="Display">
     <UserControl.CommandBindings>
         <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
     </UserControl.CommandBindings>

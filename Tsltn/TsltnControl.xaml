@@ -9,8 +9,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="WhiteSmoke"
+             Padding="5,0"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              FontSize="16"
-             Padding="5,0">
+             TextOptions.TextFormattingMode="Display">
     <UserControl.Resources>
         <Style x:Key="HeaderTextBlock" TargetType="TextBlock">
             <Style.Setters>
@@ -20,12 +22,9 @@
                 <Setter Property="Foreground" Value="White"/>
             </Style.Setters>
         </Style>
-        <Style TargetType="Button">
-            <Style.Setters>
-                <Setter Property="Padding" Value="7,2,7,2"/>
-                <Setter Property="MinWidth" Value="90"/>
-            </Style.Setters>
-        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource StdButton}"/>
+
+
         <Style TargetType="Label">
             <Style.Setters>
                 <Setter Property="Padding" Value="7,2,7,2"/>
@@ -122,7 +121,7 @@
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"
-                 Padding="10" FontSize="22" Background="WhiteSmoke"/>
+                 Padding="10" FontSize="22" Background="WhiteSmoke" TextWrapping="WrapWithOverflow"/>
 
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

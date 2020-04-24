@@ -15,8 +15,9 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         Closed="Window_Closed"
-        Background="DarkGray"
-        FontSize="16">
+        Background="Gray"
+        FontSize="16"
+        TextOptions.TextFormattingMode="Display" >
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Style.Setters>
@@ -63,7 +64,7 @@
                         <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="Save">
+                <MenuItem Name="_miSave" Command="Save" Loaded="_miSave_Loaded">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
                     </MenuItem.Icon>

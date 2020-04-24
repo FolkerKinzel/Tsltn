@@ -87,7 +87,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             }
         }
 
-        private bool GetTsltnOutFileName([NotNullWhen(true)] ref string fileName)
+        private bool GetTsltnOutFileName(ref string fileName)
         {
             var dlg = new SaveFileDialog()
             {
@@ -113,7 +113,8 @@ namespace FolkerKinzel.Tsltn.Controllers
             }
             else
             {
-                fileName = null;
+                // Da bei der Rückgabe von false nichts gespeichert wird, kann der Rückgabewert leer sein.
+                fileName = "";
                 return false;
             }
         }
@@ -125,13 +126,13 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             var dlg = new SaveFileDialog()
             {
-                FileName = fileName,
+                FileName = Path.GetFileName(fileName),
                 AddExtension = true,
                 CheckFileExists = false,
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
-                InitialDirectory = System.IO.Path.GetDirectoryName(_doc.SourceDocumentFileName),
+                InitialDirectory = System.IO.Path.GetDirectoryName(fileName),
                 DefaultExt = ".xml",
                 DereferenceLinks = true
             };

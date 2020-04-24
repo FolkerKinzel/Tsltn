@@ -110,29 +110,17 @@ namespace FolkerKinzel.Tsltn.Models
 
             this.TsltnFileName = tsltnFileName;
 
-
-            string xmlFileName;
-            try
-            {
-                xmlFileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(tsltnFileName), _tsltn.SourceDocumentFileName));
-            }
-            catch
-            {
-                return false;
-            }
-
-            return LoadSourceDocument(xmlFileName);
+            return LoadSourceDocument(_tsltn.SourceDocumentFileName);
         }
 
 
-        private bool LoadSourceDocument(string xmlFileName)
+        private bool LoadSourceDocument(string? xmlFileName)
         {
-            if (!File.Exists(xmlFileName))
+            if (xmlFileName is null || !File.Exists(xmlFileName))
             {
                 return false;
             }
             
-
             _xmlDocument = XDocument.Load(xmlFileName, LoadOptions.None);
 
             InitFirstNode();

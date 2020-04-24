@@ -1,5 +1,6 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
+using FolkerKinzel.WpfTools;
 using Microsoft.Win32;
 using System;
 using System.Collections.Concurrent;
@@ -30,6 +31,7 @@ namespace Tsltn
         private readonly IFileController _fileController;
         private readonly IRecentFilesMenu _recentFilesMenu;
         private DataError? _missingTranslation;
+        private bool _isCommandEnabled = true;
 
         public MainWindow(IDocument doc, IFileController fileController, IRecentFilesMenu recentFilesMenu)
         {
@@ -41,15 +43,19 @@ namespace Tsltn
         }
 
 
+        private static readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
+
         public string FileName => _fileController.FileName;
 
 
-        private DataError GetMissingTranslationWarning(INode node)
+        public bool IsCommandEnabled
         {
-            this._missingTranslation ??= new DataError(ErrorLevel.Warning, Res.UntranslatedElement, node);
-            this._missingTranslation.Node = node;
-
-            return this._missingTranslation;
+            get => _isCommandEnabled;
+            set
+            {
+                _isCommandEnabled = value;
+                OnPropertyChanged(nameof(IsCommandEnabled));
+            }
         }
 
 
@@ -79,6 +85,8 @@ namespace Tsltn
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
         }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_BadFileName(object? sender, BadFileNameEventArgs e)
         {
             _fileController.Tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
@@ -89,17 +97,14 @@ namespace Tsltn
             e.Result = e.Dialog.ShowDialog(this);
         }
 
-        private void _fileController_RefreshData(object? sender, EventArgs e)
-        {
-            if(_ccContent.Content is TsltnControl control)
-            {
-                control.UpdateSource();
-            }
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _fileController_RefreshData(object? sender, EventArgs e) => RefreshData();
+
+
 
         private void _fileController_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(_fileController.FileName))
+            if (e.PropertyName == nameof(_fileController.FileName))
             {
                 OnPropertyChanged(nameof(FileName));
             }
@@ -115,12 +120,12 @@ namespace Tsltn
 
         private void _fileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
         {
-            if(e.HasContent)
+            if (e.HasContent)
             {
                 var cntr = new TsltnControl(this, _doc);
                 _ccContent.Content = cntr;
                 cntr.PropertyChanged += TsltnControl_PropertyChanged;
-                CheckUntranslatedNodesAsync(cntr);
+                _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
             }
             else
             {
@@ -129,13 +134,19 @@ namespace Tsltn
             }
         }
 
+        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
+        private void _fileController_Message(object? sender, MessageEventArgs e)
+        {
+            e.Result = MessageBox.Show(this, e.Message, App.PROGRAM_NAME, e.Button, e.Image, e.DefaultResult);
+        }
+
         private void TsltnControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(TsltnControl.HasTranslation))
+            if (e.PropertyName == nameof(TsltnControl.HasTranslation))
             {
-                if(sender is TsltnControl cntr)
+                if (sender is TsltnControl cntr)
                 {
-                    CheckUntranslatedNodesAsync(cntr);
+                    _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
                 }
             }
         }
@@ -144,25 +155,17 @@ namespace Tsltn
         {
             DataError? err = (e.OriginalSource as FrameworkElement)?.DataContext as DataError;
 
-            if(_ccContent.Content is TsltnControl control)
+            if (_ccContent.Content is TsltnControl control)
             {
                 control.Navigate(err?.Node);
             }
         }
 
-
-        
-
-
-        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        private void _fileController_Message(object? sender, MessageEventArgs e)
-        {
-            e.Result = MessageBox.Show(this, e.Message, App.PROGRAM_NAME, e.Button, e.Image, e.DefaultResult);
-        }
+       
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
-            if(!await _fileController.CloseTsltnAsync().ConfigureAwait(true))
+            if (!await _fileController.CloseTsltnAsync().ConfigureAwait(true))
             {
                 e.Cancel = true;
             }
@@ -171,11 +174,7 @@ namespace Tsltn
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         private async void Window_Closed(object sender, EventArgs e)
         {
-            try
-            {
-                await Task.WhenAll(_fileController.Tasks.ToArray()).ConfigureAwait(false);
-            }
-            catch { }
+            await WaitAllTasks().ConfigureAwait(false);
         }
 
         private void RecentFilesMenu_RecentFileSelected(object? sender, RecentFileSelectedEventArgs e)
@@ -208,6 +207,9 @@ namespace Tsltn
             MessageBox.Show(sb.ToString(), $"{App.PROGRAM_NAME} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _miSave_Loaded(object sender, RoutedEventArgs e) => RefreshData();
+
         #endregion
 
         #region Commands
@@ -219,7 +221,10 @@ namespace Tsltn
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.NewTsltnAsync();
+        private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        {
+            _ = _fileController.NewTsltnAsync();
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.OpenTsltnAsync(null);
@@ -227,7 +232,7 @@ namespace Tsltn
 
         private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _doc.SourceDocumentFileName != null;
+            e.CanExecute = IsCommandEnabled && _doc.SourceDocumentFileName != null;
         }
 
 
@@ -236,57 +241,88 @@ namespace Tsltn
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _doc.Changed;
+            e.CanExecute = IsCommandEnabled && _doc.Changed;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e) => _ = _fileController.SaveTsltnAsync();
-
+        private async void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e)
+        {
+            IsCommandEnabled = false;
+            await _fileController.SaveTsltnAsync().ConfigureAwait(false);
+            IsCommandEnabled = true;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.SaveAsTsltnAsync();
-
+        private async void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        {
+            IsCommandEnabled = false;
+            await WaitAllTasks().ConfigureAwait(true);
+            await _fileController.SaveAsTsltnAsync().ConfigureAwait(false);
+            IsCommandEnabled = true;
+        }
 
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
+            IsCommandEnabled = false;
+
+            await WaitAllTasks().ConfigureAwait(true);
+
             var result = await _fileController.TranslateAsync().ConfigureAwait(true);
+
+            IsCommandEnabled = true;
 
             this.Errors.Clear();
 
-            foreach (var error in result.Errors)
+            if (this._ccContent.Content is TsltnControl tsltnControl)
             {
-                Errors.Add(error);
-            }
-            
-
-            if (result.UnusedTranslations.Any())
-            {
-                
-
-                foreach (var kvp in result.UnusedTranslations)
+                foreach (var error in result.Errors)
                 {
-                    _doc.RemoveTranslation(kvp.Key);
+                    Errors.Add(error);
                 }
-            }
+
+                await CheckUntranslatedNodesAsync(tsltnControl).ConfigureAwait(true);
+
+
+                if (result.UnusedTranslations.Any())
+                {
+                    var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(_fileController.FileName), result.UnusedTranslations);
+
+                    wnd.ShowDialog(this);
+
+                    foreach (var cntr in wnd.Controls)
+                    {
+                        if (cntr.Remove)
+                        {
+                            _doc.RemoveTranslation(cntr.Kvp.Key);
+                        }
+                    }
+                }
+            };
         }
 
-        
+
         #endregion
-
-
-
 
 
         private void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 
-        private async void CheckUntranslatedNodesAsync(TsltnControl cntr)
+        private async Task CheckUntranslatedNodesAsync(TsltnControl cntr)
         {
-            INode? result = cntr.HasTranslation ? await Task.Run(cntr.CurrentNode.GetNextUntranslated).ConfigureAwait(true) : cntr.CurrentNode;
+            IsCommandEnabled = false;
+
+            await WaitAllTasks().ConfigureAwait(true);
+
+            var task = Task.Run(cntr.CurrentNode.GetNextUntranslated);
+            _fileController.Tasks.Add(task);
+            INode? result = await task.ConfigureAwait(true);
+
+            IsCommandEnabled = true;
 
             if (_doc.SourceDocumentFileName != null)
             {
-                var err = this.GetMissingTranslationWarning(result!);
+                var err = MissingTranslationWarning;
+                err.Node = result;
 
                 if (result is null)
                 {
@@ -301,5 +337,27 @@ namespace Tsltn
                 }
             }
         }
+
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        private async Task WaitAllTasks()
+        {
+            try
+            {
+                await Task.WhenAll(_fileController.Tasks.ToArray()).ConfigureAwait(false);
+            }
+            catch { }
+
+            _fileController.Tasks.Clear();
+        }
+
+
+        private void RefreshData()
+        {
+            if (_ccContent.Content is TsltnControl control)
+            {
+                control.UpdateSource();
+            }
+        }
+
     }
 }

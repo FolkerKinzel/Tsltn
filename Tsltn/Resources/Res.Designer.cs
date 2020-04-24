@@ -88,6 +88,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cntrl ähnelt.
         /// </summary>
         public static string Cntrl {
@@ -169,6 +178,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die OK ähnelt.
+        /// </summary>
+        public static string OK {
+            get {
+                return ResourceManager.GetString("OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Original ähnelt.
         /// </summary>
         public static string Original {
@@ -210,6 +228,15 @@ namespace Tsltn.Resources {
         public static string Reset {
             get {
                 return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select translation ähnelt.
+        /// </summary>
+        public static string SelectTranslation {
+            get {
+                return ResourceManager.GetString("SelectTranslation", resourceCulture);
             }
         }
         
@@ -282,6 +309,24 @@ namespace Tsltn.Resources {
         public static string UntranslatedElement {
             get {
                 return ResourceManager.GetString("UntranslatedElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unused translations ähnelt.
+        /// </summary>
+        public static string UnusedTranslations {
+            get {
+                return ResourceManager.GetString("UnusedTranslations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file &quot;{0}&quot; contains unused translations. Check the boxes next to them, to remove the selected ones. ähnelt.
+        /// </summary>
+        public static string UnusedTranslationsExplanation {
+            get {
+                return ResourceManager.GetString("UnusedTranslationsExplanation", resourceCulture);
             }
         }
     }

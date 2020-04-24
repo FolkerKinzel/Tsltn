@@ -8,7 +8,7 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public class DataError
     {
-        public DataError(ErrorLevel level, string message, INode node)
+        public DataError(ErrorLevel level, string message, INode? node)
         {
             this.Level = level;
             this.Message = message;
@@ -17,6 +17,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         public ErrorLevel Level { get; }
         public string Message { get; }
-        public INode Node { get; set; }
+        public INode? Node { get; set; }
     }
 }
