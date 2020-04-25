@@ -16,10 +16,10 @@ namespace FolkerKinzel.Tsltn.Models.Intls
     internal static class Utility
     {
         private const int LIST_MAX_CAPACITY = 8;
-        private const int STRING_BUILDER_MAX_CAPACITY = 512;
+        private const int STRING_BUILDER_MAX_CAPACITY = 1024;
 
-        private static readonly StringBuilder _sb = new StringBuilder(1024);
-        private static readonly List<string> _list = new List<string>(8);
+        private static readonly StringBuilder _sb = new StringBuilder(STRING_BUILDER_MAX_CAPACITY);
+        private static readonly List<string> _list = new List<string>(LIST_MAX_CAPACITY);
         
 
         internal static void Cleanup()

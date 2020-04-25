@@ -293,12 +293,10 @@ namespace Tsltn
 
         #endregion
 
+
         #region private
 
-        private void OnPropertyChanged([CallerMemberName] string propName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
