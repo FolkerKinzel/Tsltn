@@ -97,6 +97,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
+        /// </summary>
+        public static string CloseMenuItem {
+            get {
+                return ResourceManager.GetString("CloseMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cntrl ähnelt.
         /// </summary>
         public static string Cntrl {
@@ -169,6 +178,24 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Help ähnelt.
+        /// </summary>
+        public static string HelpMenuItem {
+            get {
+                return ResourceManager.GetString("HelpMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Help ähnelt.
+        /// </summary>
+        public static string HelpWindowTitle {
+            get {
+                return ResourceManager.GetString("HelpWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Source Language is not a valid IETF language tag. ähnelt.
         /// </summary>
         public static string InvalidSourceLanguage {
@@ -183,6 +210,15 @@ namespace Tsltn.Resources {
         public static string InvalidTargetLanguage {
             get {
                 return ResourceManager.GetString("InvalidTargetLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die New ähnelt.
+        /// </summary>
+        public static string NewMenuItem {
+            get {
+                return ResourceManager.GetString("NewMenuItem", resourceCulture);
             }
         }
         
@@ -219,6 +255,24 @@ namespace Tsltn.Resources {
         public static string OK {
             get {
                 return ResourceManager.GetString("OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} at GitHub ähnelt.
+        /// </summary>
+        public static string OnlineHelpMenuHeader {
+            get {
+                return ResourceManager.GetString("OnlineHelpMenuHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Open ähnelt.
+        /// </summary>
+        public static string OpenMenuItem {
+            get {
+                return ResourceManager.GetString("OpenMenuItem", resourceCulture);
             }
         }
         
@@ -268,6 +322,24 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save As ähnelt.
+        /// </summary>
+        public static string SaveAsMenuItem {
+            get {
+                return ResourceManager.GetString("SaveAsMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
+        /// </summary>
+        public static string SaveMenuItem {
+            get {
+                return ResourceManager.GetString("SaveMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Select translation ähnelt.
         /// </summary>
         public static string SelectTranslation {
@@ -304,6 +376,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The source language is not specified. (Use IETF language tag.) ähnelt.
+        /// </summary>
+        public static string SourceLanguageNotSpecified {
+            get {
+                return ResourceManager.GetString("SourceLanguageNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Target language: ähnelt.
         /// </summary>
         public static string TargetLanguage {
@@ -313,11 +394,20 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The target language is not specified. (Use IETF language tag.) ähnelt.
+        /// </summary>
+        public static string TargetLanguageNotSpecified {
+            get {
+                return ResourceManager.GetString("TargetLanguageNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Translate ähnelt.
         /// </summary>
-        public static string Translate {
+        public static string TranslateMenuItem {
             get {
-                return ResourceManager.GetString("Translate", resourceCulture);
+                return ResourceManager.GetString("TranslateMenuItem", resourceCulture);
             }
         }
         

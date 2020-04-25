@@ -8,8 +8,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>1.0.10.0</FileVersion>
+    <FileVersion>1.0.14.0</FileVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
+    <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="IRecentFilesMenu.cs" />
@@ -24,12 +25,15 @@
     <None Remove="pics\NewFile_16x.png" />
     <None Remove="pics\Open_16x.png" />
     <None Remove="pics\SaveAs_16x.png" />
+    <None Remove="pics\SaveAs_grey_16x.png" />
     <None Remove="pics\Save_16x.png" />
+    <None Remove="pics\Save_grey_16x.png" />
     <None Remove="pics\ShutDown_16x.png" />
     <None Remove="pics\StatusCriticalError_16x.png" />
     <None Remove="pics\StatusInformation_16x.png" />
     <None Remove="pics\StatusWarning_16x.png" />
     <None Remove="pics\TranslateDocument_16x.png" />
+    <None Remove="pics\Web_16x.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Remove="Resources\Help.xaml" />
@@ -75,12 +79,15 @@
     <Resource Include="pics\NewFile_16x.png" />
     <Resource Include="pics\Open_16x.png" />
     <Resource Include="pics\SaveAs_16x.png" />
+    <Resource Include="pics\SaveAs_grey_16x.png" />
     <Resource Include="pics\Save_16x.png" />
+    <Resource Include="pics\Save_grey_16x.png" />
     <Resource Include="pics\ShutDown_16x.png" />
     <Resource Include="pics\StatusCriticalError_16x.png" />
     <Resource Include="pics\StatusInformation_16x.png" />
     <Resource Include="pics\StatusWarning_16x.png" />
     <Resource Include="pics\TranslateDocument_16x.png" />
+    <Resource Include="pics\Web_16x.png" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName)" />

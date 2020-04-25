@@ -9,13 +9,35 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace FolkerKinzel.Tsltn.Models.Intls
 {
     internal static class Utility
     {
-        private static readonly StringBuilder _sb = new StringBuilder();
-        private static readonly List<string> _list = new List<string>();
+        private const int LIST_MAX_CAPACITY = 8;
+        private const int STRING_BUILDER_MAX_CAPACITY = 512;
+
+        private static readonly StringBuilder _sb = new StringBuilder(1024);
+        private static readonly List<string> _list = new List<string>(8);
+        
+
+        internal static void Cleanup()
+        {
+            if(_sb.Capacity > STRING_BUILDER_MAX_CAPACITY)
+            {
+                Debug.WriteLine("Reset StringBuilder Capacity", "Utility");
+                _sb.Clear();
+                _sb.Capacity = STRING_BUILDER_MAX_CAPACITY;
+            }
+
+            if(_list.Capacity > LIST_MAX_CAPACITY)
+            {
+                Debug.WriteLine("Reset List Capacity", "Utility");
+                _list.Clear();
+                _list.Capacity = LIST_MAX_CAPACITY;
+            }
+        }
 
 
         internal static bool ContainsPathFragment(string nodePath, string pathFragment, bool ignoreCase, bool wholeWord)

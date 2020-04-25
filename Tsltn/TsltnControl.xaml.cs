@@ -33,9 +33,6 @@ namespace Tsltn
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
-        
-
-
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<ValidationErrorEventArgs>? LanguageErrorChanged;
 
@@ -60,13 +57,12 @@ namespace Tsltn
                 this._hasTranslation = true;
             }
             this.SourceFileName = System.IO.Path.GetFileName(_doc.SourceDocumentFileName);
-            this.SourceLanguage = _doc.SourceLanguage;
-            this.TargetLanguage = _doc.TargetLanguage;
-
+            
             InitializeComponent();
 
             this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
         }
+
 
         public bool HasTranslation
         {
@@ -82,7 +78,6 @@ namespace Tsltn
                 }
             }
         }
-
 
         [AllowNull]
         public string Translation
@@ -103,6 +98,7 @@ namespace Tsltn
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     _sourceLanguage = null;
+                    OnPropertyChanged();
                 }
                 else
                 {
@@ -124,6 +120,7 @@ namespace Tsltn
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     _targetLanguage = null;
+                    OnPropertyChanged();
                 }
                 else
                 {
@@ -138,8 +135,6 @@ namespace Tsltn
 
 
         public string? SourceFileName { get; }
-
-
 
         public INode CurrentNode
         {
@@ -204,6 +199,14 @@ namespace Tsltn
             }
         }
 
+        #region EventHandler
+
+        private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.SourceLanguage = _doc.SourceLanguage;
+            this.TargetLanguage = _doc.TargetLanguage;
+        }
+
 
         private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
@@ -231,6 +234,11 @@ namespace Tsltn
             HasTranslation = true;
         }
 
+        #endregion
+
+
+        #region Commands
+
         private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = CurrentNode.HasAncestor;
@@ -256,29 +264,6 @@ namespace Tsltn
             e.Handled = true;
         }
 
-
-        //private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        //{
-        //    e.CanExecute = _hasDocumentUntranslatedNodes;
-        //}
-
-        //private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
-        //{
-        //    e.Handled = true;
-
-        //    var nextUntranslated = _node?.GetNextUntranslated();
-
-        //    if (nextUntranslated is null)
-        //    {
-        //        _hasDocumentUntranslatedNodes = false;
-        //    }
-        //    else
-        //    {
-        //        Navigate(nextUntranslated);
-        //    }
-        //}
-
-
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Clipboard.Clear();
@@ -291,8 +276,6 @@ namespace Tsltn
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerText);
         }
-
-
 
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -308,7 +291,9 @@ namespace Tsltn
             }
         }
 
+        #endregion
 
+        #region private
 
         private void OnPropertyChanged([CallerMemberName] string propName = "")
         {
@@ -322,5 +307,7 @@ namespace Tsltn
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Language_Error(object sender, ValidationErrorEventArgs e) => OnLanguageErrorChanged(e);
+
+        #endregion
     }
 }

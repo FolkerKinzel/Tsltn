@@ -1,12 +1,10 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.WpfTools;
-using Microsoft.Win32;
+using FolkerKinzel.WpfTools.RecentFiles;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -40,13 +38,16 @@ namespace Tsltn
             InitializeComponent();
 
             this._recentFilesMenu = recentFilesMenu;
+
+            _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.PROGRAM_NAME);
         }
 
 
         private readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
         private readonly DataError InvalidSourceLanguage = new DataError(ErrorLevel.Error, Res.InvalidSourceLanguage, null);
         private readonly DataError InvalidTargetLanguage = new DataError(ErrorLevel.Error, Res.InvalidTargetLanguage, null);
-
+        private readonly DataError SourceLanguageNotSet = new DataError(ErrorLevel.Information, Res.SourceLanguageNotSpecified, null);
+        private readonly DataError TargetLanguageNotSet = new DataError(ErrorLevel.Information, Res.TargetLanguageNotSpecified, null);
 
         public string FileName => _fileController.FileName;
 
@@ -92,7 +93,7 @@ namespace Tsltn
 
         }
 
-        
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_BadFileName(object? sender, BadFileNameEventArgs e)
@@ -143,7 +144,7 @@ namespace Tsltn
             }
         }
 
-        
+
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void _fileController_Message(object? sender, MessageEventArgs e)
         {
@@ -152,18 +153,38 @@ namespace Tsltn
 
         private void TsltnControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(TsltnControl.HasTranslation))
+            if (sender is TsltnControl cntr)
             {
-                if (sender is TsltnControl cntr)
+                switch (e.PropertyName)
                 {
-                    _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
+                    case nameof(TsltnControl.HasTranslation):
+                        _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
+                        break;
+                    case nameof(TsltnControl.SourceLanguage):
+                        this.Errors.Remove(SourceLanguageNotSet);
+
+                        if (cntr.SourceLanguage is null)
+                        {
+                            this.Errors.Insert(0, SourceLanguageNotSet);
+                        }
+                        break;
+                    case nameof(TsltnControl.TargetLanguage):
+                        this.Errors.Remove(TargetLanguageNotSet);
+
+                        if (cntr.TargetLanguage is null)
+                        {
+                            this.Errors.Insert(0, TargetLanguageNotSet);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
 
         private void TsltnControl_LanguageErrorChanged(object? sender, System.Windows.Controls.ValidationErrorEventArgs e)
         {
-            if(e.OriginalSource is TextBox tb)
+            if (e.OriginalSource is TextBox tb)
             {
                 if (_ccContent.Content is TsltnControl cntr)
                 {
@@ -199,7 +220,7 @@ namespace Tsltn
             }
         }
 
-       
+
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -243,6 +264,25 @@ namespace Tsltn
             sb.Append(((AssemblyCopyrightAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute)))?.Copyright);
 
             MessageBox.Show(sb.ToString(), $"{App.PROGRAM_NAME} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+        }
+
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        private async void OnlineHelp_Click(object sender, RoutedEventArgs e)
+        {
+            _miGitHub.IsEnabled = false;
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
+                }
+                catch
+                { }
+            }).ConfigureAwait(true);
+
+            _miGitHub.IsEnabled = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -422,6 +462,7 @@ namespace Tsltn
                 finally { IsCommandEnabled = true; }
             }
         }
+
 
     }
 }

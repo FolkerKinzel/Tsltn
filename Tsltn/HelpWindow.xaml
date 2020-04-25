@@ -12,8 +12,8 @@
         <DockPanel DockPanel.Dock="Bottom" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{x:Static r:Res.OK}" Style="{StaticResource StdButton}" IsDefault="True" Click="OK_Click"/>
         </DockPanel>
-        <FlowDocumentReader DockPanel.Dock="Top" Name="_fdsvContent" ViewingMode="Page" IsScrollViewEnabled="False" IsTwoPageViewEnabled="False" >
-            
-        </FlowDocumentReader>
+        <FlowDocumentPageViewer DockPanel.Dock="Top" Name="_fdsvContent"/>
+
+
     </DockPanel>
 </Window>

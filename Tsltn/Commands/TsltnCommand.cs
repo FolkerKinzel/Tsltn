@@ -8,12 +8,12 @@ namespace Tsltn.Commands
 {
     public static class TsltnCommand
     {
-        private static readonly RoutedUICommand _translate = new RoutedUICommand(Res.Translate, "Translate", typeof(TsltnCommand));
+        private static readonly RoutedCommand _translate = new RoutedCommand("Translate", typeof(TsltnCommand));
 
         
 
 
-        public static RoutedUICommand Translate
+        public static RoutedCommand Translate
         {
             get { return _translate; }
         }

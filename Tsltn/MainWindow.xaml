@@ -26,6 +26,8 @@
                 <Setter Property="Padding" Value="3"/>
             </Style.Setters>
         </Style>
+
+
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Help" Executed="Help_Executed" />
@@ -50,33 +52,67 @@
 
         <Menu FontSize="16">
             <MenuItem Header="{x:Static r:Res.FileMenuHeader}" Padding="8,4">
-                <MenuItem Command="New">
+                <MenuItem Command="New" Header="{x:Static r:Res.NewMenuItem}">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/NewFile_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="Open">
+                <MenuItem Command="Open" Header="{x:Static r:Res.OpenMenuItem}">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/Open_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="Close">
+                <MenuItem Command="Close" Header="{x:Static r:Res.CloseMenuItem}">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Name="_miSave" Command="Save" Loaded="_miSave_Loaded">
-                    <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
-                    </MenuItem.Icon>
+                <MenuItem x:Name="_miSave" Command="Save" Loaded="_miSave_Loaded" Header="{x:Static r:Res.SaveMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
                 </MenuItem>
-                <MenuItem Command="SaveAs">
-                    <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"/>
-                    </MenuItem.Icon>
+                <MenuItem Command="SaveAs" Header="{x:Static r:Res.SaveAsMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/SaveAs_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/SaveAs_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Command="{x:Static cmd:TsltnCommand.Translate}">
+                <MenuItem Command="{x:Static cmd:TsltnCommand.Translate}" Header="{x:Static r:Res.TranslateMenuItem}">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/TranslateDocument_16x.png"/>
                     </MenuItem.Icon>
@@ -89,7 +125,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="{x:Static r:Res.QuitMenuItem}" Click="miQuit_Click" Name="miQuit">
+                <MenuItem Click="miQuit_Click" Header="{x:Static r:Res.QuitMenuItem}" Name="miQuit">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"/>
                     </MenuItem.Icon>
@@ -97,14 +133,19 @@
             </MenuItem>
 
             <MenuItem Header="{x:Static r:Res.HelpMenuHeader}" Padding="8,4">
-                <MenuItem Command="ApplicationCommands.Help">
+                <MenuItem Command="ApplicationCommands.Help" Header="{x:Static r:Res.HelpMenuItem}">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/Help_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-
-                <MenuItem Header="{x:Static r:Res.AboutMenuItem}" Click="Info_Click">
+                <MenuItem Click="OnlineHelp_Click" Name="_miGitHub" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="pics/Web_16x.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Click="Info_Click" Header="{x:Static r:Res.AboutMenuItem}" >
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/InformationSymbol_16x.png"/>
                     </MenuItem.Icon>

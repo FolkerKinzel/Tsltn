@@ -188,11 +188,15 @@ namespace FolkerKinzel.Tsltn.Models
                 node = GetNextNode(node);
             }
 
+            Utility.Cleanup();
+
             _xmlDocument?.Save(outFileName);
 
             this.OpenTsltn(this.TsltnFileName);
 
             unusedTranslations = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
+
+
 
             /////////////////////////////////////////////
 
@@ -223,6 +227,8 @@ namespace FolkerKinzel.Tsltn.Models
             _tsltn = null;
             this.TsltnFileName = null;
             FirstNode = null;
+
+            Utility.Cleanup();
         }
 
         #endregion

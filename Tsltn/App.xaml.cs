@@ -1,16 +1,9 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.WpfTools;
+using FolkerKinzel.WpfTools.RecentFiles;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Tsltn.Resources;
@@ -23,6 +16,9 @@ namespace Tsltn
     public partial class App : Application
     {
         public const string PROGRAM_NAME = "Tsltn";
+
+        public const string OnlineHelpUrl = "https://github.com/FolkerKinzel/Tsltn";
+
         //public const string TSLTN_FILE_EXTENSION = ".tsltn";
 
         //private void OnStartup(object sender, StartupEventArgs e)
@@ -41,7 +37,8 @@ namespace Tsltn
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            new MainWindow(Document.Instance, new FileController(Document.Instance), new RecentFilesMenu(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!)).Show();
+            new MainWindow(Document.Instance, new FileController(Document.Instance),
+                new RecentFilesMenu(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!)).Show();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]

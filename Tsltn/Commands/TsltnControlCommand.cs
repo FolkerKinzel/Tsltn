@@ -5,26 +5,26 @@ namespace Tsltn.Commands
 {
     public static class TsltnControlCommand
     {
-        private static readonly RoutedUICommand _copyText = new RoutedUICommand(Res.CopyText, "CopyText", typeof(TsltnControlCommand));
-        private static readonly RoutedUICommand _copyXml = new RoutedUICommand(Res.CopyXml, "CopyXml", typeof(TsltnControlCommand));
+        private static readonly RoutedCommand _copyText = new RoutedCommand("CopyText", typeof(TsltnControlCommand));
+        private static readonly RoutedCommand _copyXml = new RoutedCommand("CopyXml", typeof(TsltnControlCommand));
 
-        private static readonly RoutedUICommand _browseAll = new RoutedUICommand(Res.BrowseAll, "BrowseAll", typeof(TsltnControlCommand));
+        private static readonly RoutedCommand _browseAll = new RoutedCommand("BrowseAll", typeof(TsltnControlCommand));
 
 
         
 
 
-        public static RoutedUICommand CopyXml
+        public static RoutedCommand CopyXml
         {
             get { return _copyXml; }
         }
 
-        public static RoutedUICommand CopyText
+        public static RoutedCommand CopyText
         {
             get { return _copyText; }
         }
 
-        public static RoutedUICommand BrowseAll
+        public static RoutedCommand BrowseAll
         {
             get { return _browseAll; }
         }

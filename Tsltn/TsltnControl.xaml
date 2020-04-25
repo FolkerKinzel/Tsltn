@@ -13,7 +13,8 @@
              Padding="5,0"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              FontSize="16"
-             TextOptions.TextFormattingMode="Ideal">
+             TextOptions.TextFormattingMode="Ideal"
+             Loaded="TsltnControl_Loaded">
     <UserControl.Resources>
         <Style x:Key="HeaderTextBlock" TargetType="TextBlock">
             <Style.Setters>

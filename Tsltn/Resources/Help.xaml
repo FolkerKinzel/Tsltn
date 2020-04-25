@@ -34,7 +34,7 @@
     <Paragraph>After that, you are able to navigate through the sections of the original file and assign translations to them, by entering the text box
                     on the right side of the window and putting text to it (or leave it empty for a translation that contains no text).</Paragraph>
     <Paragraph>If no translation is assigned to a section, the original text will appear in the translated file. (If the header "Translation" 
-                    is gray, no translation is assigned.)</Paragraph>
+                    is grey, no translation is assigned.)</Paragraph>
     <Paragraph>You can untranslate a section by pressing the "Reset"-button.</Paragraph>
     <Paragraph>It might be, that former translations are not assigned, if the original document has been changed. You can select and reassign those
                 translations by clicking the "Browse All" button.</Paragraph>

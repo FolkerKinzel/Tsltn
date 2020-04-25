@@ -129,6 +129,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CloseMenuItem" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="Cntrl" xml:space="preserve">
     <value>Cntrl</value>
   </data>
@@ -151,11 +154,20 @@
   <data name="HelpMenuHeader" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="HelpMenuItem" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="HelpWindowTitle" xml:space="preserve">
+    <value>Help</value>
+  </data>
   <data name="InvalidSourceLanguage" xml:space="preserve">
     <value>Source Language is not a valid IETF language tag.</value>
   </data>
   <data name="InvalidTargetLanguage" xml:space="preserve">
     <value>Target Language is not a valid IETF language tag.</value>
+  </data>
+  <data name="NewMenuItem" xml:space="preserve">
+    <value>New</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Next &gt;</value>
@@ -168,6 +180,12 @@
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="OnlineHelpMenuHeader" xml:space="preserve">
+    <value>{0} at GitHub</value>
+  </data>
+  <data name="OpenMenuItem" xml:space="preserve">
+    <value>Open</value>
   </data>
   <data name="Original" xml:space="preserve">
     <value>Original</value>
@@ -184,6 +202,12 @@
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="SaveAsMenuItem" xml:space="preserve">
+    <value>Save As</value>
+  </data>
+  <data name="SaveMenuItem" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="SelectTranslation" xml:space="preserve">
     <value>Select translation</value>
   </data>
@@ -196,10 +220,16 @@
   <data name="SourceLanguage" xml:space="preserve">
     <value>Source language:</value>
   </data>
+  <data name="SourceLanguageNotSpecified" xml:space="preserve">
+    <value>The source language is not specified. (Use IETF language tag.)</value>
+  </data>
   <data name="TargetLanguage" xml:space="preserve">
     <value>Target language:</value>
   </data>
-  <data name="Translate" xml:space="preserve">
+  <data name="TargetLanguageNotSpecified" xml:space="preserve">
+    <value>The target language is not specified. (Use IETF language tag.)</value>
+  </data>
+  <data name="TranslateMenuItem" xml:space="preserve">
     <value>Translate</value>
   </data>
   <data name="Translation" xml:space="preserve">
