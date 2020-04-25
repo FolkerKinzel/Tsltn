@@ -157,6 +157,9 @@ namespace Tsltn
 
             UpdateSource();
 
+            //_tbTranslation.IsUndoEnabled = false;
+            //_tbTranslation.IsUndoEnabled = true;
+
             this.CurrentNode = node;
 
             var transl = node.Translation;
