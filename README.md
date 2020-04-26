@@ -11,6 +11,12 @@ Tsltn enables you, to
 
 ## Installing Tsltn
 
+It's recommended to download and run the
+
+* [Tsltn Installer for 64-bit Windows (Windows 7 x64 - Windows 10 x64)](./Tsltn/Installer/bin/Standalone/TsltnSetup.exe)
+
+Alternatively you can [download the executable file](./Tsltn/Binaries/) and use it directly, or you can build Tsltn yourselves.
+
 Tsltn runs on Windows x64 (e.g. Windows 10 x64) and needs the .NET Core 3.1 Runtime.
 
 * [Download zip-File]()

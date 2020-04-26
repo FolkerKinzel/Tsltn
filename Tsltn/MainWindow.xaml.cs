@@ -320,7 +320,7 @@ namespace Tsltn
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e)
+        private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
             _ = _fileController.CloseTsltnAsync();

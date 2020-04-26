@@ -1,1 +1,1 @@
-These binaries require the .NET Core 3.1 runtime.
+These binaries require the .NET Core 3.1 runtime. They are compiled for 64-bit Windows (Windows 7 x64 - Windows 10 x64).

@@ -1,0 +1,1 @@
+These binaries are for 64-bit Windows (Windows 7 x64 - Windows 10 x64) and have the runtime included.
