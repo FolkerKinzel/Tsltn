@@ -13,7 +13,7 @@ Tsltn enables you,
 
 It's recommended to download, unzip and run:
 
-* [TsltnSetup.zip (Installer for 64-bit Windows, i.e. for Windows 7 x64 - Windows 10 x64)](./Tsltn/Installer/bin/Standalone/TsltnSetup.zip)
+* [TsltnSetup.zip (Installer for 64-bit Windows, i.e. for Windows 7 x64 - Windows 10 x64)](./Tsltn/Installer/TsltnSetup.zip)
 
 Alternatively you can [download the executable file](./Tsltn/Binaries/Tsltn.exe.zip) and use it directly, or you can 
 build Tsltn yourselves.
