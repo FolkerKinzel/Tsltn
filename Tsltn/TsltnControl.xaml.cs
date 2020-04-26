@@ -227,15 +227,11 @@ namespace Tsltn
             }
         }
 
-        private void _btnReset_Click(object sender, RoutedEventArgs e)
-        {
-            this.HasTranslation = false;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
 
-        private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            HasTranslation = true;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => HasTranslation = true;
 
         #endregion
 
@@ -250,8 +246,6 @@ namespace Tsltn
         private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Navigate(_node.GetAncestor());
-
-
             e.Handled = true;
         }
 
@@ -263,7 +257,6 @@ namespace Tsltn
         private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Navigate(CurrentNode.GetDescendant());
-
             e.Handled = true;
         }
 
@@ -271,6 +264,7 @@ namespace Tsltn
         {
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerXml);
+            e.Handled = true;
         }
 
 
@@ -278,6 +272,7 @@ namespace Tsltn
         {
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerText);
+            e.Handled = true;
         }
 
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -292,6 +287,8 @@ namespace Tsltn
                     this.Translation = kvp.Value;
                 }
             }
+
+            e.Handled = true;
         }
 
         #endregion

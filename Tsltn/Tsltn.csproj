@@ -8,10 +8,20 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>1.0.14.0</FileVersion>
+    <FileVersion>1.0.26.0</FileVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="deps\**" />
+    <Compile Remove="Installer\**" />
+    <EmbeddedResource Remove="deps\**" />
+    <EmbeddedResource Remove="Installer\**" />
+    <None Remove="deps\**" />
+    <None Remove="Installer\**" />
+    <Page Remove="deps\**" />
+    <Page Remove="Installer\**" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="IRecentFilesMenu.cs" />
     <Compile Remove="RecentFilesMenu.cs" />

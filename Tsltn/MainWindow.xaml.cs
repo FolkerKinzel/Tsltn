@@ -294,6 +294,7 @@ namespace Tsltn
 
         private void Help_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            e.Handled = true;
             new HelpWindow().Show();
         }
 
@@ -301,12 +302,16 @@ namespace Tsltn
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
+            e.Handled = true;
             _ = _fileController.NewTsltnAsync();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = _fileController.OpenTsltnAsync(null);
-
+        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            _ = _fileController.OpenTsltnAsync(null);
+        }
 
         private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -315,7 +320,11 @@ namespace Tsltn
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e) => _ = _fileController.CloseTsltnAsync();
+        private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e)
+        {
+            e.Handled = true;
+            _ = _fileController.CloseTsltnAsync();
+        }
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -323,8 +332,9 @@ namespace Tsltn
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs? e)
+        private async void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
+            e.Handled = true;
             IsCommandEnabled = false;
             await _fileController.SaveTsltnAsync().ConfigureAwait(false);
             IsCommandEnabled = true;
@@ -333,6 +343,7 @@ namespace Tsltn
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private async void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
+            e.Handled = true;
             IsCommandEnabled = false;
             await WaitAllTasks().ConfigureAwait(true);
             await _fileController.SaveAsTsltnAsync().ConfigureAwait(false);
@@ -341,6 +352,7 @@ namespace Tsltn
 
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
+            e.Handled = true;
             IsCommandEnabled = false;
 
             await WaitAllTasks().ConfigureAwait(true);

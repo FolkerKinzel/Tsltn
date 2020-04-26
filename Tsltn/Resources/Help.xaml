@@ -17,17 +17,17 @@
         Tsltn
     </Paragraph>
     <Paragraph>Tsltn is a tool to translate the Visual Studio XML documentation file to other languages.</Paragraph>
-    <Paragraph>It enables you to</Paragraph>
+    <Paragraph>It enables you, to</Paragraph>
     <List>
         <ListItem>
-            <Paragraph>keep your translated files in sync with the original file - even if this has been changed,
+            <Paragraph>keep your translated files in sync with the original file,
             </Paragraph>
         </ListItem>
         <ListItem>
-            <Paragraph>translate only the required sections (skip attributes and code sections),</Paragraph>
+            <Paragraph>to translate only the required sections (skip attributes and code sections), and</Paragraph>
         </ListItem>
         <ListItem>
-            <Paragraph>prompts you to retranslate a section only, if the original file on that section has changed significantly.</Paragraph>
+            <Paragraph>it prompts you to retranslate a section, only if the original file on that section has changed significantly.</Paragraph>
         </ListItem>
     </List>
     <Paragraph>To create a new translation, select "File → New" and then choose the Visual Studio XML documentation file to translate.</Paragraph>

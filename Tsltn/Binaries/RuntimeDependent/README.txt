@@ -1,0 +1,1 @@
+These binaries require the .NET Core 3.1 runtime.

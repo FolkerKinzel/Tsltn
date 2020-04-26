@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppSetupName 'TsltnSetup'
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.0.0"
 
 #define MyAppName "Tsltn"
 #define MyAppPublisher "Folker Kinzel"
@@ -18,7 +18,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{1F9AD9CF-6AD6-4F70-A8D3-F96B8D21028B}
 VersionInfoVersion={#MyAppVersion}
-VersionInfoDescription=Tsltn Setup for Windows x64 (contains the runtime)
+VersionInfoDescription=Tsltn Setup for Windows x64 (requires .Net Core 3.1 runtime)
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -32,7 +32,7 @@ SourceDir=.
 DefaultGroupName={#MyAppName}
 
 LicenseFile={#MyAppProjectDirectory}\Installer\LICENSE.rtf
-OutputDir={#MyAppProjectDirectory}\Installer\bin\Standalone
+OutputDir={#MyAppProjectDirectory}\Installer\bin\RuntimeDependent
 OutputBaseFilename={#MyAppSetupName}
 SetupIconFile={#MyAppProjectDirectory}\Installer\Tsltn.ico
 Compression=lzma
@@ -63,12 +63,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "fileassoc"; Description: "{cm:AssocFileExtension,{#MyAppName},{#MyAppNameExt}}"; GroupDescription: "{cm:AssocingFileExtension,{#MyAppName},{#MyAppNameExt}}"
 
 [Files]
-Source: "{#MyAppProjectDirectory}\Binaries\Standalone\x64\Tsltn.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyAppProjectDirectory}\Binaries\RuntimeDependent\x64\Tsltn.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyAppProjectDirectory}\Installer\TsltnFileIcon.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-;HINWEIS: "{cm:StartMenuToolTip}" ist - sprachabhängig - in CustomMessages.isl und CustomMessages.de.isl im Ordner des iss-Scripts definiert! 
+;HINWEIS: "{cm:StartMenuToolTip}" ist - sprachabhängig - in CustomMessages.isl und CustomMessages.de.isl im Ordner des iss-Scripts (Tsltn\Installer\) definiert! 
 Name: "{userprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Comment: "{cm:StartMenuToolTip}"
 ;Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
@@ -83,6 +83,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 Root: HKCU; Subkey: "Software\Classes\{#MyAppNameExt}"; ValueType: string; ValueName: ""; ValueData: "FolkerKinzel.TsltnFile"; Flags: uninsdeletevalue; Tasks: fileassoc
 
 ;Schlüssel zum Öffnen der assoziierten Dateiendung:
+;HINWEIS: "{cm:TsltnFileTypeDescription}" ist - sprachabhängig - in CustomMessages.isl und CustomMessages.de.isl im Ordner des iss-Scripts (Tsltn\Installer\) definiert!
 Root: HKCU; Subkey: "Software\Classes\FolkerKinzel.TsltnFile"; ValueType: string; ValueName: ""; ValueData: "{cm:TsltnFileTypeDescription}"; Flags: uninsdeletekey; Tasks: fileassoc
 Root: HKCU; Subkey: "Software\Classes\FolkerKinzel.TsltnFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\TsltnFileIcon.ico"; Tasks: fileassoc
 Root: HKCU; Subkey: "Software\Classes\FolkerKinzel.TsltnFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Tasks: fileassoc
