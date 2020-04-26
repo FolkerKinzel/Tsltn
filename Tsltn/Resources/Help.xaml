@@ -27,7 +27,7 @@
             <Paragraph>to translate only the required sections (skip attributes and code sections), and</Paragraph>
         </ListItem>
         <ListItem>
-            <Paragraph>it prompts you to retranslate a section, only if the original file on that section has changed significantly.</Paragraph>
+            <Paragraph>it only prompts you to retranslate a section, when there are significant changes.</Paragraph>
         </ListItem>
     </List>
     <Paragraph>To create a new translation, select "File → New" and then choose the Visual Studio XML documentation file to translate.</Paragraph>
