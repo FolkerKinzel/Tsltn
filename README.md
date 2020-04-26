@@ -1,5 +1,5 @@
 # Tsltn
-GUI-Tool to translate the Visual Studio xml documentation file.
+GUI-tool to translate the Visual Studio xml documentation file.
 
 ![Screenshot](screenshot.png)
 
@@ -11,7 +11,7 @@ Tsltn enables you,
 
 ## Installing Tsltn
 
-It's recommended to download, unzip and run
+It's recommended to download, unzip and run:
 
 * [TsltnSetup.zip (Installer for 64-bit Windows, i.e. for Windows 7 x64 - Windows 10 x64)](./Tsltn/Installer/bin/Standalone/TsltnSetup.exe)
 
