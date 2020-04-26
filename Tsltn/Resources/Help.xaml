@@ -17,10 +17,10 @@
         Tsltn
     </Paragraph>
     <Paragraph>Tsltn is a tool to translate the Visual Studio XML documentation file to other languages.</Paragraph>
-    <Paragraph>It enables you, to</Paragraph>
+    <Paragraph>It enables you,</Paragraph>
     <List>
         <ListItem>
-            <Paragraph>keep your translated files in sync with the original file,
+            <Paragraph>to keep your translated files in sync with the original file,
             </Paragraph>
         </ListItem>
         <ListItem>
