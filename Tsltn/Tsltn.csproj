@@ -8,17 +8,21 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>1.0.33.0</FileVersion>
+    <FileVersion>1.0.4.1</FileVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Binaries\**" />
     <Compile Remove="deps\**" />
     <Compile Remove="Installer\**" />
+    <EmbeddedResource Remove="Binaries\**" />
     <EmbeddedResource Remove="deps\**" />
     <EmbeddedResource Remove="Installer\**" />
+    <None Remove="Binaries\**" />
     <None Remove="deps\**" />
     <None Remove="Installer\**" />
+    <Page Remove="Binaries\**" />
     <Page Remove="deps\**" />
     <Page Remove="Installer\**" />
   </ItemGroup>

@@ -76,7 +76,10 @@ namespace FolkerKinzel.Tsltn.Controllers
                 {
                     case MessageBoxResult.Yes:
                         {
-                            await DoSaveTsltnAsync(FileName).ConfigureAwait(true);
+                            if(!await SaveAsTsltnAsync().ConfigureAwait(true))
+                            {
+                                return false;
+                            }
                         }
                         break;
                     case MessageBoxResult.No:
