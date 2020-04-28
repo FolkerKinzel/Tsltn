@@ -6,19 +6,34 @@
         xmlns:local="clr-namespace:Tsltn"
         xmlns:r ="clr-namespace:Tsltn.Resources"
         mc:Ignorable="d"
-        Height="800" Width="750"
+        Height="650" Width="600"
+        MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         WindowStyle="ThreeDBorderWindow"
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         FontSize="16"
         TextOptions.TextFormattingMode="Ideal">
     <Window.Resources>
-        <Style TargetType="Button" BasedOn="{StaticResource StdButton}"/>
-        <Style TargetType="TextBlock">
-            <Style.Setters>
-                <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
-            </Style.Setters>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/StandardResourceDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!--
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Style.Setters>
+                    <Setter Property="Padding" Value="7,2,7,2"/>
+                    <Setter Property="MinWidth" Value="90"/>
+                </Style.Setters>
+            </Style>
+            -->
+
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Style.Setters>
+                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>
     </Window.Resources>
     <DockPanel>
         

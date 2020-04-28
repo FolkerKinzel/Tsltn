@@ -178,7 +178,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
                 OnNewFileName(FileName);
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
                 OnPropertyChanged(nameof(FileName));

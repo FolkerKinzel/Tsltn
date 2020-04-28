@@ -16,24 +16,39 @@
              TextOptions.TextFormattingMode="Ideal"
              Loaded="TsltnControl_Loaded">
     <UserControl.Resources>
-        <Style x:Key="HeaderTextBlock" TargetType="TextBlock">
-            <Style.Setters>
-                <Setter Property="TextAlignment" Value="Center"/>
-                <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Foreground" Value="White"/>
-            </Style.Setters>
-        </Style>
-        <Style TargetType="Button" BasedOn="{StaticResource StdButton}"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/StandardResourceDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Style x:Key="HeaderTextBlock" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Style.Setters>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Style.Setters>
+            </Style>
 
-        <Style x:Key="headerBorder" TargetType="Border">
-            <Setter Property="Background" Value="Black"/>
-        </Style>
+            <!--
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Style.Setters>
+                    <Setter Property="Padding" Value="7,2,7,2"/>
+                    <Setter Property="MinWidth" Value="90"/>
+                </Style.Setters>
+            </Style>
+            -->
 
-        <Style TargetType="Label">
-            <Style.Setters>
-                <Setter Property="Padding" Value="7,2,7,2"/>
-            </Style.Setters>
-        </Style>
+
+            <Style x:Key="headerBorder" TargetType="Border">
+                <Setter Property="Background" Value="Black"/>
+            </Style>
+
+            <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                <Style.Setters>
+                    <Setter Property="Padding" Value="7,2,7,2"/>
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.CommandBindings>
         <CommandBinding Command="PreviousPage" CanExecute="PreviousPage_CanExecute" Executed="PreviousPage_Executed"/>
@@ -54,6 +69,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        
+        
+        
         <DockPanel Grid.ColumnSpan="2">
             <local:NavigationUserControl x:Name="NavCtrl" DockPanel.Dock="Right" Margin="5"/>
 
@@ -69,13 +87,13 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.Resources>
-                    <Style TargetType="TextBox">
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                         <Style.Setters>
                             <Setter Property="MinWidth" Value="60"/>
                             <Setter Property="Margin" Value="5,0,5,0"/>
                         </Style.Setters>
                     </Style>
-                    <Style TargetType="TextBlock">
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                         <Style.Setters>
                             <Setter Property="Margin" Value="5,0,5,0"/>
                         </Style.Setters>

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
+    [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
     public partial class FileController : INotifyPropertyChanged, IFileController
     {
         private readonly IFileAccess _doc;
@@ -102,8 +104,26 @@ namespace FolkerKinzel.Tsltn.Controllers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
 
+        public Task OpenTsltnFromCommandLineAsync(string commandLineArg)
+        {
+            try
+            {
+                commandLineArg = Path.Combine(Environment.CurrentDirectory, commandLineArg);
+            }
+            catch(Exception e)
+            {
+                OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+                //OnHasContentChanged(false);
+                //_doc.CloseTsltn();
+                //OnPropertyChanged(nameof(FileName));
+                //OnBadFileName(fileName);
 
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+                return Task.CompletedTask;
+            }
+
+            return OpenTsltnAsync(commandLineArg);
+        }
+
         public async Task OpenTsltnAsync(string? fileName)
         {
             if (StringComparer.OrdinalIgnoreCase.Equals(fileName, this.FileName))
@@ -204,7 +224,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 OnPropertyChanged(nameof(FileName));
                 OnNewFileName(FileName);
             }
-            catch (AggregateException e)
+            catch(Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
                 OnHasContentChanged(false);
@@ -243,9 +263,9 @@ namespace FolkerKinzel.Tsltn.Controllers
                     }
 
                 }
-                catch (AggregateException ex)
+                catch (Exception e)
                 {
-                    OnMessage(new MessageEventArgs(ex.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+                    OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
                 }
                 finally
                 {
@@ -284,9 +304,9 @@ namespace FolkerKinzel.Tsltn.Controllers
 
                     
                 }
-                catch (AggregateException ex)
+                catch (Exception e)
                 {
-                    OnMessage(new MessageEventArgs(ex.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+                    OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
 
                     try
                     {

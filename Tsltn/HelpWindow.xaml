@@ -6,11 +6,28 @@
         xmlns:local="clr-namespace:Tsltn"
         xmlns:r="clr-namespace:Tsltn.Resources"
         mc:Ignorable="d"
-        Height="600" Width="800">
+        Height="600" Width="800"
+        MaxHeight="{x:Static SystemParameters.FullPrimaryScreenHeight}"
+        MaxWidth="{x:Static SystemParameters.FullPrimaryScreenWidth}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/StandardResourceDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!--
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Style.Setters>
+                    <Setter Property="Padding" Value="7,2,7,2"/>
+                    <Setter Property="MinWidth" Value="90"/>
+                </Style.Setters>
+            </Style>
+            -->
+        </ResourceDictionary>
+    </Window.Resources>
 
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom" Background="{x:Static SystemColors.MenuBarBrush}">
-            <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{x:Static r:Res.OK}" Style="{StaticResource StdButton}" IsDefault="True" Click="OK_Click"/>
+            <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{x:Static r:Res.OK}" IsDefault="True" Click="OK_Click"/>
         </DockPanel>
         <FlowDocumentPageViewer DockPanel.Dock="Top" Name="_fdsvContent"/>
 

@@ -40,14 +40,27 @@ namespace Tsltn
             this._recentFilesMenu = recentFilesMenu;
 
             _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.PROGRAM_NAME);
+
+
+            //double d = SystemParameters.FullPrimaryScreenHeight;
+            //d = SystemParameters.PrimaryScreenHeight;
+            //d = SystemParameters.VirtualScreenHeight;
+
+            //d = SystemParameters.WorkArea.Height;
+
+            //d = SystemParameters.FullPrimaryScreenWidth;
+            //d = SystemParameters.PrimaryScreenWidth;
+            //d = SystemParameters.VirtualScreenWidth;
+
+            //d = SystemParameters.WorkArea.Width;
         }
 
 
         private readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
         private readonly DataError InvalidSourceLanguage = new DataError(ErrorLevel.Error, Res.InvalidSourceLanguage, null);
         private readonly DataError InvalidTargetLanguage = new DataError(ErrorLevel.Error, Res.InvalidTargetLanguage, null);
-        private readonly DataError SourceLanguageNotSet = new DataError(ErrorLevel.Information, Res.SourceLanguageNotSpecified, null);
-        private readonly DataError TargetLanguageNotSet = new DataError(ErrorLevel.Information, Res.TargetLanguageNotSpecified, null);
+        private readonly DataError MissingSourceLanguage = new DataError(ErrorLevel.Information, Res.SourceLanguageNotSpecified, null);
+        private readonly DataError MissingTargetLanguage = new DataError(ErrorLevel.Information, Res.TargetLanguageNotSpecified, null);
 
         public string FileName => _fileController.FileName;
 
@@ -86,11 +99,25 @@ namespace Tsltn
             _fileController.ShowFileDialog += _fileController_ShowFileDialog;
             _fileController.BadFileName += _fileController_BadFileName;
 
-            await _recentFilesMenu.InitializeAsync(miRecentFiles).ConfigureAwait(false);
+            await _recentFilesMenu.InitializeAsync(miRecentFiles).ConfigureAwait(true);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
 
-            await ProcessCommandLineArgs().ConfigureAwait(false);
+            _ = ProcessCommandLineArgs();
+        }
 
+
+        private async void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (!await _fileController.CloseTsltnAsync().ConfigureAwait(true))
+            {
+                e.Cancel = true;
+            }
+        }
+
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        private async void Window_Closed(object sender, EventArgs e)
+        {
+            await WaitAllTasks().ConfigureAwait(false);
         }
 
 
@@ -161,19 +188,19 @@ namespace Tsltn
                         _fileController.Tasks.Add(CheckUntranslatedNodesAsync(cntr));
                         break;
                     case nameof(TsltnControl.SourceLanguage):
-                        this.Errors.Remove(SourceLanguageNotSet);
+                        this.Errors.Remove(MissingSourceLanguage);
 
                         if (cntr.SourceLanguage is null)
                         {
-                            this.Errors.Insert(0, SourceLanguageNotSet);
+                            this.Errors.Insert(0, MissingSourceLanguage);
                         }
                         break;
                     case nameof(TsltnControl.TargetLanguage):
-                        this.Errors.Remove(TargetLanguageNotSet);
+                        this.Errors.Remove(MissingTargetLanguage);
 
                         if (cntr.TargetLanguage is null)
                         {
-                            this.Errors.Insert(0, TargetLanguageNotSet);
+                            this.Errors.Insert(0, MissingTargetLanguage);
                         }
                         break;
                     default:
@@ -212,29 +239,26 @@ namespace Tsltn
 
         private void DataError_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DataError? err = (e.OriginalSource as FrameworkElement)?.DataContext as DataError;
-
-            if (_ccContent.Content is TsltnControl control)
+            if ((e.OriginalSource as FrameworkElement)?.DataContext is DataError err && _ccContent.Content is TsltnControl control)
             {
-                control.Navigate(err?.Node);
+                if (object.ReferenceEquals(err, this.InvalidSourceLanguage) ||
+                    object.ReferenceEquals(err, this.MissingSourceLanguage))
+                {
+                    Keyboard.Focus(control._tbSourceLanguage);
+                }
+                else if (object.ReferenceEquals(err, this.InvalidTargetLanguage) ||
+                    object.ReferenceEquals(err, this.MissingTargetLanguage))
+                {
+                    Keyboard.Focus(control._tbTargetLanguage);
+                }
+                else
+                {
+                    control.Navigate(err.Node);
+                    //Keyboard.Focus(control._tbTranslation);
+                }
             }
         }
 
-
-
-        private async void Window_Closing(object sender, CancelEventArgs e)
-        {
-            if (!await _fileController.CloseTsltnAsync().ConfigureAwait(true))
-            {
-                e.Cancel = true;
-            }
-        }
-
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-        private async void Window_Closed(object sender, EventArgs e)
-        {
-            await WaitAllTasks().ConfigureAwait(false);
-        }
 
         private void RecentFilesMenu_RecentFileSelected(object? sender, RecentFileSelectedEventArgs e)
         {
@@ -457,21 +481,15 @@ namespace Tsltn
             string[] args = Environment.GetCommandLineArgs();
 
 
+            //args = new string[2] { "", "New Translation2.tsltn" };
+            //args = new string[2] { "", "nixda" };
+            //Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
             if (args.Length > 1)
             {
-                try
-                {
-                    string fileName = System.IO.Path.GetFullPath(args[1]);
-
-                    if (System.IO.File.Exists(fileName))
-                    {
-                        IsCommandEnabled = false;
-                        await _fileController.OpenTsltnAsync(fileName).ConfigureAwait(false);
-                    }
-
-                }
-                catch { }
-                finally { IsCommandEnabled = true; }
+                IsCommandEnabled = false;
+                await _fileController.OpenTsltnFromCommandLineAsync(args[1]).ConfigureAwait(true);
+                IsCommandEnabled = true;
             }
         }
 

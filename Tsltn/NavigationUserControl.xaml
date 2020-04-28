@@ -14,11 +14,12 @@
         <CommandBinding Command="BrowseForward" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
     </UserControl.CommandBindings>
     <UserControl.Resources>
-        <Style TargetType="ToggleButton">
+        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
             <Style.Setters>
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="MinWidth" Value="25"/>
                 <Setter Property="MinHeight" Value="25"/>
+                <Setter Property="IsThreeState" Value="False"/>
             </Style.Setters>
         </Style>
     </UserControl.Resources>
@@ -30,8 +31,8 @@
                      Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
         <StackPanel Orientation="Horizontal">
-            <ToggleButton IsThreeState="False" IsChecked="{Binding CaseSensitive}" FontSize="16">Aa</ToggleButton>
-            <ToggleButton IsThreeState="False" IsChecked="{Binding WholeWord}">
+            <ToggleButton IsChecked="{Binding CaseSensitive}" FontSize="16">Aa</ToggleButton>
+            <ToggleButton IsChecked="{Binding WholeWord}">
                 <Border Margin="1" BorderBrush="Black" BorderThickness="0,1,1,1">
                 <TextBlock Margin="1" FontSize="10">Ab</TextBlock>
                 </Border>

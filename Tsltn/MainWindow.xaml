@@ -8,7 +8,8 @@
         xmlns:r ="clr-namespace:Tsltn.Resources"
         xmlns:cmd ="clr-namespace:Tsltn.Commands"
         mc:Ignorable="d"
-        Height="650" Width="1200"
+        Height="500" Width="800"
+        MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         WindowStyle="ThreeDBorderWindow"  ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
@@ -20,14 +21,12 @@
         FontSize="16"
         TextOptions.TextFormattingMode="Ideal" >
     <Window.Resources>
-        <Style TargetType="MenuItem">
-            <Style.Setters>
-                <Setter Property="MinWidth" Value="85"/>
-                <Setter Property="Padding" Value="3"/>
-            </Style.Setters>
-        </Style>
-
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/StandardResourceDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+        </ResourceDictionary>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Help" Executed="Help_Executed" />
@@ -157,9 +156,10 @@
 
         <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"/>
 
-        <ListBox Grid.Row="3" ItemsSource="{Binding Errors}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox Grid.Row="3" ItemsSource="{Binding Errors}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Focusable="False">
             <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <Setter Property="Focusable" Value="False"/>
                     <EventSetter Event="MouseDoubleClick" Handler="DataError_MouseDoubleClick"/>
                 </Style>
             </ListBox.ItemContainerStyle>
@@ -178,6 +178,7 @@
                                 <Style TargetType="Image">
                                     <Style.Setters>
                                         <Setter Property="Source" Value="pics/StatusCriticalError_16x.png"/>
+                                        <Setter Property="Focusable" Value="False"/>
                                     </Style.Setters>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Level}" Value="{x:Static models:ErrorLevel.Warning}">
@@ -190,7 +191,7 @@
                                 </Style>
                             </Image.Style>
                         </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="WrapWithOverflow"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="WrapWithOverflow" Focusable="False"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

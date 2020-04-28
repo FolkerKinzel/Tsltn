@@ -2,13 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppSetupName 'TsltnSetup'
-#define MyAppVersion "1.0.0.1"
+#define MyAppVersion "1.3.1.2"
 
 #define MyAppName "Tsltn"
 #define MyAppPublisher "Folker Kinzel"
 #define MyAppURL "https://github.com/FolkerKinzel/Tsltn"
 #define MyAppExeName "Tsltn.exe"
 #define MyAppNameExt ".tsltn"
+#define MyDeveloperDeploymentDirectory "{userpf}\Folker_Kinzel"
 
 #define MyAppProjectDirectory "C:\Users\fkinz\source\repos\Tsltn\Tsltn"
 
@@ -26,7 +27,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={userpf}\Folker_Kinzel\{#MyAppName}
+DefaultDirName={#MyDeveloperDeploymentDirectory}\{#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 SourceDir=.
 DefaultGroupName={#MyAppName}
@@ -88,3 +89,7 @@ Root: HKCU; Subkey: "Software\Classes\FolkerKinzel.TsltnFile"; ValueType: string
 Root: HKCU; Subkey: "Software\Classes\FolkerKinzel.TsltnFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\TsltnFileIcon.ico"; Tasks: fileassoc
 Root: HKCU; Subkey: "Software\Classes\FolkerKinzel.TsltnFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Tasks: fileassoc
 
+[UninstallDelete]
+Type: files; Name: "{app}\*.*.RF.txt"
+Type: dirifempty; Name: "{app}"
+Type: dirifempty; Name: "{#MyDeveloperDeploymentDirectory}"

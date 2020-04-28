@@ -8,25 +8,48 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
+                <!--
+                
+                <File Profile="WPF" FileVersion="4.800.119.56501" AssemblyVersion="4.0.0.0" PublicKeyToken="31bf3856ad364e35" AssemblyName="PresentationFramework.Aero" Path="ref/netcoreapp3.1/PresentationFramework.Aero.dll" Type="Managed"/>
+
+                <File Profile="WPF" FileVersion="4.800.119.56501" AssemblyVersion="4.0.0.0" PublicKeyToken="31bf3856ad364e35" AssemblyName="PresentationFramework.Aero2" Path="ref/netcoreapp3.1/PresentationFramework.Aero2.dll" Type="Managed"/>
+
+                <File Profile="WPF" FileVersion="4.800.119.56501" AssemblyVersion="4.0.0.0" PublicKeyToken="31bf3856ad364e35" AssemblyName="PresentationFramework.AeroLite" Path="ref/netcoreapp3.1/PresentationFramework.AeroLite.dll" Type="Managed"/>
+
+                <File Profile="WPF" FileVersion="4.800.119.56501" AssemblyVersion="4.0.0.0" PublicKeyToken="31bf3856ad364e35" AssemblyName="PresentationFramework.Classic" Path="ref/netcoreapp3.1/PresentationFramework.Classic.dll" Type="Managed"/>
+
+                <File Profile="WPF" FileVersion="4.800.119.56501" AssemblyVersion="4.0.0.0" PublicKeyToken="31bf3856ad364e35" AssemblyName="PresentationFramework.Luna" Path="ref/netcoreapp3.1/PresentationFramework.Luna.dll" Type="Managed"/>
+
+                <File Profile="WPF" FileVersion="4.800.119.56501" AssemblyVersion="4.0.0.0" PublicKeyToken="31bf3856ad364e35" AssemblyName="PresentationFramework.Royale" Path="ref/netcoreapp3.1/PresentationFramework.Royale.dll" Type="Managed"/>
+                
+                
+                -->
+
+
+
+                <!--
+                <ResourceDictionary Source="/PresentationFramework.Luna, Version=4.0.0.0,
+                                Culture=neutral, PublicKeyToken=31bf3856ad364e35,
+                                ProcessorArchitecture=MSIL;component/themes/luna.homestead.xaml" />
+                -->
+
+                <!--
+                <ResourceDictionary Source="/PresentationFramework.Aero, Version=4.0.0.0,  
+Culture=neutral, PublicKeyToken=31bf3856ad364e35,
+ProcessorArchitecture=MSIL;component/themes/aero.normalcolor.xaml" />
+                -->
+                
+                
+                <ResourceDictionary Source="/PresentationFramework.Aerolite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35;component/themes/aerolite.normalcolor.xaml" />
+                
             </ResourceDictionary.MergedDictionaries>
 
-            
 
-            <Style x:Key="StdButton" TargetType="Button">
-                <Style.Setters>
-                    <Setter Property="Padding" Value="7,2,7,2"/>
-                    <Setter Property="MinWidth" Value="90"/>
-                </Style.Setters>
-            </Style>
-
-            <Style TargetType="MenuItem">
-                <Style.Setters>
-                    <Setter Property="MinWidth" Value="70"/>
-                </Style.Setters>
-            </Style>
 
             
-            
+
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

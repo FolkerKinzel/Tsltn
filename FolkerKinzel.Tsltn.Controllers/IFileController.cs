@@ -22,6 +22,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         Task<bool> CloseTsltnAsync();
         Task NewTsltnAsync();
+        Task OpenTsltnFromCommandLineAsync(string commandLineArg);
         Task OpenTsltnAsync(string? fileName);
         Task<bool> SaveTsltnAsync();
         Task<bool> SaveAsTsltnAsync();
