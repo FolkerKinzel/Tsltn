@@ -40,19 +40,6 @@ namespace Tsltn
             this._recentFilesMenu = recentFilesMenu;
 
             _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.PROGRAM_NAME);
-
-
-            //double d = SystemParameters.FullPrimaryScreenHeight;
-            //d = SystemParameters.PrimaryScreenHeight;
-            //d = SystemParameters.VirtualScreenHeight;
-
-            //d = SystemParameters.WorkArea.Height;
-
-            //d = SystemParameters.FullPrimaryScreenWidth;
-            //d = SystemParameters.PrimaryScreenWidth;
-            //d = SystemParameters.VirtualScreenWidth;
-
-            //d = SystemParameters.WorkArea.Width;
         }
 
 
@@ -77,14 +64,6 @@ namespace Tsltn
 
 
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
-
-
-        //{ 
-        //    new DataError(ErrorLevel.Error, "Das ist ein Fehler.", null!),
-        //    new DataError(ErrorLevel.Warning, "Das ist eine Warnung. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", null!),
-        //    new DataError(ErrorLevel.Information, "Das ist eine Information.", null!),
-
-        //};
 
 
         #region EventHandler
@@ -290,6 +269,7 @@ namespace Tsltn
             MessageBox.Show(sb.ToString(), $"{App.PROGRAM_NAME} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
         }
 
+
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         private async void OnlineHelp_Click(object sender, RoutedEventArgs e)
         {
@@ -479,11 +459,6 @@ namespace Tsltn
         private async Task ProcessCommandLineArgs()
         {
             string[] args = Environment.GetCommandLineArgs();
-
-
-            //args = new string[2] { "", "New Translation2.tsltn" };
-            //args = new string[2] { "", "nixda" };
-            //Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
             if (args.Length > 1)
             {
