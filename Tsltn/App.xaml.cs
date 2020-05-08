@@ -1,6 +1,6 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.WpfTools.RecentFiles;
+using FolkerKinzel.RecentFiles;
 using System;
 using System.Diagnostics;
 using System.IO;

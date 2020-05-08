@@ -8,7 +8,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>1.3.4.2</FileVersion>
+    <FileVersion>1.3.6.2</FileVersion>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
@@ -69,8 +69,8 @@
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FolkerKinzel.WpfTools">
-      <HintPath>deps\netcoreapp3.1\FolkerKinzel.WpfTools.dll</HintPath>
+    <Reference Include="FolkerKinzel.RecentFiles">
+      <HintPath>deps\FolkerKinzel.RecentFiles\netcoreapp3.1\FolkerKinzel.RecentFiles.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.WpfTools.RecentFiles;
+using FolkerKinzel.RecentFiles;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -68,7 +68,7 @@ namespace Tsltn
 
         #region EventHandler
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _fileController.HasContentChanged += _fileController_HasContentChanged;
             _fileController.Message += _fileController_Message;
@@ -78,7 +78,7 @@ namespace Tsltn
             _fileController.ShowFileDialog += _fileController_ShowFileDialog;
             _fileController.BadFileName += _fileController_BadFileName;
 
-            await _recentFilesMenu.InitializeAsync(miRecentFiles).ConfigureAwait(true);
+            _recentFilesMenu.Initialize(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
 
             _ = ProcessCommandLineArgs();
@@ -97,6 +97,8 @@ namespace Tsltn
         private async void Window_Closed(object sender, EventArgs e)
         {
             await WaitAllTasks().ConfigureAwait(false);
+
+            _recentFilesMenu.Dispose();
         }
 
 
