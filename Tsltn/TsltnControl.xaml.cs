@@ -16,6 +16,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Tsltn.Resources;
 using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Tsltn
 {
@@ -24,7 +27,7 @@ namespace Tsltn
     /// </summary>
     public partial class TsltnControl : UserControl, INotifyPropertyChanged
     {
-        private readonly Window _owner;
+        private readonly MainWindow _owner;
         private INode _node;
         //private bool _hasDocumentUntranslatedNodes;
         private string _translation = "";
@@ -34,11 +37,16 @@ namespace Tsltn
         private string? _targetLanguage;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event EventHandler<ValidationErrorEventArgs>? LanguageErrorChanged;
+
+        private static readonly DataError MissingTranslationWarning = new DataError(ErrorLevel.Warning, Res.UntranslatedElement, null);
+        private static readonly DataError InvalidSourceLanguage = new DataError(ErrorLevel.Error, Res.InvalidSourceLanguage, null);
+        private static readonly DataError InvalidTargetLanguage = new DataError(ErrorLevel.Error, Res.InvalidTargetLanguage, null);
+        private static readonly DataError MissingSourceLanguage = new DataError(ErrorLevel.Information, Res.SourceLanguageNotSpecified, null);
+        private static readonly DataError MissingTargetLanguage = new DataError(ErrorLevel.Information, Res.TargetLanguageNotSpecified, null);
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Argumentausnahmen korrekt instanziieren", Justification = "<Ausstehend>")]
-        public TsltnControl(Window owner, IDocument doc)
+        public TsltnControl(MainWindow owner, IDocument doc)
         {
             if (owner is null || doc?.FirstNode is null)
             {
@@ -57,12 +65,15 @@ namespace Tsltn
                 this._hasTranslation = true;
             }
             this.SourceFileName = System.IO.Path.GetFileName(_doc.SourceDocumentFileName);
-            
+
             InitializeComponent();
 
             this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
+         
+            _owner.TranslationErrors += MainWindow_TranslationErrors;
         }
 
+        
 
         public bool HasTranslation
         {
@@ -76,6 +87,8 @@ namespace Tsltn
                 {
                     Translation = "";
                 }
+
+                _doc.Tasks.Add(CheckUntranslatedNodesAsync());
             }
         }
 
@@ -95,14 +108,17 @@ namespace Tsltn
             get => _sourceLanguage;
             set
             {
+                this.Errors.Remove(MissingSourceLanguage);
+
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     _sourceLanguage = null;
                     OnPropertyChanged();
+                    this.Errors.Insert(0, MissingSourceLanguage);
                 }
                 else
                 {
-                    _sourceLanguage = value.Replace(" ","", StringComparison.Ordinal);
+                    _sourceLanguage = value.Replace(" ", "", StringComparison.Ordinal);
                     OnPropertyChanged();
 
                     // wirft ggf. CultureNotFoundException
@@ -117,10 +133,13 @@ namespace Tsltn
             get => _targetLanguage;
             set
             {
+                this.Errors.Remove(MissingTargetLanguage);
+
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     _targetLanguage = null;
                     OnPropertyChanged();
+                    this.Errors.Insert(0, MissingTargetLanguage);
                 }
                 else
                 {
@@ -148,27 +167,10 @@ namespace Tsltn
         }
 
 
-        internal void Navigate(INode? node)
-        {
-            if (node is null)
-            {
-                return;
-            }
+        public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
 
-            UpdateSource();
 
-            //_tbTranslation.IsUndoEnabled = false;
-            //_tbTranslation.IsUndoEnabled = true;
-
-            this.CurrentNode = node;
-
-            var transl = node.Translation;
-            this.Translation = transl;
-
-            // Die lokale Variable muss benutzt werden,
-            // da Translation nie null zurückgibt.
-            this.HasTranslation = transl != null;
-        }
+        
 
 
         internal void UpdateSource()
@@ -204,10 +206,101 @@ namespace Tsltn
 
         #region EventHandler
 
+        private void MainWindow_TranslationErrors(object? sender, TranslationErrorsEventArgs e)
+        {
+            if (e.Errors.Any())
+            {
+                this.Errors.Clear();
+
+                foreach (var error in e.Errors)
+                {
+                    this.Errors.Add(error);
+                }
+
+                if (SourceLanguage is null)
+                {
+                    this.Errors.Add(MissingSourceLanguage);
+                }
+                else if (Validation.GetHasError(_tbSourceLanguage))
+                {
+                    this.Errors.Add(InvalidSourceLanguage);
+                }
+
+                if (TargetLanguage is null)
+                {
+                    this.Errors.Add(MissingTargetLanguage);
+                }
+                else if (Validation.GetHasError(_tbTargetLanguage))
+                {
+                    this.Errors.Add(InvalidTargetLanguage);
+                }
+
+                _doc.Tasks.Add(CheckUntranslatedNodesAsync());
+            }
+        }
+
+
+        private void DataError_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if ((e.OriginalSource as FrameworkElement)?.DataContext is DataError err)
+            {
+                if (object.ReferenceEquals(err, InvalidSourceLanguage) ||
+                    object.ReferenceEquals(err, MissingSourceLanguage))
+                {
+                    Keyboard.Focus(_tbSourceLanguage);
+                }
+                else if (object.ReferenceEquals(err, InvalidTargetLanguage) ||
+                    object.ReferenceEquals(err, MissingTargetLanguage))
+                {
+                    Keyboard.Focus(_tbTargetLanguage);
+                }
+                else
+                {
+                    Navigate(err.Node);
+                    //Keyboard.Focus(control._tbTranslation);
+                }
+            }
+        }
+
+
+        private void Language_Error(object sender, ValidationErrorEventArgs e)
+        {
+            if (e.OriginalSource is TextBox tb)
+            {
+                if (tb.Name == nameof(_tbSourceLanguage))
+                {
+                    this.Errors.Remove(InvalidSourceLanguage);
+
+                    if (Validation.GetHasError(_tbSourceLanguage))
+                    {
+                        this.Errors.Insert(0, InvalidSourceLanguage);
+                    }
+                }
+                else
+                {
+                    this.Errors.Remove(InvalidTargetLanguage);
+
+                    if (Validation.GetHasError(_tbTargetLanguage))
+                    {
+                        this.Errors.Insert(0, InvalidTargetLanguage);
+                    }
+                }
+            }
+        }
+
+
         private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.SourceLanguage = _doc.SourceLanguage;
             this.TargetLanguage = _doc.TargetLanguage;
+
+            _doc.Tasks.Add(CheckUntranslatedNodesAsync());
+        }
+
+
+        private void TsltnControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _owner.TranslationErrors -= MainWindow_TranslationErrors;
         }
 
 
@@ -299,13 +392,48 @@ namespace Tsltn
         private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void OnLanguageErrorChanged(ValidationErrorEventArgs e) => LanguageErrorChanged?.Invoke(this, e);
+        private async Task CheckUntranslatedNodesAsync()
+        {
+            await _doc.WaitAllTasks().ConfigureAwait(true);
+
+            var task = Task.Run(CurrentNode.GetNextUntranslated);
+            _doc.Tasks.Add(task);
+            INode? untranslatedNode = await task.ConfigureAwait(true);
+
+            Errors.Remove(MissingTranslationWarning);
+
+            if (untranslatedNode != null)
+            {
+                MissingTranslationWarning.Node = untranslatedNode;
+                Errors.Insert(0, MissingTranslationWarning);
+            }
+        }
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Language_Error(object sender, ValidationErrorEventArgs e) => OnLanguageErrorChanged(e);
+        private void Navigate(INode? node)
+        {
+            if (node is null)
+            {
+                return;
+            }
+
+            UpdateSource();
+
+            //_tbTranslation.IsUndoEnabled = false;
+            //_tbTranslation.IsUndoEnabled = true;
+
+            this.CurrentNode = node;
+
+            var transl = node.Translation;
+            this.Translation = transl;
+
+            // Die lokale Variable muss benutzt werden,
+            // da Translation nie null zurückgibt.
+            this.HasTranslation = transl != null;
+        }
 
         #endregion
+
+
     }
 }

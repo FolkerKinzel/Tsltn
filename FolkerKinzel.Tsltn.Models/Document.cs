@@ -1,5 +1,6 @@
 ﻿using FolkerKinzel.Tsltn.Models.Intls;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -33,7 +35,8 @@ namespace FolkerKinzel.Tsltn.Models
 
         public bool Changed => _tsltn?.Changed ?? false;
 
-     
+        public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
+
 
         public string? TsltnFileName { get; private set; }
 
@@ -80,6 +83,23 @@ namespace FolkerKinzel.Tsltn.Models
         #endregion
 
         #region Methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidXml(string s) => Utility.IsValidXml(s);
+
+
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        public async Task WaitAllTasks()
+        {
+            try
+            {
+                await Task.WhenAll(Tasks.ToArray()).ConfigureAwait(false);
+            }
+            catch { }
+
+            Tasks.Clear();
+        }
+
 
         public void NewTsltn(string sourceDocumentFileName)
         {

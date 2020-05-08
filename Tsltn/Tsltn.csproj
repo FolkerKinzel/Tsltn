@@ -31,6 +31,7 @@
     <Compile Remove="IRecentFilesMenu.cs" />
     <Compile Remove="RecentFilesMenu.cs" />
     <Compile Remove="TsltnPage.xaml.cs" />
+    <Compile Remove="UntranslatedNodeEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="HistoryTable_16x.png" />

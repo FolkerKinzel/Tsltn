@@ -20,7 +20,6 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         private static readonly StringBuilder _sb = new StringBuilder(STRING_BUILDER_MAX_CAPACITY);
         private static readonly List<string> _list = new List<string>(LIST_MAX_CAPACITY);
-        
 
         internal static void Cleanup()
         {
@@ -65,7 +64,25 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             }
         }
 
+        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        internal static bool IsValidXml(string translation)
+        {
+            _sb.Clear().Append("<R>").Append(translation).Append("</R>");
 
+            try
+            {
+                _ = XElement.Parse(_sb.ToString(), LoadOptions.None);
+            }
+            catch(XmlException)
+            {
+                return false;
+            }
+            catch(Exception)
+            {
+
+            }
+            return true;
+        }
 
 
         /// <summary>
@@ -78,10 +95,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         /// <exception cref="XmlException">Der Inhalt von <paramref name="translation"/> war kein gültiges Xml.</exception>
         internal static void Translate(XElement node, string translation)
         {
-            const string ROOT = "Root";
-            _sb.Clear();
-
-            _sb.Append('<').Append(ROOT).Append('>').Append(translation).Append("</").Append(ROOT).Append('>');
+            _sb.Clear().Append("<R>").Append(translation).Append("</R>");
 
             var tmp = XElement.Parse(_sb.ToString(), LoadOptions.None);
 

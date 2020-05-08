@@ -170,10 +170,12 @@ namespace FolkerKinzel.Tsltn.Controllers
             
             OnRefreshData();
 
+            await _doc.WaitAllTasks().ConfigureAwait(true);
+
             try
             {
                 var task = Task.Run(() => _doc.SaveTsltnAs(fileName));
-                this.Tasks.Add(task);
+                _doc.Tasks.Add(task);
                 await task.ConfigureAwait(false);
 
                 OnNewFileName(FileName);

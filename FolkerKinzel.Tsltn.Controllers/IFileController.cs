@@ -10,7 +10,6 @@ namespace FolkerKinzel.Tsltn.Controllers
     public interface IFileController
     {
         string FileName { get; }
-        ConcurrentBag<Task> Tasks { get; }
 
         event EventHandler<HasContentChangedEventArgs>? HasContentChanged;
         event EventHandler<MessageEventArgs>? Message;

@@ -7,6 +7,7 @@
              xmlns:r ="clr-namespace:Tsltn.Resources"
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              xmlns:cmd ="clr-namespace:Tsltn.Commands"
+             xmlns:models="clr-namespace:FolkerKinzel.Tsltn.Models;assembly=FolkerKinzel.Tsltn.Models"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="WhiteSmoke"
@@ -14,7 +15,8 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              FontSize="16"
              TextOptions.TextFormattingMode="Ideal"
-             Loaded="TsltnControl_Loaded">
+             Loaded="TsltnControl_Loaded" 
+             Unloaded="TsltnControl_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -65,8 +67,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="3*" MinHeight="170"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="1*" MinHeight="50"/>
         </Grid.RowDefinitions>
 
         
@@ -173,9 +177,53 @@
             <Button Command="NextPage" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
         </Grid>
 
-        <Button Grid.Column="1" Grid.Row="3" DockPanel.Dock="Top" HorizontalAlignment="Center" Command="{x:Static cmd:TsltnControlCommand.BrowseAll}"
+        <Button Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Command="{x:Static cmd:TsltnControlCommand.BrowseAll}"
                 Content="{x:Static r:Res.BrowseAll}"></Button>
 
-        
+
+        <GridSplitter Grid.Row="4" Grid.ColumnSpan="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"/>
+
+        <ListBox Grid.Row="5" Grid.ColumnSpan="2" ItemsSource="{Binding Errors}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <Setter Property="Focusable" Value="False"/>
+                    <EventSetter Event="MouseDoubleClick" Handler="DataError_MouseDoubleClick"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Image Width="16" Height="16" VerticalAlignment="Top" Margin="5">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Setters>
+                                        <Setter Property="Source" Value="pics/StatusCriticalError_16x.png"/>
+                                        <Setter Property="Focusable" Value="False"/>
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Level}" Value="{x:Static models:ErrorLevel.Warning}">
+                                            <Setter Property="Source" Value="pics/StatusWarning_16x.png"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="{x:Static models:ErrorLevel.Information}">
+                                            <Setter Property="Source" Value="pics/StatusInformation_16x.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                        <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="WrapWithOverflow" Focusable="False"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+
     </Grid>
 </UserControl>

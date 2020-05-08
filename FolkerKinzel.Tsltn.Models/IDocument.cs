@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -15,6 +17,14 @@ namespace FolkerKinzel.Tsltn.Models
         IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
         
         void RemoveTranslation(long id);
+
+        bool IsValidXml(string s);
+
+
+        ConcurrentBag<Task> Tasks { get; }
+
+        Task WaitAllTasks();
+
 
     }
 }

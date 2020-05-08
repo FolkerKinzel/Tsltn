@@ -33,7 +33,6 @@ namespace FolkerKinzel.Tsltn.Controllers
         #region Properties
 
 
-        public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
 
 
         public string FileName
@@ -279,13 +278,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
         {
-            try
-            {
-                await Task.WhenAll(this.Tasks.ToArray()).ConfigureAwait(true);
-            }
-            catch { }
-            
-            this.Tasks.Clear();
+            await _doc.WaitAllTasks().ConfigureAwait(true);
 
             if (!await DoSaveTsltnAsync(_doc.TsltnFileName).ConfigureAwait(true))
             {
