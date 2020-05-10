@@ -72,8 +72,12 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
                 section = Document.GetNextNode(section);
 
-                s = Utility.GetNodePath(section);
-
+                if(section is null)
+                {
+                    continue;
+                }
+                Document.GetNodeID(section, out _, out s);
+             
                 Assert.IsNotNull(s);
             }
 
@@ -86,7 +90,11 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
                 section = Document.GetPreviousNode(section);
 
-                s = Utility.GetNodePath(section);
+                if (section is null)
+                {
+                    continue;
+                }
+                Document.GetNodeID(section, out _, out s);
 
                 Assert.IsNotNull(s);
 

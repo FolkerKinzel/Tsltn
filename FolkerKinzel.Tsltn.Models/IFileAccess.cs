@@ -16,7 +16,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         void Translate(
             string outFileName,
-            string invalidXml,
             out List<DataError> errors,
             out List<KeyValuePair<long, string>> unusedTranslations);
 

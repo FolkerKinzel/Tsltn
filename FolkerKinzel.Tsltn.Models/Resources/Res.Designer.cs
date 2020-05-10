@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FolkerKinzel.Tsltn.Controllers.Resources {
+namespace FolkerKinzel.Tsltn.Models.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FolkerKinzel.Tsltn.Controllers.Resources.Res", typeof(Res).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FolkerKinzel.Tsltn.Models.Resources.Res", typeof(Res).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,74 +61,11 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file{0}&quot;{1}&quot;{0}is empty or not a{0}{2}! ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The translation contains invalid XML ähnelt.
         /// </summary>
-        internal static string EmptyOrInvalidFile {
+        internal static string InvalidXml {
             get {
-                return ResourceManager.GetString("EmptyOrInvalidFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The file is already open. ähnelt.
-        /// </summary>
-        internal static string FileAlreadyOpen {
-            get {
-                return ResourceManager.GetString("FileAlreadyOpen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &quot;The file &quot;{0}&quot; was changed.{1}Do you want to save the changes?&quot; ähnelt.
-        /// </summary>
-        internal static string FileWasChanged {
-            get {
-                return ResourceManager.GetString("FileWasChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Language ähnelt.
-        /// </summary>
-        internal static string Language {
-            get {
-                return ResourceManager.GetString("Language", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Open the source file to translate ähnelt.
-        /// </summary>
-        internal static string OpenSourceFile {
-            get {
-                return ResourceManager.GetString("OpenSourceFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The source document{0}&quot;{1}&quot;{0}was not found! ähnelt.
-        /// </summary>
-        internal static string SourceDocumentNotFound {
-            get {
-                return ResourceManager.GetString("SourceDocumentNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Tsltn file ähnelt.
-        /// </summary>
-        internal static string TsltnFile {
-            get {
-                return ResourceManager.GetString("TsltnFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Visual Studio XML documentation file ähnelt.
-        /// </summary>
-        internal static string XmlDocumentationFile {
-            get {
-                return ResourceManager.GetString("XmlDocumentationFile", resourceCulture);
+                return ResourceManager.GetString("InvalidXml", resourceCulture);
             }
         }
     }

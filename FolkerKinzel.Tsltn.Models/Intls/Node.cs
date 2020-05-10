@@ -28,7 +28,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
             // Das Replacement des geschützten Leerzeichens soll beim Hashen
             // ignoriert werden:
-            this.ID = Utility.GetNodeID(el, out _innerXml, out _nodePath);
+            this.ID = Document.GetNodeID(el, out _innerXml, out _nodePath);
             _innerXml = _whitespaceRegex.Replace(_innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim(), " ");
 
             var firstNode = (Node?)Document.Instance.FirstNode;
@@ -69,6 +69,10 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             }
         }
 
+        public bool ReferencesSameXml(INode other)
+        {
+            return object.ReferenceEquals(this.XmlNode, ((Node)other).XmlNode);
+        }
 
         public bool HasAncestor { get; }
 
@@ -108,7 +112,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             XElement? unTrans = Document.GetNextNode(this.XmlNode);
             while (unTrans != null)
             {
-                if (!Document.GetHasTranslation(Utility.GetNodeID(unTrans)))
+                if (!Document.GetHasTranslation(Document.GetNodeID(unTrans)))
                 {
                     return new Node(unTrans);
                 }
@@ -136,7 +140,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
             while (unTrans != null && !object.ReferenceEquals(unTrans, this.XmlNode))
             {
-                if (!Document.GetHasTranslation(Utility.GetNodeID(unTrans)))
+                if (!Document.GetHasTranslation(Document.GetNodeID(unTrans)))
                 {
                     return new Node(unTrans);
                 }
@@ -148,48 +152,48 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         }
 
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord) => Document.FindNode(this.XmlNode, nodePathFragment, ignoreCase, wholeWord);
+        //{
+        //    XElement? node = Document.GetNextNode(this.XmlNode);
 
-        public INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord)
-        {
-            XElement? node = Document.GetNextNode(this.XmlNode);
+        //    while (node != null)
+        //    {
+        //        if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
+        //        {
+        //            return new Node(node);
+        //        }
 
-            while (node != null)
-            {
-                if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
-                {
-                    return new Node(node);
-                }
-
-                node = Document.GetNextNode(node);
-            }
+        //        node = Document.GetNextNode(node);
+        //    }
 
 
-            if (Utility.ContainsPathFragment(Document.Instance.FirstNode!.NodePath, nodePathFragment, ignoreCase, wholeWord))
-            {
-                return Document.Instance.FirstNode;
-            }
+        //    if (Utility.ContainsPathFragment(Document.Instance.FirstNode!.NodePath, nodePathFragment, ignoreCase, wholeWord))
+        //    {
+        //        return Document.Instance.FirstNode;
+        //    }
 
-            if(object.ReferenceEquals(this.XmlNode, ((Node?)Document.Instance.FirstNode)!.XmlNode))
-            {
-                return null;
-            }
-            
+        //    if (object.ReferenceEquals(this.XmlNode, ((Node?)Document.Instance.FirstNode)!.XmlNode))
+        //    {
+        //        return null;
+        //    }
 
-            node = Document.GetNextNode(((Node)Document.Instance.FirstNode).XmlNode);
 
-            while (node != null && !object.ReferenceEquals(node, this.XmlNode))
-            {
-                if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
-                {
-                    return new Node(node);
-                }
+        //    node = Document.GetNextNode(((Node)Document.Instance.FirstNode).XmlNode);
 
-                node = Document.GetNextNode(node);
-            }
+        //    while (node != null && !object.ReferenceEquals(node, this.XmlNode))
+        //    {
+        //        if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
+        //        {
+        //            return new Node(node);
+        //        }
 
-            return null;
-        }
+        //        node = Document.GetNextNode(node);
+        //    }
 
-        
+        //    return null;
+        //}
+
+
     }
 }

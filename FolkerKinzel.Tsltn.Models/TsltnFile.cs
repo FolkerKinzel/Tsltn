@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using FolkerKinzel.Tsltn.Models.Intls;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace FolkerKinzel.Tsltn.Models
 {
@@ -34,14 +35,11 @@ namespace FolkerKinzel.Tsltn.Models
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
-
         /// <summary>
         /// ctor
         /// </summary>
         public TsltnFile() { }
 
-
-        
 
         internal string SourceDocumentFileName
         {
@@ -50,6 +48,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 // Der relative Pfad wird beim Speichern wieder in einen solchen 
                 // umgewandelt. In der Anwendung wird nur der absolute Pfad benutzt.
+
                 _sourceDocumentRelativePath = _sourceDocumentAbsolutePath = value;
                 Changed = true;
             }
@@ -83,32 +82,50 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal void SetTranslation(long nodeID, string? transl)
         {
-            if (transl is null)
+            lock (this._translations)
             {
-                if (this._translations.Remove(nodeID))
+                if (transl is null)
                 {
+                    if (this._translations.Remove(nodeID))
+                    {
+                        Changed = true;
+                    }
+                }
+                else
+                {
+                    this._translations[nodeID] = transl;
                     Changed = true;
                 }
-            }
-            else
-            {
-                this._translations[nodeID] = transl;
-                Changed = true;
             }
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl) => _translations.TryGetValue(nodeID, out transl);
+        internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
+        {
+            lock (this._translations)
+            {
+                return _translations.TryGetValue(nodeID, out transl);
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool HasTranslation(long nodeID) => _translations.ContainsKey(nodeID);
+        internal bool HasTranslation(long nodeID)
+        {
+            lock (this._translations) 
+            { 
+                return _translations.ContainsKey(nodeID); 
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => this._translations;
-
-
-
+        internal IEnumerable<KeyValuePair<long, string>> GetAllTranslations()
+        {
+            lock (this._translations)
+            {
+                return this._translations.ToArray();
+            }
+        }
 
         internal void Save(string? tsltnFileName)
         {
@@ -212,23 +229,28 @@ namespace FolkerKinzel.Tsltn.Models
             writer.WriteAttributeString(FILE_VERSION_XML_STRING, FILE_VERSION);
 
             writer.WriteAttributeString(SOURCE_FILE, _sourceDocumentRelativePath);
-            
-            if (SourceLanguage != null)
+
+            string? sourceLanguage = SourceLanguage;
+            if (sourceLanguage != null)
             {
-                writer.WriteAttributeString(SOURCE_LANGUAGE, SourceLanguage);
+                writer.WriteAttributeString(SOURCE_LANGUAGE, sourceLanguage);
             }
 
-            if (TargetLanguage != null)
+            string? targetLanguage = TargetLanguage;
+            if (targetLanguage != null)
             {
-                writer.WriteAttributeString(TARGET_LANGUAGE, TargetLanguage);
+                writer.WriteAttributeString(TARGET_LANGUAGE, targetLanguage);
             }
 
-            foreach (KeyValuePair<long, string> kvp in _translations)
+            lock (this._translations)
             {
-                writer.WriteStartElement(TRANSLATION_XML_NAME);
-                writer.WriteAttributeString(ID, kvp.Key.ToString("X", CultureInfo.InvariantCulture));
-                writer.WriteString(kvp.Value);
-                writer.WriteEndElement();
+                foreach (KeyValuePair<long, string> kvp in _translations)
+                {
+                    writer.WriteStartElement(TRANSLATION_XML_NAME);
+                    writer.WriteAttributeString(ID, kvp.Key.ToString("X", CultureInfo.InvariantCulture));
+                    writer.WriteString(kvp.Value);
+                    writer.WriteEndElement();
+                }
             }
         }
 

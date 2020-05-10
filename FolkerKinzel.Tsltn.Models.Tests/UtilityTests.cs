@@ -14,16 +14,18 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         [TestMethod()]
         public void TranslateTest()
         {
+            
+
             string test = "<code>code 1</code>Some Text Between<code>code 2</code>";
 
             var testElement = new XElement("Test");
 
             testElement.Add(new XText("Hallo"), new XElement("InnerTest"));
 
-            Utility.Translate(testElement, test);
+            Document.Utility.Translate(testElement, test);
 
             var clone = Utility.MaskCodeBlock(testElement);
-            Utility.Translate(clone, "<code />Dazwischen<code />");
+            Document.Utility.Translate(clone, "<code />Dazwischen<code />");
         }
     }
 }

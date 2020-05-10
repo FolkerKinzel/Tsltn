@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,7 +19,7 @@ namespace FolkerKinzel.Tsltn.Models
         
         void RemoveTranslation(long id);
 
-        bool IsValidXml(string s);
+        bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage);
 
 
         ConcurrentBag<Task> Tasks { get; }

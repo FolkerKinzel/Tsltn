@@ -161,7 +161,7 @@
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
             <TextBlock Text="{Binding CurrentNode.InnerXml}" TextWrapping="WrapWithOverflow" Padding="10" FontSize="22"/>
         </ScrollViewer>
-        <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=Explicit}"
+        <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=PropertyChanged}"
                  GotKeyboardFocus="_tbTranslation_GotKeyboardFocus"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"

@@ -291,7 +291,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 {
                     return await Task.Run(() =>
                     {
-                        _doc.Translate(fileName, Res.InvalidXml, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
+                        _doc.Translate(fileName, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
                         return (Errors: errors, UnusedTranslations: unusedTranslations);
                     }).ConfigureAwait(false);
 

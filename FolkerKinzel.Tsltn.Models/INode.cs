@@ -15,5 +15,7 @@ namespace FolkerKinzel.Tsltn.Models
         INode? GetAncestor();
         INode? GetDescendant();
         INode? GetNextUntranslated();
+
+        bool ReferencesSameXml(INode other);
     }
 }

@@ -1,4 +1,6 @@
 # Tsltn
+##### Version 1.4
+
 GUI-tool to translate the Visual Studio xml documentation file.
 
 ![Screenshot](screenshot.png)

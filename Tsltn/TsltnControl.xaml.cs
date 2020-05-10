@@ -19,13 +19,17 @@ using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Diagnostics;
+using System.Windows.Threading;
+using System.Web;
 
 namespace Tsltn
 {
     /// <summary>
     /// Interaktionslogik für TsltnControl.xaml
     /// </summary>
-    public partial class TsltnControl : UserControl, INotifyPropertyChanged
+    public sealed partial class TsltnControl : UserControl, INotifyPropertyChanged, IDisposable
     {
         private readonly MainWindow _owner;
         private INode _node;
@@ -35,6 +39,8 @@ namespace Tsltn
         private bool _hasTranslation;
         private string? _sourceLanguage;
         private string? _targetLanguage;
+
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -80,15 +86,18 @@ namespace Tsltn
             get => _hasTranslation;
             set
             {
-                _hasTranslation = value;
-                OnPropertyChanged();
-
-                if (!value)
+                if (_hasTranslation != value)
                 {
-                    Translation = "";
-                }
+                    _hasTranslation = value;
+                    OnPropertyChanged();
 
-                _doc.Tasks.Add(CheckUntranslatedNodesAsync());
+                    if (!value)
+                    {
+                        Translation = "";
+                    }
+
+                    _doc.Tasks.Add(CheckUntranslatedNodesAsync());
+                }
             }
         }
 
@@ -170,14 +179,17 @@ namespace Tsltn
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
 
 
-        
+        public void Dispose()
+        {
+            ((IDisposable)_cancellationTokenSource).Dispose();
+        }
 
 
         internal void UpdateSource()
         {
             if (HasTranslation)
             {
-                this._tbTranslation.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                //this._tbTranslation.GetBindingExpression(TextBox.TextProperty).UpdateSource();
                 _node.Translation = this.Translation;
             }
             else
@@ -205,6 +217,25 @@ namespace Tsltn
         }
 
         #region EventHandler
+
+        private async void TsltnControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.SourceLanguage = _doc.SourceLanguage;
+            this.TargetLanguage = _doc.TargetLanguage;
+
+            await CheckUntranslatedNodesAsync().ConfigureAwait(false);
+
+            _ = Task.Run(() => CheckXmlError(_cancellationTokenSource.Token));
+        }
+
+
+        private void TsltnControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _owner.TranslationErrors -= MainWindow_TranslationErrors;
+            _cancellationTokenSource.Cancel();
+
+            this.Dispose();
+        }
 
         private void MainWindow_TranslationErrors(object? sender, TranslationErrorsEventArgs e)
         {
@@ -288,22 +319,6 @@ namespace Tsltn
             }
         }
 
-
-        private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.SourceLanguage = _doc.SourceLanguage;
-            this.TargetLanguage = _doc.TargetLanguage;
-
-            _doc.Tasks.Add(CheckUntranslatedNodesAsync());
-        }
-
-
-        private void TsltnControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            _owner.TranslationErrors -= MainWindow_TranslationErrors;
-        }
-
-
         private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
             var target = _node.FindNode(e.PathFragment, e.CaseSensitive, e.WholeWord);
@@ -319,6 +334,7 @@ namespace Tsltn
                 Navigate(target);
             }
         }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
@@ -394,18 +410,78 @@ namespace Tsltn
 
         private async Task CheckUntranslatedNodesAsync()
         {
-            await _doc.WaitAllTasks().ConfigureAwait(true);
-
-            var task = Task.Run(CurrentNode.GetNextUntranslated);
-            _doc.Tasks.Add(task);
-            INode? untranslatedNode = await task.ConfigureAwait(true);
-
-            Errors.Remove(MissingTranslationWarning);
+            INode? untranslatedNode = await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true);
 
             if (untranslatedNode != null)
             {
                 MissingTranslationWarning.Node = untranslatedNode;
-                Errors.Insert(0, MissingTranslationWarning);
+
+                if (!Errors.Contains(MissingTranslationWarning))
+                {
+                    Errors.Insert(0, MissingTranslationWarning);
+                }
+            }
+            else
+            {
+                Errors.Remove(MissingTranslationWarning);
+            }
+        }
+
+        private void CheckXmlError(CancellationToken cancelToken)
+        {
+            while (true)
+            {
+                Thread.Sleep(5000);
+
+                if (cancelToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                if(!_owner.IsCommandEnabled)
+                {
+                    continue;
+                }
+
+                if(!HasTranslation)
+                {
+                    Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
+                    continue;
+                }
+
+
+                if(!_doc.IsValidXml(Translation, out string? exceptionMessage))
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        RemoveXmlErrorMessages();
+
+                        Errors.Insert(0, new XmlDataError(CurrentNode, exceptionMessage));
+
+                    }, DispatcherPriority.SystemIdle);
+                }
+                else
+                {
+                    Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
+                }
+                
+                if (cancelToken.IsCancellationRequested)
+                {
+                    break;
+                }
+            }
+
+            Debug.WriteLine("CheckXmlError beendet.");
+        }
+
+
+        private void RemoveXmlErrorMessages()
+        {
+            var thisErrors = Errors.Where(x => x is XmlDataError && this.CurrentNode.ReferencesSameXml(x.Node!)).ToArray();
+
+            foreach (var error in thisErrors)
+            {
+                Errors.Remove(error);
             }
         }
 
@@ -431,6 +507,11 @@ namespace Tsltn
             // da Translation nie null zurückgibt.
             this.HasTranslation = transl != null;
         }
+
+
+        
+
+        
 
         #endregion
 

@@ -32,16 +32,16 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             const string SUMMARY = "summary";
 
-            tsltn.SetTranslation(Utility.GetNodeID(new XElement(SUMMARY, "Hello Car")), "Hallo Auto");
+            tsltn.SetTranslation(Document.GetNodeID(new XElement(SUMMARY, "Hello Car")), "Hallo Auto");
 
             var auto2 = new XElement(SUMMARY, "Car 2");
-            tsltn.SetTranslation(Utility.GetNodeID(auto2), "Auto 2");
+            tsltn.SetTranslation(Document.GetNodeID(auto2), "Auto 2");
 
             XElement parent1 = new XElement("Node1", "Hi Manual");
-            tsltn.SetTranslation(Utility.GetNodeID(parent1), "Hallo Manual");
+            tsltn.SetTranslation(Document.GetNodeID(parent1), "Hallo Manual");
 
             XElement parent2 = new XElement("Node2", "Manual 2");
-            tsltn.SetTranslation(Utility.GetNodeID(parent2), "manuell 2");
+            tsltn.SetTranslation(Document.GetNodeID(parent2), "manuell 2");
 
 
             var sb = new StringBuilder();
@@ -63,10 +63,10 @@ namespace FolkerKinzel.Tsltn.Models.Tests
             Assert.AreEqual("de", tsltn2.SourceLanguage);
             Assert.AreEqual("en", tsltn2.TargetLanguage);
 
-            Assert.IsTrue(tsltn.TryGetTranslation(Utility.GetNodeID(auto2), out string? transl));
+            Assert.IsTrue(tsltn.TryGetTranslation(Document.GetNodeID(auto2), out string? transl));
             Assert.AreEqual("Auto 2", transl);
 
-            Assert.IsTrue(tsltn.TryGetTranslation(Utility.GetNodeID(parent2), out string? result));
+            Assert.IsTrue(tsltn.TryGetTranslation(Document.GetNodeID(parent2), out string? result));
             Assert.AreEqual("manuell 2", result);
 
 
