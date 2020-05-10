@@ -21,7 +21,7 @@ Alternatively you can [download the executable file](./Tsltn/Binaries/Tsltn.exe.
 build Tsltn yourselves.
 
 > IMPORTANT: On some systems, the content of the ZIP file is blocked. Before extracting it, right click on the ZIP file, 
-> select Properties, and click on the Unblock button - if it is present - in the lower right corner of the General tab 
+> select Properties, and check the Allow checkbox - if it is present - in the lower right corner of the General tab 
 > in the Properties dialog.
 
 
