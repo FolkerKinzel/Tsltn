@@ -44,13 +44,12 @@ namespace Tsltn
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+
         private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
 
             PathFragment = PathFragment?.Replace(" ", "", StringComparison.Ordinal);
-
-            
 
             if (string.IsNullOrEmpty(PathFragment))
             {
@@ -58,10 +57,9 @@ namespace Tsltn
             }
 
             OnNavigationRequested(PathFragment, CaseSensitive, WholeWord);
-
             OnPropertyChanged(nameof(PathFragment));
-
         }
+
 
         private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {

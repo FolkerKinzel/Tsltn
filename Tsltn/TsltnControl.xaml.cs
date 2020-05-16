@@ -70,7 +70,7 @@ namespace Tsltn
                 this._translation = _node.Translation;
                 this._hasTranslation = true;
             }
-            this.SourceFileName = System.IO.Path.GetFileName(_doc.SourceDocumentFileName);
+            this.SourceFileName = _doc.SourceDocumentFileName;
 
             InitializeComponent();
 
@@ -80,7 +80,6 @@ namespace Tsltn
         }
 
         
-
         public bool HasTranslation
         {
             get => _hasTranslation;
@@ -101,6 +100,7 @@ namespace Tsltn
             }
         }
 
+
         [AllowNull]
         public string Translation
         {
@@ -111,6 +111,7 @@ namespace Tsltn
                 OnPropertyChanged();
             }
         }
+
 
         public string? SourceLanguage
         {
@@ -189,8 +190,7 @@ namespace Tsltn
         {
             if (HasTranslation)
             {
-                //this._tbTranslation.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-                _node.Translation = this.Translation;
+                _node.Translation = this.Translation.Trim();
             }
             else
             {
@@ -319,9 +319,10 @@ namespace Tsltn
             }
         }
 
+
         private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            var target = _node.FindNode(e.PathFragment, e.CaseSensitive, e.WholeWord);
+            var target = _node.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
 
             if (target is null)
             {
@@ -338,6 +339,7 @@ namespace Tsltn
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => HasTranslation = true;
@@ -384,16 +386,17 @@ namespace Tsltn
             e.Handled = true;
         }
 
+
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var allWnd = new BrowseAllTranslationsWindow(_doc.GetAllTranslations());
 
             if (true == allWnd.ShowDialog(_owner))
             {
-                if (allWnd._lbTranslations.SelectedItem is KeyValuePair<long, string> kvp)
+                if (allWnd._lbTranslations.SelectedItem is string s)
                 {
                     this.HasTranslation = true;
-                    this.Translation = kvp.Value;
+                    this.Translation = s;
                 }
             }
 
@@ -426,6 +429,7 @@ namespace Tsltn
                 Errors.Remove(MissingTranslationWarning);
             }
         }
+
 
         private void CheckXmlError(CancellationToken cancelToken)
         {
@@ -508,10 +512,6 @@ namespace Tsltn
             this.HasTranslation = transl != null;
         }
 
-
-        
-
-        
 
         #endregion
 

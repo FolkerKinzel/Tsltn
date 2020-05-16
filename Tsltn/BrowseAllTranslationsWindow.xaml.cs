@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,11 +26,11 @@ namespace Tsltn
         public BrowseAllTranslationsWindow(IEnumerable<KeyValuePair<long, string>> enumerable)
         {
             this.Title = $"{App.PROGRAM_NAME} - {Res.SelectTranslation}";
-            this.AllTranslations = enumerable;
+            this.AllTranslations = enumerable.Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s);
             InitializeComponent();
         }
 
-        public IEnumerable<KeyValuePair<long, string>> AllTranslations { get; }
+        public IEnumerable<string> AllTranslations { get; }
 
 
         //private void OnPropertyChanged(string propName)
@@ -37,16 +38,19 @@ namespace Tsltn
         //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         //}
 
+
         internal bool? ShowDialog(Window owner)
         {
             this.Owner = owner;
             return ShowDialog();
         }
 
+
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
         }
+
 
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
