@@ -158,15 +158,24 @@
         <Button Name="_btnReset" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"
                 Content="{x:Static r:Res.Reset}" Click="_btnReset_Click" IsEnabled="{Binding HasTranslation}"/>
 
+        <!--
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
             <TextBlock Text="{Binding CurrentNode.InnerXml}" TextWrapping="WrapWithOverflow" Padding="10" FontSize="22"/>
         </ScrollViewer>
+        -->
+
+        <TextBox Grid.Row="2" IsReadOnly="True" Text="{Binding CurrentNode.InnerXml, Mode=OneWay}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.CanContentScroll="True"
+                 TextWrapping="WrapWithOverflow" Padding="10" FontSize="22" Background="WhiteSmoke" UndoLimit="0" IsEnabled="False"/>
+
         <TextBox Name="_tbTranslation" Grid.Row="2" Grid.Column="1" Text="{Binding Translation, UpdateSourceTrigger=PropertyChanged}"
                  GotKeyboardFocus="_tbTranslation_GotKeyboardFocus"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"
-                 Padding="10" FontSize="22" Background="WhiteSmoke" TextWrapping="WrapWithOverflow"/>
+                 Padding="10" FontSize="22" Background="WhiteSmoke" TextWrapping="WrapWithOverflow" AcceptsReturn="True" />
 
         <Grid Grid.Row="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

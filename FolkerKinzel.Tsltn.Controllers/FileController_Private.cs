@@ -126,6 +126,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             var dlg = new SaveFileDialog()
             {
+                Title = Res.SaveTranslationAs,
                 FileName = Path.GetFileName(fileName),
                 AddExtension = true,
                 CheckFileExists = false,

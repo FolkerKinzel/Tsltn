@@ -1,5 +1,5 @@
 # Tsltn
-![version](https://img.shields.io/badge/version-1.5-blue)
+![version](https://img.shields.io/badge/version-1.6-blue)
 
 GUI-tool to translate the Visual Studio xml documentation file.
 

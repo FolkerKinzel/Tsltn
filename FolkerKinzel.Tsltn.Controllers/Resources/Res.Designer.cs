@@ -106,6 +106,15 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save Translation As ähnelt.
+        /// </summary>
+        internal static string SaveTranslationAs {
+            get {
+                return ResourceManager.GetString("SaveTranslationAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The source document{0}&quot;{1}&quot;{0}was not found! ähnelt.
         /// </summary>
         internal static string SourceDocumentNotFound {

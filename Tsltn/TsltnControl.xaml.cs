@@ -40,6 +40,8 @@ namespace Tsltn
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
+        private readonly StringBuilder _sb = new StringBuilder(1024);
+
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -77,9 +79,14 @@ namespace Tsltn
             this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
          
             _owner.TranslationErrors += MainWindow_TranslationErrors;
+
+            DataObject.AddPastingHandler(_tbTranslation, _tbTranslation_Paste);
         }
 
-        
+
+       
+
+
         public bool HasTranslation
         {
             get => _hasTranslation;
@@ -231,8 +238,10 @@ namespace Tsltn
 
         private void TsltnControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            _owner.TranslationErrors -= MainWindow_TranslationErrors;
             _cancellationTokenSource.Cancel();
+
+            _owner.TranslationErrors -= MainWindow_TranslationErrors;
+            DataObject.RemovePastingHandler(_tbTranslation, _tbTranslation_Paste);
 
             this.Dispose();
         }
@@ -337,12 +346,77 @@ namespace Tsltn
         }
 
 
+        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => HasTranslation = true;
+
+
+        private void _tbTranslation_Paste(object sender, DataObjectPastingEventArgs e)
+        {
+            e.CancelCommand();
+            _sb.Clear().Append(Clipboard.GetText());
+            //Clipboard.Clear();
+
+            int markupCounter = 0;
+            char previous = 'a';
+
+            for (int i = _sb.Length - 1; i >= 0; i--)
+            {
+                if(markupCounter < 0)
+                {
+                    break;
+                }
+
+                char current = _sb[i];
+
+                switch (current)
+                {
+                    case '>':
+                        markupCounter++;
+                        break;
+                    case '<':
+                        markupCounter--;
+                        break;
+                    default:
+                        if(markupCounter > 0) // inside Markup
+                        {
+                            if(char.IsWhiteSpace(current) && char.IsPunctuation(previous))
+                            {
+                                _sb.Remove(i, 1);
+                                continue;
+                            }
+                            else if(char.IsPunctuation(current) && char.IsWhiteSpace(previous))
+                            {
+                                _sb.Remove(i + 1, 1);
+                            }
+                        }
+                        break;
+                }
+
+                previous = current;
+            }
+
+            if(_tbTranslation.IsSelectionActive)
+            {
+                string replacement = _sb.ToString();
+                _sb.Clear().Append(_tbTranslation.Text);
+
+                int selectionStart = _tbTranslation.SelectionStart;
+                _sb.Remove(selectionStart, _tbTranslation.SelectionLength);
+                _sb.Insert(_tbTranslation.SelectionStart, replacement);
+
+
+                Translation = _sb.ToString();
+
+                _tbTranslation.Select(selectionStart + replacement.Length, 0);
+            }
+        }
+
 
         #endregion
 
