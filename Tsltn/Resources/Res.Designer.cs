@@ -79,6 +79,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Alt ähnelt.
+        /// </summary>
+        public static string AltKey {
+            get {
+                return ResourceManager.GetString("AltKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Browse all ähnelt.
         /// </summary>
         public static string BrowseAll {
@@ -214,6 +223,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Left ähnelt.
+        /// </summary>
+        public static string LeftKey {
+            get {
+                return ResourceManager.GetString("LeftKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die New ähnelt.
         /// </summary>
         public static string NewMenuItem {
@@ -228,6 +246,15 @@ namespace Tsltn.Resources {
         public static string Next {
             get {
                 return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Next To Translate &gt; ähnelt.
+        /// </summary>
+        public static string NextToTranslate {
+            get {
+                return ResourceManager.GetString("NextToTranslate", resourceCulture);
             }
         }
         
@@ -322,6 +349,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Right ähnelt.
+        /// </summary>
+        public static string RightKey {
+            get {
+                return ResourceManager.GetString("RightKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Save As ähnelt.
         /// </summary>
         public static string SaveAsMenuItem {
@@ -351,9 +387,9 @@ namespace Tsltn.Resources {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Shift ähnelt.
         /// </summary>
-        public static string Shift {
+        public static string ShiftKey {
             get {
-                return ResourceManager.GetString("Shift", resourceCulture);
+                return ResourceManager.GetString("ShiftKey", resourceCulture);
             }
         }
         

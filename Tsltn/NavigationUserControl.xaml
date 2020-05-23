@@ -26,13 +26,13 @@
     <StackPanel>
         <Label Content="{x:Static r:Res.GoTo}" Padding="0"></Label>
         <DockPanel>
-            <Button DockPanel.Dock="Right" Command="BrowseForward" MinWidth="25" MinHeight="25">&#x2192;</Button>
+            <Button DockPanel.Dock="Right" Command="BrowseForward" MinWidth="25" MinHeight="25" TabIndex="4">&#x2192;</Button>
             <TextBox AcceptsReturn="False" AcceptsTab="False"
-                     Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" UndoLimit="10" TabIndex="1"/>
         </DockPanel>
         <StackPanel Orientation="Horizontal">
-            <ToggleButton IsChecked="{Binding CaseSensitive}" FontSize="16">Aa</ToggleButton>
-            <ToggleButton IsChecked="{Binding WholeWord}">
+            <ToggleButton IsChecked="{Binding CaseSensitive}" FontSize="16" TabIndex="2">Aa</ToggleButton>
+            <ToggleButton IsChecked="{Binding WholeWord}" TabIndex="3">
                 <Border Margin="1" BorderBrush="Black" BorderThickness="0,1,1,1">
                 <TextBlock Margin="1" FontSize="10">Ab</TextBlock>
                 </Border>

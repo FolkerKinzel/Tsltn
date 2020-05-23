@@ -42,7 +42,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         internal XElement XmlNode { get; }
 
-        internal long ID { get; }
+        public long ID { get; }
 
         public string NodePath => _nodePath;
         public string InnerXml => _innerXml;
@@ -104,11 +104,6 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public INode? GetNextUntranslated()
         {
-            if (!Document.GetHasTranslation(this.ID))
-            {
-                return this;
-            }
-
             XElement? unTrans = Document.GetNextNode(this.XmlNode);
             while (unTrans != null)
             {
@@ -146,6 +141,11 @@ namespace FolkerKinzel.Tsltn.Models.Intls
                 }
 
                 unTrans = Document.GetNextNode(unTrans);
+            }
+
+            if (!Document.GetHasTranslation(this.ID))
+            {
+                return this;
             }
 
             return null;

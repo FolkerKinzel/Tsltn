@@ -23,7 +23,7 @@ namespace Tsltn
         protected override void OnStartup(StartupEventArgs e)
         {
             ApplicationCommands.SaveAs.InputGestures.Add(
-                new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.Shift}+S"));
+                new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.ShiftKey}+S"));
 
             base.OnStartup(e);
         }

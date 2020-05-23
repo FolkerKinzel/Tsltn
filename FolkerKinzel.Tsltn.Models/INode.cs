@@ -4,6 +4,7 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public interface INode
     {
+        long ID { get; }
         bool HasAncestor { get; }
         bool HasDescendant { get; }
         string InnerText { get; }

@@ -11,5 +11,7 @@ namespace Tsltn.Commands
 
         public static RoutedCommand BrowseAll { get; } = new RoutedCommand("BrowseAll", typeof(TsltnControlCommand));
 
+        public static RoutedCommand NextToTranslate { get; } = new RoutedCommand("NextToTranslate", typeof(TsltnControlCommand),
+            new InputGestureCollection { new KeyGesture(Key.Right, ModifierKeys.Shift | ModifierKeys.Alt) });
     }
 }

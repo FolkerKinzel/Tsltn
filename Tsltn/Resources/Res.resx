@@ -123,6 +123,9 @@
   <data name="AboutMenuItem" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="AltKey" xml:space="preserve">
+    <value>Alt</value>
+  </data>
   <data name="BrowseAll" xml:space="preserve">
     <value>Browse all</value>
   </data>
@@ -166,11 +169,17 @@
   <data name="InvalidTargetLanguage" xml:space="preserve">
     <value>Target Language is not a valid IETF language tag.</value>
   </data>
+  <data name="LeftKey" xml:space="preserve">
+    <value>Left</value>
+  </data>
   <data name="NewMenuItem" xml:space="preserve">
     <value>New</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Next &gt;</value>
+  </data>
+  <data name="NextToTranslate" xml:space="preserve">
+    <value>Next To Translate &gt;</value>
   </data>
   <data name="NodePath" xml:space="preserve">
     <value>Node path:</value>
@@ -202,6 +211,9 @@
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="RightKey" xml:space="preserve">
+    <value>Right</value>
+  </data>
   <data name="SaveAsMenuItem" xml:space="preserve">
     <value>Save As</value>
   </data>
@@ -211,7 +223,7 @@
   <data name="SelectTranslation" xml:space="preserve">
     <value>Select translation</value>
   </data>
-  <data name="Shift" xml:space="preserve">
+  <data name="ShiftKey" xml:space="preserve">
     <value>Shift</value>
   </data>
   <data name="SourceFile" xml:space="preserve">

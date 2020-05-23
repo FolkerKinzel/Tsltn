@@ -18,6 +18,7 @@ using System.Windows.Input;
 using Tsltn.Resources;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace Tsltn
 {
@@ -129,7 +130,17 @@ namespace Tsltn
 
         private void _fileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
         {
-            _ccContent.Content = e.HasContent ? new TsltnControl(this, _doc) : null;
+            if(e.HasContent)
+            {
+                var cntr = new TsltnControl(this, _doc);
+                _ccContent.Content = cntr;
+                Dispatcher.BeginInvoke(new Action(() => cntr._btnNext.Focus()), DispatcherPriority.ApplicationIdle);
+            }
+            else
+            {
+                _ccContent.Content = null;
+
+            }
         }
 
 

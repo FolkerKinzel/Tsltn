@@ -40,6 +40,8 @@ namespace Tsltn
         private string? _sourceLanguage;
         private string? _targetLanguage;
 
+        INode? _nextUntranslatedNode;
+
         private readonly StringBuilder _sb = new StringBuilder(1024);
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -81,6 +83,10 @@ namespace Tsltn
             _owner.TranslationErrors += MainWindow_TranslationErrors;
 
             DataObject.AddPastingHandler(_tbTranslation, _tbTranslation_Paste);
+
+            _btnPrevious.ToolTip = $"{Res.AltKey}+{Res.LeftKey}";
+            _btnNext.ToolTip = $"{Res.AltKey}+{Res.RightKey}";
+            _btnNextToTranslate.ToolTip = $"{Res.ShiftKey}+{Res.AltKey}+{Res.RightKey}";
         }
 
 
@@ -92,7 +98,7 @@ namespace Tsltn
             get => _hasTranslation;
             set
             {
-                if (_hasTranslation != value)
+                if (value != _hasTranslation)
                 {
                     _hasTranslation = value;
                     OnPropertyChanged();
@@ -225,14 +231,16 @@ namespace Tsltn
 
         #region EventHandler
 
-        private async void TsltnControl_Loaded(object sender, RoutedEventArgs e)
+        private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.SourceLanguage = _doc.SourceLanguage;
             this.TargetLanguage = _doc.TargetLanguage;
 
-            await CheckUntranslatedNodesAsync().ConfigureAwait(false);
-
-            _ = Task.Run(() => CheckXmlError(_cancellationTokenSource.Token));
+            _ = this.Dispatcher.BeginInvoke(new Action(async () =>
+            {
+                await CheckUntranslatedNodesAsync().ConfigureAwait(false);
+                _ = Task.Run(() => CheckXmlError(_cancellationTokenSource.Token));
+            }), DispatcherPriority.ApplicationIdle);
         }
 
 
@@ -346,11 +354,14 @@ namespace Tsltn
         }
 
 
-        
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _btnReset_Click(object sender, RoutedEventArgs e) => this.HasTranslation = false;
-
+        private void _btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            this.HasTranslation = false;
+            _btnNext.Focus();
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => HasTranslation = true;
@@ -432,6 +443,7 @@ namespace Tsltn
         {
             Navigate(_node.GetAncestor());
             e.Handled = true;
+            _btnPrevious.Focus();
         }
 
         private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -443,6 +455,7 @@ namespace Tsltn
         {
             Navigate(CurrentNode.GetDescendant());
             e.Handled = true;
+            _btnNext.Focus();
         }
 
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -450,6 +463,7 @@ namespace Tsltn
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerXml);
             e.Handled = true;
+            _btnNext.Focus();
         }
 
 
@@ -458,6 +472,7 @@ namespace Tsltn
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerText);
             e.Handled = true;
+            _btnNext.Focus();
         }
 
 
@@ -475,6 +490,28 @@ namespace Tsltn
             }
 
             e.Handled = true;
+
+            _btnNext.Focus();
+        }
+
+        private void NextToTranslate_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = _nextUntranslatedNode != null;
+        }
+
+        private async void NextToTranslate_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(this.HasTranslation)
+            {
+                this.Navigate(_nextUntranslatedNode);
+            }
+            else
+            {
+                var next = await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true);
+                this.Navigate(next);
+            }
+
+            _btnNextToTranslate.Focus();
         }
 
         #endregion
@@ -487,11 +524,12 @@ namespace Tsltn
 
         private async Task CheckUntranslatedNodesAsync()
         {
-            INode? untranslatedNode = await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true);
+            UpdateSource();
+            _nextUntranslatedNode = this.HasTranslation ? await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true) : this.CurrentNode;
 
-            if (untranslatedNode != null)
+            if (_nextUntranslatedNode != null)
             {
-                MissingTranslationWarning.Node = untranslatedNode;
+                MissingTranslationWarning.Node = _nextUntranslatedNode;
 
                 if (!Errors.Contains(MissingTranslationWarning))
                 {
@@ -533,9 +571,7 @@ namespace Tsltn
                     Dispatcher.Invoke(() =>
                     {
                         RemoveXmlErrorMessages();
-
                         Errors.Insert(0, new XmlDataError(CurrentNode, exceptionMessage));
-
                     }, DispatcherPriority.SystemIdle);
                 }
                 else
@@ -566,15 +602,12 @@ namespace Tsltn
 
         private void Navigate(INode? node)
         {
-            if (node is null)
+            if (node is null || node.ID == CurrentNode.ID)
             {
                 return;
             }
 
             UpdateSource();
-
-            //_tbTranslation.IsUndoEnabled = false;
-            //_tbTranslation.IsUndoEnabled = true;
 
             this.CurrentNode = node;
 
@@ -587,8 +620,9 @@ namespace Tsltn
         }
 
 
+
         #endregion
 
-
+        
     }
 }
