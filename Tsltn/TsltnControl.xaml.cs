@@ -236,6 +236,9 @@ namespace Tsltn
             this.SourceLanguage = _doc.SourceLanguage;
             this.TargetLanguage = _doc.TargetLanguage;
 
+
+            // Möglichst nicht INNERHALB des Loaded-Eventhandlers auf den VisualTree
+            // zugreifen: Das führt zu schwer identifizierbaren Fehlern:
             _ = this.Dispatcher.BeginInvoke(new Action(async () =>
             {
                 await CheckUntranslatedNodesAsync().ConfigureAwait(false);
