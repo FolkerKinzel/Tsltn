@@ -16,7 +16,7 @@
              FontSize="16"
              TextOptions.TextFormattingMode="Ideal"
              Loaded="TsltnControl_Loaded" 
-             Unloaded="TsltnControl_Unloaded" Focusable="False">
+             Unloaded="TsltnControl_Unloaded" FocusManager.IsFocusScope="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -183,10 +183,10 @@ namespace FolkerKinzel.Tsltn.Models
             out List<DataError> errors,
             out List<KeyValuePair<long, string>> unusedTranslations)
         {
-            var node = ((Node?)FirstNode)?.XmlNode;
+            var cloneDoc = new XDocument(_xmlDocument);
+            var node = GetFirstNode(cloneDoc);
 
             errors = new List<DataError>();
-
             var used = new List<KeyValuePair<long, string>>();
 
             while (node != null)
@@ -212,14 +212,9 @@ namespace FolkerKinzel.Tsltn.Models
                 node = GetNextNode(node);
             }
 
-            Utility.Cleanup();
-
-            _xmlDocument?.Save(outFileName);
-
-            this.OpenTsltn(this.TsltnFileName);
+            cloneDoc.Save(outFileName);
 
             unusedTranslations = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
-
 
 
             /////////////////////////////////////////////
@@ -265,27 +260,49 @@ namespace FolkerKinzel.Tsltn.Models
         {
             lock (_lockObject)
             {
-                var members = _xmlDocument?.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
+                return _xmlDocument is null ? null : GetFirstNode(_xmlDocument);
 
-                if (members is null)
-                {
-                    return null;
-                }
+                //var members = _xmlDocument?.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
 
-                foreach (var member in members)
-                {
-                    foreach (XElement section in member.Elements())
-                    {
-                        var el = ExtractDescendant(section);
+                //if (members is null)
+                //{
+                //    return null;
+                //}
 
-                        if (el != null) return el;
-                    }
-                }
+                //foreach (var member in members)
+                //{
+                //    foreach (XElement section in member.Elements())
+                //    {
+                //        var el = ExtractDescendant(section);
+
+                //        if (el != null) return el;
+                //    }
+                //}
             }
-
-            return null;
         }
 
+
+        private static XElement? GetFirstNode(XDocument xDoc)
+        {
+            var members = xDoc.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
+
+            if (members is null)
+            {
+                return null;
+            }
+
+            foreach (var member in members)
+            {
+                foreach (XElement section in member.Elements())
+                {
+                    var el = ExtractDescendant(section);
+
+                    if (el != null) return el;
+                }
+            }
+        
+            return null;
+        }
 
         internal static XElement? GetNextNode(XElement? currentNode)
         {

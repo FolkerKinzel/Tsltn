@@ -294,28 +294,11 @@ namespace FolkerKinzel.Tsltn.Controllers
                         _doc.Translate(fileName, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
                         return (Errors: errors, UnusedTranslations: unusedTranslations);
                     }).ConfigureAwait(false);
-
-                    
                 }
                 catch (Exception e)
                 {
                     OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-
-                    try
-                    {
-                        await Task.Run(() => _doc.ReloadSourceDocument(_doc.SourceDocumentFileName!)).ConfigureAwait(false);
-                    }
-                    catch
-                    {
-                        OnHasContentChanged(false);
-                        _doc.CloseTsltn();
-                        OnPropertyChanged(nameof(FileName));
-                    }
-
-                    return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
                 }//catch
-
-
             }//if
 
             return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());

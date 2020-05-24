@@ -26,7 +26,7 @@ namespace Tsltn
         public BrowseAllTranslationsWindow(IEnumerable<KeyValuePair<long, string>> enumerable)
         {
             this.Title = $"{App.PROGRAM_NAME} - {Res.SelectTranslation}";
-            this.AllTranslations = enumerable.Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s);
+            this.AllTranslations = enumerable.Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s).ToArray();
             InitializeComponent();
         }
 
