@@ -107,9 +107,10 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             try
             {
-                commandLineArg = Path.Combine(Environment.CurrentDirectory, commandLineArg);
+                //commandLineArg = Path.Combine(Environment.CurrentDirectory, commandLineArg);
+                commandLineArg = Path.GetFullPath(commandLineArg);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
                 //OnHasContentChanged(false);

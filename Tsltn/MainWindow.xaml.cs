@@ -134,7 +134,7 @@ namespace Tsltn
             {
                 var cntr = new TsltnControl(this, _doc);
                 _ccContent.Content = cntr;
-                Dispatcher.BeginInvoke(new Action(() => cntr._btnNext.Focus()), DispatcherPriority.ApplicationIdle);
+                Dispatcher.BeginInvoke(new Action(() => cntr._tbOriginal.Focus()), DispatcherPriority.ApplicationIdle);
             }
             else
             {

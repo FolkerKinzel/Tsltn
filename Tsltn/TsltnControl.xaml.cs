@@ -245,7 +245,8 @@ namespace Tsltn
             // zugreifen: Das führt zu schwer identifizierbaren Fehlern:
             _ = this.Dispatcher.BeginInvoke(new Action(async () =>
             {
-                await CheckUntranslatedNodesAsync().ConfigureAwait(false);
+                await CheckUntranslatedNodesAsync().ConfigureAwait(true);
+                CommandManager.InvalidateRequerySuggested();
                 _ = Task.Run(() => CheckXmlError(_cancellationTokenSource.Token));
             }), DispatcherPriority.ApplicationIdle);
         }
@@ -481,7 +482,9 @@ namespace Tsltn
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerXml);
             //e.Handled = true;
-            _btnNext.Focus();
+            //_btnNext.Focus();
+
+            _tbOriginal.Focus();
         }
 
 
@@ -538,6 +541,7 @@ namespace Tsltn
         {
             UpdateSource();
             _nextUntranslatedNode = this.HasTranslation ? await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true) : this.CurrentNode;
+
 
             if (_nextUntranslatedNode != null)
             {

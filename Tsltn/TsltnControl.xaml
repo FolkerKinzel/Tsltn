@@ -142,16 +142,13 @@
                     HorizontalAlignment="Right" Content="{x:Static r:Res.NextToTranslate}" FontSize="12">
             </Button>
 
-            <TextBox Grid.Row="1" DockPanel.Dock="Top" Text="{Binding CurrentNode.InnerXml, Mode=OneWay}" AcceptsReturn="True"
+            <TextBox Name="_tbOriginal" Grid.Row="1" DockPanel.Dock="Top" Text="{Binding CurrentNode.InnerXml, Mode=OneWay}" AcceptsReturn="True"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"
                  TextWrapping="WrapWithOverflow" Padding="10" FontSize="22" Background="WhiteSmoke" UndoLimit="0" />
 
             <Grid Grid.Row="2" FocusManager.IsFocusScope="True">
-                
-                
-
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <Button Name="_btnFirstNode" Command="BrowseHome" Content="&lt;&lt;" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource Self}}">
                         <Button.Style>
