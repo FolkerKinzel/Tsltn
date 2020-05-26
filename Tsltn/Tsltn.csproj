@@ -60,7 +60,8 @@
     <None Include="Resources\Help.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="FolkerKinzel.RecentFiles" Version="1.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -68,11 +69,6 @@
   <ItemGroup>
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Controllers\FolkerKinzel.Tsltn.Controllers.csproj" />
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FolkerKinzel.RecentFiles">
-      <HintPath>deps\FolkerKinzel.RecentFiles\netcoreapp3.1\FolkerKinzel.RecentFiles.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Res.Designer.cs">
