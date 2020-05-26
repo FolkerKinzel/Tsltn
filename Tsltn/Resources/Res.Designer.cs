@@ -124,20 +124,11 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Copy text ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy All ähnelt.
         /// </summary>
-        public static string CopyText {
+        public static string CopyAll {
             get {
-                return ResourceManager.GetString("CopyText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Copy xml ähnelt.
-        /// </summary>
-        public static string CopyXml {
-            get {
-                return ResourceManager.GetString("CopyXml", resourceCulture);
+                return ResourceManager.GetString("CopyAll", resourceCulture);
             }
         }
         
@@ -309,6 +300,15 @@ namespace Tsltn.Resources {
         public static string Original {
             get {
                 return ResourceManager.GetString("Original", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Pos1 ähnelt.
+        /// </summary>
+        public static string Pos1Key {
+            get {
+                return ResourceManager.GetString("Pos1Key", resourceCulture);
             }
         }
         

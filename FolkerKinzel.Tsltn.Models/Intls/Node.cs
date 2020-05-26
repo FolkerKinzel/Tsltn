@@ -1,23 +1,13 @@
-﻿using FolkerKinzel.Tsltn.Models.Intls;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using System;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace FolkerKinzel.Tsltn.Models.Intls
 {
     internal class Node : INode
     {
-        //private static readonly Dictionary<long, Node> _nodeContainer = new Dictionary<long, Node>();
-        private static readonly Regex _whitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
-
         private readonly string _nodePath;
         private readonly string _innerXml;
-        private string? _innerText;
 
         private const string NonBreakingSpace = "&#160;";
 
@@ -29,31 +19,22 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             // Das Replacement des geschützten Leerzeichens soll beim Hashen
             // ignoriert werden:
             this.ID = Document.GetNodeID(el, out _innerXml, out _nodePath);
-            _innerXml = _whitespaceRegex.Replace(_innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim(), " ");
 
-            var firstNode = (Node?)Document.Instance.FirstNode;
-            this.HasAncestor = !(firstNode is null || this.ID == firstNode.ID);
+            _innerXml = _innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim();
+
+            this.HasAncestor = !(Document.Instance.FirstNode is null) && !ReferencesSameXml(Document.Instance.FirstNode);
 
             this.HasDescendant = Document.GetNextNode(el) != null;
         }
 
-        
-
 
         internal XElement XmlNode { get; }
 
-        public long ID { get; }
+        private long ID { get; }
 
         public string NodePath => _nodePath;
         public string InnerXml => _innerXml;
-        public string InnerText
-        {
-            get
-            {
-                this._innerText ??= _whitespaceRegex.Replace(XmlNode.Value, " ");
-                return _innerText;
-            }
-        }
+
 
 
         public string? Translation
@@ -69,10 +50,8 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             }
         }
 
-        public bool ReferencesSameXml(INode other)
-        {
-            return object.ReferenceEquals(this.XmlNode, ((Node)other).XmlNode);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ReferencesSameXml(INode? other) => object.ReferenceEquals(this.XmlNode, (other as Node)?.XmlNode);
 
         public bool HasAncestor { get; }
 
@@ -82,7 +61,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public INode? GetAncestor()
         {
-            if(!HasAncestor)
+            if (!HasAncestor)
             {
                 return null;
             }
@@ -92,7 +71,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public INode? GetDescendant()
         {
-            if(!HasDescendant)
+            if (!HasDescendant)
             {
                 return null;
             }
@@ -154,46 +133,6 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord) => Document.FindNode(this.XmlNode, nodePathFragment, ignoreCase, wholeWord);
-        //{
-        //    XElement? node = Document.GetNextNode(this.XmlNode);
-
-        //    while (node != null)
-        //    {
-        //        if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
-        //        {
-        //            return new Node(node);
-        //        }
-
-        //        node = Document.GetNextNode(node);
-        //    }
-
-
-        //    if (Utility.ContainsPathFragment(Document.Instance.FirstNode!.NodePath, nodePathFragment, ignoreCase, wholeWord))
-        //    {
-        //        return Document.Instance.FirstNode;
-        //    }
-
-        //    if (object.ReferenceEquals(this.XmlNode, ((Node?)Document.Instance.FirstNode)!.XmlNode))
-        //    {
-        //        return null;
-        //    }
-
-
-        //    node = Document.GetNextNode(((Node)Document.Instance.FirstNode).XmlNode);
-
-        //    while (node != null && !object.ReferenceEquals(node, this.XmlNode))
-        //    {
-        //        if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
-        //        {
-        //            return new Node(node);
-        //        }
-
-        //        node = Document.GetNextNode(node);
-        //    }
-
-        //    return null;
-        //}
-
 
     }
 }

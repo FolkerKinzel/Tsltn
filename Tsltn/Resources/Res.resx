@@ -138,11 +138,8 @@
   <data name="Cntrl" xml:space="preserve">
     <value>Cntrl</value>
   </data>
-  <data name="CopyText" xml:space="preserve">
-    <value>Copy text</value>
-  </data>
-  <data name="CopyXml" xml:space="preserve">
-    <value>Copy xml</value>
+  <data name="CopyAll" xml:space="preserve">
+    <value>Copy All</value>
   </data>
   <data name="FileMenuHeader" xml:space="preserve">
     <value>File</value>
@@ -198,6 +195,9 @@
   </data>
   <data name="Original" xml:space="preserve">
     <value>Original</value>
+  </data>
+  <data name="Pos1Key" xml:space="preserve">
+    <value>Pos1</value>
   </data>
   <data name="Previous" xml:space="preserve">
     <value>&lt; Previous</value>

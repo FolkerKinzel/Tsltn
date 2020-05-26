@@ -79,7 +79,7 @@ namespace Tsltn
             InitializeComponent();
 
             this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
-         
+
             _owner.TranslationErrors += MainWindow_TranslationErrors;
 
             DataObject.AddPastingHandler(_tbTranslation, _tbTranslation_Paste);
@@ -87,10 +87,11 @@ namespace Tsltn
             _btnPrevious.ToolTip = $"{Res.AltKey}+{Res.LeftKey}";
             _btnNext.ToolTip = $"{Res.AltKey}+{Res.RightKey}";
             _btnNextToTranslate.ToolTip = $"{Res.ShiftKey}+{Res.AltKey}+{Res.RightKey}";
+            _btnFirstNode.ToolTip = $"{Res.AltKey}+{Res.Pos1Key}";
         }
 
 
-       
+
 
 
         public bool HasTranslation
@@ -188,6 +189,9 @@ namespace Tsltn
                 OnPropertyChanged();
             }
         }
+
+
+
 
 
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
@@ -382,11 +386,11 @@ namespace Tsltn
             int markupCounter = 0;
             char previous = 'a';
 
-            
+
 
             for (int i = _sb.Length - 1; i >= 0; i--)
             {
-                if(markupCounter < 0)
+                if (markupCounter < 0)
                 {
                     break;
                 }
@@ -402,14 +406,14 @@ namespace Tsltn
                         markupCounter--;
                         break;
                     default:
-                        if(markupCounter > 0) // inside Markup
+                        if (markupCounter > 0) // inside Markup
                         {
-                            if(char.IsWhiteSpace(current) && char.IsPunctuation(previous)) // das '=' - Zeichen ist nicht Punctuation
+                            if (char.IsWhiteSpace(current) && char.IsPunctuation(previous)) // das '=' - Zeichen ist nicht Punctuation
                             {
                                 _sb.Remove(i, 1);
                                 continue;
                             }
-                            else if(char.IsPunctuation(current) && char.IsWhiteSpace(previous))
+                            else if (char.IsPunctuation(current) && char.IsWhiteSpace(previous))
                             {
                                 _sb.Remove(i + 1, 1);
                             }
@@ -420,7 +424,7 @@ namespace Tsltn
                 previous = current;
             }
 
-            if(_tbTranslation.IsSelectionActive)
+            if (_tbTranslation.IsSelectionActive)
             {
                 string replacement = _sb.ToString();
                 _sb.Clear().Append(_tbTranslation.Text);
@@ -447,11 +451,17 @@ namespace Tsltn
             e.CanExecute = CurrentNode.HasAncestor;
         }
 
+        private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Navigate(_doc.FirstNode);
+            //e.Handled = true;
+        }
+
         private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Navigate(_node.GetAncestor());
-            e.Handled = true;
-            _btnPrevious.Focus();
+            //e.Handled = true;
+            //_btnPrevious.Focus();
         }
 
         private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -462,26 +472,20 @@ namespace Tsltn
         private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Navigate(CurrentNode.GetDescendant());
-            e.Handled = true;
-            _btnNext.Focus();
+            //e.Handled = true;
+            //_btnNext.Focus();
         }
 
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerXml);
-            e.Handled = true;
+            //e.Handled = true;
             _btnNext.Focus();
         }
 
 
-        private void CopyText_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            Clipboard.Clear();
-            Clipboard.SetText(CurrentNode.InnerText);
-            e.Handled = true;
-            _btnNext.Focus();
-        }
+
 
 
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -509,7 +513,7 @@ namespace Tsltn
 
         private async void NextToTranslate_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if(this.HasTranslation)
+            if (this.HasTranslation)
             {
                 this.Navigate(_nextUntranslatedNode);
             }
@@ -553,45 +557,51 @@ namespace Tsltn
 
         private void CheckXmlError(CancellationToken cancelToken)
         {
-            while (true)
-            {
-                Thread.Sleep(5000);
-
-                if (cancelToken.IsCancellationRequested)
+            //try
+            //{
+                while (true)
                 {
-                    break;
-                }
+                    Thread.Sleep(5000);
 
-                if(!_owner.IsCommandEnabled)
-                {
-                    continue;
-                }
-
-                if(!HasTranslation)
-                {
-                    Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
-                    continue;
-                }
-
-
-                if(!_doc.IsValidXml(Translation, out string? exceptionMessage))
-                {
-                    Dispatcher.Invoke(() =>
+                    if (cancelToken.IsCancellationRequested)
                     {
-                        RemoveXmlErrorMessages();
-                        Errors.Insert(0, new XmlDataError(CurrentNode, exceptionMessage));
-                    }, DispatcherPriority.SystemIdle);
+                        break;
+                    }
+
+                    if (!_owner.IsCommandEnabled)
+                    {
+                        continue;
+                    }
+
+
+                    if (!HasTranslation)
+                    {
+                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
+                        continue;
+                    }
+
+
+                    if (!_doc.IsValidXml(Translation, out string? exceptionMessage))
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            RemoveXmlErrorMessages();
+                            Errors.Insert(0, new XmlDataError(CurrentNode, exceptionMessage));
+                        }, DispatcherPriority.SystemIdle);
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
+                    }
+
+
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
                 }
-                else
-                {
-                    Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
-                }
-                
-                if (cancelToken.IsCancellationRequested)
-                {
-                    break;
-                }
-            }
+            //}
+            //catch (TaskCanceledException) { }
 
             Debug.WriteLine("CheckXmlError beendet.");
         }
@@ -610,7 +620,7 @@ namespace Tsltn
 
         private void Navigate(INode? node)
         {
-            if (node is null || node.ID == CurrentNode.ID)
+            if (node is null || node.ReferencesSameXml(CurrentNode))
             {
                 return;
             }
@@ -629,8 +639,9 @@ namespace Tsltn
 
 
 
+
         #endregion
 
-        
+
     }
 }

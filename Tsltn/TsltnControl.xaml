@@ -16,7 +16,7 @@
              FontSize="16"
              TextOptions.TextFormattingMode="Ideal"
              Loaded="TsltnControl_Loaded" 
-             Unloaded="TsltnControl_Unloaded" FocusManager.IsFocusScope="True">
+             Unloaded="TsltnControl_Unloaded" >
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -55,8 +55,8 @@
     <UserControl.CommandBindings>
         <CommandBinding Command="BrowseBack" CanExecute="PreviousPage_CanExecute" Executed="PreviousPage_Executed"/>
         <CommandBinding Command="BrowseForward" CanExecute="NextPage_CanExecute" Executed="NextPage_Executed"/>
+        <CommandBinding Command="BrowseHome" CanExecute="PreviousPage_CanExecute" Executed="BrowseHome_Executed"/>
         <CommandBinding Command="{x:Static cmd:TsltnControlCommand.CopyXml}" Executed="CopyXml_Executed"/>
-        <CommandBinding Command="{x:Static cmd:TsltnControlCommand.CopyText}" Executed="CopyText_Executed"/>
         <CommandBinding Command="{x:Static cmd:TsltnControlCommand.BrowseAll}" Executed="BrowseAll_Executed"/>
         <CommandBinding Command="{x:Static cmd:TsltnControlCommand.NextToTranslate}" CanExecute="NextToTranslate_CanExecute" Executed="NextToTranslate_Executed"/>
     </UserControl.CommandBindings>
@@ -124,15 +124,16 @@
             </Grid>
         </DockPanel>
 
-        
 
 
-        <Grid Grid.Row="1">
+
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+           
             <Border Style="{StaticResource headerBorder}">
                 <TextBlock  Style="{StaticResource HeaderTextBlock}" Text="{x:Static r:Res.Original}" VerticalAlignment="Center"/>
             </Border>
@@ -141,19 +142,26 @@
                     HorizontalAlignment="Right" Content="{x:Static r:Res.NextToTranslate}" FontSize="12">
             </Button>
 
-            <TextBox Grid.Row="1" DockPanel.Dock="Top" IsReadOnly="True" Text="{Binding CurrentNode.InnerXml, Mode=OneWay}"
+            <TextBox Grid.Row="1" DockPanel.Dock="Top" Text="{Binding CurrentNode.InnerXml, Mode=OneWay}" AcceptsReturn="True"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"
-                 TextWrapping="WrapWithOverflow" Padding="10" FontSize="22" Background="WhiteSmoke" UndoLimit="0" IsEnabled="False"/>
+                 TextWrapping="WrapWithOverflow" Padding="10" FontSize="22" Background="WhiteSmoke" UndoLimit="0" />
 
-            <Grid Grid.Row="2">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Command="{x:Static cmd:TsltnControlCommand.CopyText}" Content="{x:Static r:Res.CopyText}"/>
-                    <Button Command="{x:Static cmd:TsltnControlCommand.CopyXml}" Content="{x:Static r:Res.CopyXml}"/>
+            <Grid Grid.Row="2" FocusManager.IsFocusScope="True">
+                
+                
+
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Button Name="_btnFirstNode" Command="BrowseHome" Content="&lt;&lt;" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource Self}}">
+                        <Button.Style>
+                            <Style TargetType="Button"></Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Name="_btnPrevious" Command="BrowseBack" Content="{x:Static r:Res.Previous}"/>
                 </StackPanel>
-                <Button Name="_btnPrevious" Command="BrowseBack" Content="{x:Static r:Res.Previous}" HorizontalAlignment="Left"></Button>
-                <Button Name="_btnNext" Command="BrowseForward" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
+                <Button Command="{x:Static cmd:TsltnControlCommand.CopyXml}" Content="{x:Static r:Res.CopyAll}" HorizontalAlignment="Center"/>
+                <Button Name="_btnNext" DockPanel.Dock="Right" Command="BrowseForward" HorizontalAlignment="Right" Content="{x:Static r:Res.Next}"/>
             </Grid>
         </Grid>
 
@@ -163,7 +171,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
+            
             <Border>
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource headerBorder}">
