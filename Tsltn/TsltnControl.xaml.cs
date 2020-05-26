@@ -373,11 +373,16 @@ namespace Tsltn
         private void _tbTranslation_Paste(object sender, DataObjectPastingEventArgs e)
         {
             e.CancelCommand();
-            _sb.Clear().Append(Clipboard.GetText());
+            _sb.Clear().Append(Clipboard.GetText())
+                .Replace("<c> null </c>", "<c>null</c>")
+                .Replace("<c> true </c>", "<c>true</c>")
+                .Replace("<c> false </c>", "<c>false</c>");
             //Clipboard.Clear();
 
             int markupCounter = 0;
             char previous = 'a';
+
+            
 
             for (int i = _sb.Length - 1; i >= 0; i--)
             {
@@ -399,7 +404,7 @@ namespace Tsltn
                     default:
                         if(markupCounter > 0) // inside Markup
                         {
-                            if(char.IsWhiteSpace(current) && char.IsPunctuation(previous))
+                            if(char.IsWhiteSpace(current) && char.IsPunctuation(previous)) // das '=' - Zeichen ist nicht Punctuation
                             {
                                 _sb.Remove(i, 1);
                                 continue;

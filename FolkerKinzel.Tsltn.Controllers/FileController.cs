@@ -77,7 +77,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 {
                     case MessageBoxResult.Yes:
                         {
-                            if(!await SaveAsTsltnAsync().ConfigureAwait(true))
+                            if(!await SaveTsltnAsync().ConfigureAwait(true))
                             {
                                 return false;
                             }
