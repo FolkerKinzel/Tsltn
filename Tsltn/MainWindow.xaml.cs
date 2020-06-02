@@ -1,6 +1,6 @@
 ﻿using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.RecentFiles;
+using FolkerKinzel.RecentFiles.WPF;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
