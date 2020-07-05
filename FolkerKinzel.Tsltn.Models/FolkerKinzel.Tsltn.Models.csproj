@@ -13,7 +13,7 @@
     <Compile Remove="Intls\Translation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FolkerKinzel.Strings" Version="1.0.0" />
+    <PackageReference Include="FolkerKinzel.Strings" Version="1.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
