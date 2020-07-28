@@ -33,6 +33,10 @@
         </ResourceDictionary>
            
     </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="MoveUp" Executed="MoveUp_Executed"/>
+        <CommandBinding Command="MoveDown" Executed="MoveDown_Executed"/>
+    </Window.CommandBindings>
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" IsCancel="True" Content="{x:Static r:Res.Cancel}"/>
@@ -49,7 +53,7 @@
             </Button>
         </DockPanel>
         <ListBox Name="_lbTranslations" DockPanel.Dock="Top" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                 ItemsSource="{Binding AllTranslations}">
+                 ItemsSource="{Binding AllTranslations}" IsSynchronizedWithCurrentItem="True">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <Style.Setters>

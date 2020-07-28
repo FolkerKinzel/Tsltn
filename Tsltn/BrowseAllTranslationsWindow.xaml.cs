@@ -27,6 +27,7 @@ namespace Tsltn
         {
             this.Title = $"{App.PROGRAM_NAME} - {Res.SelectTranslation}";
             this.AllTranslations = enumerable.Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s).ToArray();
+
             InitializeComponent();
         }
 
@@ -55,6 +56,37 @@ namespace Tsltn
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.DialogResult = true;
+        }
+
+        private void MoveUp_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var cv = CollectionViewSource.GetDefaultView(_lbTranslations.ItemsSource);
+
+            cv.MoveCurrentToPrevious();
+
+            if (cv.IsCurrentBeforeFirst)
+            {
+                cv.MoveCurrentToFirst();
+            }
+
+
+            _lbTranslations.SelectedItem = cv.CurrentItem;
+            _lbTranslations.ScrollIntoView(cv.CurrentItem);
+        }
+
+        private void MoveDown_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var cv = CollectionViewSource.GetDefaultView(_lbTranslations.ItemsSource);
+
+            cv.MoveCurrentToNext();
+
+            if (cv.IsCurrentAfterLast)
+            {
+                cv.MoveCurrentToLast();
+            }
+
+            _lbTranslations.SelectedItem = cv.CurrentItem;
+            _lbTranslations.ScrollIntoView(cv.CurrentItem);
         }
     }
 }
