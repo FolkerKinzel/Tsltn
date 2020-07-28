@@ -8,6 +8,7 @@ namespace FolkerKinzel.Tsltn.Controllers
     internal sealed class FileWatcher : IDisposable
     {
         private bool _raiseEvents = true;
+        private readonly object _lockObject = new object();
 
         private readonly FileSystemWatcher _watcher = new FileSystemWatcher()
         {
@@ -32,11 +33,23 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Watch() => _raiseEvents = true;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SuspendWatching() => _raiseEvents = false;
+        public bool RaiseEvents
+        {
+            get
+            {
+                lock(_lockObject)
+                {
+                    return _raiseEvents;
+                }
+            }
+            set
+            {
+                lock(_lockObject)
+                {
+                    _raiseEvents = value;
+                }
+            }
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public string? WatchedFile
@@ -58,7 +71,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                             _watcher.Filter = Path.GetFileName(_watchedFile);
 
                             _watcher.EnableRaisingEvents = true;
-                            Watch();
+                            RaiseEvents = true;
                             return;
                         }
                     }
@@ -66,7 +79,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 }
 
                 _watcher.EnableRaisingEvents = false;
-                SuspendWatching(); 
+                RaiseEvents = false;
             }
         }
 
@@ -94,16 +107,16 @@ namespace FolkerKinzel.Tsltn.Controllers
             _ = OnReloadAsync();
         }
 
-        //private void OnMessage(MessageEventArgs args) => Message?.Invoke(this, args);
+
         private Task OnReloadAsync()
         {
-            if (_raiseEvents)
+            if (RaiseEvents)
             {
                 return Task.Run(() =>
                 {
-                    SuspendWatching();
+                    RaiseEvents = false;
                     Reload?.Invoke(this, EventArgs.Empty);
-                    Watch();
+                    RaiseEvents = true;
                 });
             }
 
