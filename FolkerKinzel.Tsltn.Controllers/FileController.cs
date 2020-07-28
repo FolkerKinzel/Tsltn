@@ -97,6 +97,21 @@ namespace FolkerKinzel.Tsltn.Controllers
             return true;
         }
 
+
+        public async Task ReloadTsltnAsync()
+        {
+            OnRefreshData();
+
+            await SaveTsltnAsync().ConfigureAwait(true);
+
+            OnHasContentChanged(false);
+
+            string? fileName = _doc.TsltnFileName;
+            _doc.CloseTsltn();
+
+            await OpenTsltnAsync(fileName).ConfigureAwait(false);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<bool> SaveTsltnAsync() => DoSaveTsltnAsync(_doc.TsltnFileName);
 
@@ -107,16 +122,11 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             try
             {
-                //commandLineArg = Path.Combine(Environment.CurrentDirectory, commandLineArg);
                 commandLineArg = Path.GetFullPath(commandLineArg);
             }
             catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                //OnHasContentChanged(false);
-                //_doc.CloseTsltn();
-                //OnPropertyChanged(nameof(FileName));
-                //OnBadFileName(fileName);
 
                 return Task.CompletedTask;
             }
