@@ -129,6 +129,9 @@
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="NotReloaded" xml:space="preserve">
+    <value>The data could not be reloaded automatically!</value>
+  </data>
   <data name="OpenSourceFile" xml:space="preserve">
     <value>Open the source file to translate</value>
   </data>

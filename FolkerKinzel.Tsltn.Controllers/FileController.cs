@@ -102,14 +102,24 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             OnRefreshData();
 
-            await SaveTsltnAsync().ConfigureAwait(true);
+            if ((_doc.TsltnFileName != null && !_doc.Changed) || await SaveTsltnAsync().ConfigureAwait(true))
+            {
 
-            OnHasContentChanged(false);
+                OnHasContentChanged(false);
 
-            string? fileName = _doc.TsltnFileName;
-            _doc.CloseTsltn();
+                string? fileName = _doc.TsltnFileName;
+                _doc.CloseTsltn();
 
-            await OpenTsltnAsync(fileName).ConfigureAwait(false);
+                await OpenTsltnAsync(fileName).ConfigureAwait(false);
+            }
+            else
+            {
+                var args = new MessageEventArgs(
+                    Res.NotReloaded,
+                    MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+
+                OnMessage(args);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

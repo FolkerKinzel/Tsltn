@@ -97,6 +97,15 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The data could not be reloaded automatically! ähnelt.
+        /// </summary>
+        internal static string NotReloaded {
+            get {
+                return ResourceManager.GetString("NotReloaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Open the source file to translate ähnelt.
         /// </summary>
         internal static string OpenSourceFile {
