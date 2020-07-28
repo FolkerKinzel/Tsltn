@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-    public interface IFileController
+    public interface IFileController : IDisposable
     {
         string FileName { get; }
 

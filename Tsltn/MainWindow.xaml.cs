@@ -91,6 +91,7 @@ namespace Tsltn
         private async void Window_Closed(object sender, EventArgs e)
         {
             await _doc.WaitAllTasks().ConfigureAwait(false);
+            _fileController.Dispose();
             _recentFilesMenu.Dispose();
         }
 

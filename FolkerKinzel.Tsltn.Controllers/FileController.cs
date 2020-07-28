@@ -16,24 +16,28 @@ using System.Windows;
 namespace FolkerKinzel.Tsltn.Controllers
 {
     [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-    public partial class FileController : INotifyPropertyChanged, IFileController
+    public sealed partial class FileController : INotifyPropertyChanged, IFileController, IDisposable
     {
         private readonly IFileAccess _doc;
+        private readonly FileWatcher _watcher = new FileWatcher();
+        private static FileController? _instance;
 
         public const string TSLTN_FILE_EXTENSION = ".tsltn";
 
-        
-
-        public FileController(IFileAccess document)
+        private FileController(IFileAccess document)
         {
             this._doc = document;
         }
 
 
+        public static FileController GetInstance(IFileAccess document)
+        {
+            _instance ??= new FileController(document);
+            return _instance;
+        }
+
+
         #region Properties
-
-
-
 
         public string FileName
         {
@@ -55,6 +59,11 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
         #region Methods
+
+        public void Dispose()
+        {
+            _watcher.Dispose();
+        }
 
         public async Task<bool> CloseTsltnAsync()
         {
@@ -324,6 +333,8 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
         }
+
+        
 
 
         #endregion

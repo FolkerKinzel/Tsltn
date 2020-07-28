@@ -11,7 +11,7 @@ using System.Windows;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-    public partial class FileController : INotifyPropertyChanged, IFileController
+    public sealed partial class FileController : INotifyPropertyChanged, IFileController
     {
         private bool GetXmlInFileName([NotNullWhen(true)] ref string? fileName)
         {

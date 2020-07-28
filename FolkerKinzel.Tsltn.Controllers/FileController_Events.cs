@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-    public partial class FileController : INotifyPropertyChanged, IFileController
+    public sealed partial class FileController : INotifyPropertyChanged, IFileController
     {
 
         public event PropertyChangedEventHandler? PropertyChanged;
