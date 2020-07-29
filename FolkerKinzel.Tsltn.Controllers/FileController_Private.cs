@@ -157,7 +157,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             
             OnRefreshData();
 
-            await _doc.WaitAllTasks().ConfigureAwait(true);
+            await _doc.WaitAllTasks().ConfigureAwait(false);
 
             try
             {
@@ -203,7 +203,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             OnRefreshData();
 
-            if ((_doc.TsltnFileName != null && !_doc.Changed) || await SaveTsltnAsync().ConfigureAwait(true))
+            if ((_doc.TsltnFileName != null && !_doc.Changed) || await SaveTsltnAsync().ConfigureAwait(false))
             {
 
                 OnHasContentChanged(false);

@@ -159,7 +159,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     {
                         case MessageBoxResult.Yes:
                             {
-                                await DoSaveTsltnAsync(FileName).ConfigureAwait(true);
+                                await DoSaveTsltnAsync(FileName).ConfigureAwait(false);
                             }
                             break;
                         case MessageBoxResult.No:
@@ -180,7 +180,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                if (!await Task.Run(() => _doc.OpenTsltn(fileName)).ConfigureAwait(true))
+                if (!await Task.Run(() => _doc.OpenTsltn(fileName)).ConfigureAwait(false))
                 {
                     OnHasContentChanged(false);
                     OnPropertyChanged(nameof(FileName));
@@ -251,7 +251,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public async Task NewTsltnAsync()
         {
-            await CloseTsltnAsync().ConfigureAwait(true);
+            await CloseTsltnAsync().ConfigureAwait(false);
 
             string? xmlFileName = null;
 
@@ -259,7 +259,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 try
                 {
-                    await Task.Run(() => _doc.NewTsltn(xmlFileName)).ConfigureAwait(true);
+                    await Task.Run(() => _doc.NewTsltn(xmlFileName)).ConfigureAwait(false);
 
                     if (_doc.FirstNode is null)
                     {
@@ -306,10 +306,10 @@ namespace FolkerKinzel.Tsltn.Controllers
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
         {
-            await _doc.WaitAllTasks().ConfigureAwait(true);
+            await _doc.WaitAllTasks().ConfigureAwait(false);
 
 
-            if (!await DoSaveTsltnAsync(_doc.TsltnFileName).ConfigureAwait(true))
+            if (!await DoSaveTsltnAsync(_doc.TsltnFileName).ConfigureAwait(false))
             {
                 return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
             }
