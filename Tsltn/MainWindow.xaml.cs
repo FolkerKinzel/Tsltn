@@ -111,7 +111,9 @@ namespace Tsltn
 
         private void _fileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e)
         {
-            e.Result = e.Dialog.ShowDialog(this);
+            //e.Result = e.Dialog.ShowDialog(this);
+
+            Dispatcher.Invoke(() => e.ShowDialog(this), DispatcherPriority.Send);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
