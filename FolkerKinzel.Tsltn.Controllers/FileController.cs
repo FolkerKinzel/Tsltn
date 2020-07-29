@@ -333,6 +333,12 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         }
 
+        public Task ChangeSourceDocumentAsync(string newSourceDocument)
+        {
+            _doc.ChangeSourceDocumentFileName(newSourceDocument);
+
+            return ReloadTsltnAsync();
+        }
 
 
 
