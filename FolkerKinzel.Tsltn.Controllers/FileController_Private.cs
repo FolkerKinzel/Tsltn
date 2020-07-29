@@ -1,4 +1,5 @@
-﻿using FolkerKinzel.Tsltn.Controllers.Resources;
+﻿using FolkerKinzel.Tsltn.Controllers.Enums;
+using FolkerKinzel.Tsltn.Controllers.Resources;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,29 @@ namespace FolkerKinzel.Tsltn.Controllers
     {
         private bool GetXmlInFileName([NotNullWhen(true)] ref string? fileName)
         {
-            var dlg = new OpenFileDialog()
+            //var dlg = new OpenFileDialog()
+            //{
+            //    FileName = fileName,
+            //    AddExtension = true,
+            //    CheckFileExists = true,
+            //    CheckPathExists = true,
+
+            //    DefaultExt = ".xml",
+            //    Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
+            //    DereferenceLinks = true,
+            //    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            //    Multiselect = false,
+            //    ValidateNames = true,
+            //    Title = Res.OpenSourceFile
+
+            //    //ReadOnlyChecked = true,
+            //    //ShowReadOnly = true
+
+            //};
+
+            var args = new ShowFileDialogEventArgs(DlgType.OpenFileDialog)
             {
-                FileName = fileName,
+                FileName = fileName ?? "",
                 AddExtension = true,
                 CheckFileExists = true,
                 CheckPathExists = true,
@@ -30,19 +51,13 @@ namespace FolkerKinzel.Tsltn.Controllers
                 Multiselect = false,
                 ValidateNames = true,
                 Title = Res.OpenSourceFile
-
-                //ReadOnlyChecked = true,
-                //ShowReadOnly = true
-
             };
-
-            var args = new ShowFileDialogEventArgs(dlg);
 
             this.OnFileDialog(args);
 
             if (args.Result == true)
             {
-                fileName = dlg.FileName ?? "";
+                fileName = args.FileName;
                 return true;
             }
 
@@ -53,7 +68,26 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private bool GetTsltnInFileName([NotNullWhen(true)] out string? fileName)
         {
-            var dlg = new OpenFileDialog()
+            //var dlg = new OpenFileDialog()
+            //{
+            //    //FileName = fileName,
+            //    AddExtension = true,
+            //    CheckFileExists = true,
+            //    CheckPathExists = true,
+
+            //    DefaultExt = TSLTN_FILE_EXTENSION,
+            //    Filter = $"{Res.TsltnFile} (*{TSLTN_FILE_EXTENSION})|*{TSLTN_FILE_EXTENSION}",
+            //    DereferenceLinks = true,
+            //    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            //    Multiselect = false,
+            //    ValidateNames = true
+
+            //    //ReadOnlyChecked = true,
+            //    //ShowReadOnly = true
+
+            //};
+
+            var args = new ShowFileDialogEventArgs(DlgType.OpenFileDialog)
             {
                 //FileName = fileName,
                 AddExtension = true,
@@ -66,19 +100,13 @@ namespace FolkerKinzel.Tsltn.Controllers
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 Multiselect = false,
                 ValidateNames = true
-
-                //ReadOnlyChecked = true,
-                //ShowReadOnly = true
-
             };
-
-            var args = new ShowFileDialogEventArgs(dlg);
 
             OnFileDialog(args);
 
             if (args.Result == true)
             {
-                fileName = dlg.FileName ?? "";
+                fileName = args.FileName;
                 return true;
             }
             else
@@ -90,7 +118,20 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private bool GetTsltnOutFileName(ref string fileName)
         {
-            var dlg = new SaveFileDialog()
+            //var dlg = new SaveFileDialog()
+            //{
+            //    FileName = Path.GetFileName(fileName),
+            //    AddExtension = true,
+            //    CheckFileExists = false,
+            //    CheckPathExists = true,
+            //    CreatePrompt = false,
+            //    Filter = $"{Res.TsltnFile} (*{TSLTN_FILE_EXTENSION})|*{TSLTN_FILE_EXTENSION}",
+            //    InitialDirectory = _doc.TsltnFileName != null ? Path.GetDirectoryName(_doc.TsltnFileName) : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            //    DefaultExt = TSLTN_FILE_EXTENSION,
+            //    DereferenceLinks = true
+            //};
+
+            var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
             {
                 FileName = Path.GetFileName(fileName),
                 AddExtension = true,
@@ -98,18 +139,16 @@ namespace FolkerKinzel.Tsltn.Controllers
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.TsltnFile} (*{TSLTN_FILE_EXTENSION})|*{TSLTN_FILE_EXTENSION}",
-                InitialDirectory = _doc.TsltnFileName != null ? Path.GetDirectoryName(_doc.TsltnFileName) : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                InitialDirectory = _doc.TsltnFileName != null ? Path.GetDirectoryName(_doc.TsltnFileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 DefaultExt = TSLTN_FILE_EXTENSION,
                 DereferenceLinks = true
             };
-
-            var args = new ShowFileDialogEventArgs(dlg);
 
             OnFileDialog(args);
 
             if (args.Result == true)
             {
-                fileName = dlg.FileName ?? "";
+                fileName = args.FileName;
                 return true;
             }
             else
@@ -125,27 +164,39 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             fileName = _doc.SourceDocumentFileName;
 
-            var dlg = new SaveFileDialog()
+            //var dlg = new SaveFileDialog()
+            //{
+            //    Title = Res.SaveTranslationAs,
+            //    FileName = Path.GetFileName(fileName),
+            //    AddExtension = true,
+            //    CheckFileExists = false,
+            //    CheckPathExists = true,
+            //    CreatePrompt = false,
+            //    Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
+            //    InitialDirectory = System.IO.Path.GetDirectoryName(fileName),
+            //    DefaultExt = ".xml",
+            //    DereferenceLinks = true
+            //};
+
+            var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
             {
                 Title = Res.SaveTranslationAs,
-                FileName = Path.GetFileName(fileName),
+                FileName = Path.GetFileName(fileName) ?? "",
                 AddExtension = true,
                 CheckFileExists = false,
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
-                InitialDirectory = System.IO.Path.GetDirectoryName(fileName),
+                InitialDirectory = System.IO.Path.GetDirectoryName(fileName) ?? "",
                 DefaultExt = ".xml",
                 DereferenceLinks = true
             };
-
-            var args = new ShowFileDialogEventArgs(dlg);
 
             OnFileDialog(args);
 
             if (args.Result == true)
             {
-                fileName = dlg.FileName ?? "";
+                fileName = args.FileName;
                 return true;
             }
             else
