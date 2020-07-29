@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-    internal sealed class FileWatcher : IDisposable
+    internal sealed class FileWatcher : IDisposable, IFileWatcher
     {
         private bool _raiseEvents = true;
         private readonly object _lockObject = new object();
 
         private readonly FileSystemWatcher _watcher = new FileSystemWatcher()
         {
-            NotifyFilter = 
+            NotifyFilter =
             NotifyFilters.FileName |
             //NotifyFilters.DirectoryName |
-            NotifyFilters.LastWrite | 
+            NotifyFilters.LastWrite |
             NotifyFilters.LastAccess,
         };
 
@@ -37,14 +37,14 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             get
             {
-                lock(_lockObject)
+                lock (_lockObject)
                 {
                     return _raiseEvents;
                 }
             }
             set
             {
-                lock(_lockObject)
+                lock (_lockObject)
                 {
                     _raiseEvents = value;
                 }
@@ -64,7 +64,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     _watchedFile = value;
                 }
 
-                if(value is string s)
+                if (value is string s)
                 {
                     try
                     {
