@@ -21,6 +21,8 @@ namespace FolkerKinzel.Tsltn.Models
 
         bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage);
 
+        void ChangeSourceDocumentFileName(string? fileName);
+
 
         ConcurrentBag<Task> Tasks { get; }
 

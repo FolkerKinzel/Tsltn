@@ -79,7 +79,7 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &quot;The file &quot;{0}&quot; was changed.{1}Do you want to save the changes?&quot; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file &quot;{0}&quot; was changed.{1}Do you want to save the changes? ähnelt.
         /// </summary>
         internal static string FileWasChanged {
             get {
@@ -120,6 +120,15 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         internal static string SaveTranslationAs {
             get {
                 return ResourceManager.GetString("SaveTranslationAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The source document was changed outside of the editor.{0}Do you want to reload the translation? ähnelt.
+        /// </summary>
+        internal static string SourceDocumentChanged {
+            get {
+                return ResourceManager.GetString("SourceDocumentChanged", resourceCulture);
             }
         }
         

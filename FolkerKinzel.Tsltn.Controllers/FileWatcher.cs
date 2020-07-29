@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-    internal sealed class FileWatcher : IDisposable, IFileWatcher
+    public sealed class FileWatcher : IDisposable, IFileWatcher
     {
         private bool _raiseEvents = true;
         private readonly object _lockObject = new object();
@@ -57,32 +57,28 @@ namespace FolkerKinzel.Tsltn.Controllers
             get => _watchedFile;
             set
             {
-                lock (_lockObject)
-                {
-                    _watcher.EnableRaisingEvents = false;
-                    _raiseEvents = false;
-                    _watchedFile = value;
-                }
-
-                if (value is string s)
+                if (File.Exists(value))
                 {
                     try
                     {
-                        var directory = Path.GetDirectoryName(s);
-
-                        if (Directory.Exists(directory))
+                        lock (_lockObject)
                         {
-                            lock (_lockObject)
-                            {
-                                _watcher.Path = directory;
-                                _watcher.Filter = Path.GetFileName(value);
-                                _watcher.EnableRaisingEvents = true;
-                                _raiseEvents = true;
-                            }
-                            return;
+                            _watchedFile = value;
+                            _watcher.Path = Path.GetDirectoryName(value);
+                            _watcher.Filter = Path.GetFileName(value);
+                            _raiseEvents = true;
+                            _watcher.EnableRaisingEvents = true;
                         }
+                        return;
                     }
                     catch { }
+                }
+
+                lock (_lockObject)
+                {
+                    _watchedFile = value;
+                    _watcher.EnableRaisingEvents = false;
+                    _raiseEvents = false;
                 }
             }
         }

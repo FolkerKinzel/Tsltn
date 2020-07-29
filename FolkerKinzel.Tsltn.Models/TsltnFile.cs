@@ -41,9 +41,9 @@ namespace FolkerKinzel.Tsltn.Models
         public TsltnFile() { }
 
 
-        internal string SourceDocumentFileName
+        internal string? SourceDocumentFileName
         {
-            get { return _sourceDocumentAbsolutePath ?? throw new ArgumentNullException(nameof(SourceDocumentFileName)); }
+            get { return _sourceDocumentAbsolutePath; }
             set
             {
                 // Der relative Pfad wird beim Speichern wieder in einen solchen 

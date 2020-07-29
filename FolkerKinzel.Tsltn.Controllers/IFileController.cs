@@ -26,5 +26,9 @@ namespace FolkerKinzel.Tsltn.Controllers
         Task<bool> SaveTsltnAsync();
         Task<bool> SaveAsTsltnAsync();
         Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync();
+
+        void SuspendSourceFileObservation();
+
+        void ResumeSourceFileObservation();
     }
 }

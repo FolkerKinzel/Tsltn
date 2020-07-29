@@ -2,7 +2,7 @@
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
-    internal interface IFileWatcher
+    public interface IFileWatcher
     {
         bool RaiseEvents { get; set; }
         string? WatchedFile { get; set; }

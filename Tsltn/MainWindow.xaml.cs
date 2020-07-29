@@ -26,7 +26,7 @@ namespace Tsltn
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public sealed partial class MainWindow : Window, INotifyPropertyChanged, IDisposable
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -46,6 +46,12 @@ namespace Tsltn
             this._recentFilesMenu = recentFilesMenu;
 
             _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.PROGRAM_NAME);
+        }
+
+        public void Dispose()
+        {
+            _fileController.Dispose();
+            _recentFilesMenu.Dispose();
         }
 
         public string FileName => _fileController.FileName;
@@ -91,8 +97,7 @@ namespace Tsltn
         private async void Window_Closed(object sender, EventArgs e)
         {
             await _doc.WaitAllTasks().ConfigureAwait(false);
-            _fileController.Dispose();
-            _recentFilesMenu.Dispose();
+            Dispose();
         }
 
 
@@ -268,8 +273,9 @@ namespace Tsltn
 
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
-            e.Handled = true;
             IsCommandEnabled = false;
+            _fileController.SuspendSourceFileObservation();
+            e.Handled = true;
 
             var (Errors, UnusedTranslations) = await _fileController.TranslateAsync().ConfigureAwait(true);
 
@@ -293,6 +299,8 @@ namespace Tsltn
                     }
                 }
             }
+
+            _fileController.ResumeSourceFileObservation();
         }
 
 

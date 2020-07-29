@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -193,6 +194,49 @@ namespace FolkerKinzel.Tsltn.Controllers
             return true;
         }
 
+        private async void FileWatcher_Reload(object? sender, EventArgs e)
+        {
+            if (_watcher.WatchedFile != _doc.SourceDocumentFileName)
+            {
+                _doc.ChangeSourceDocumentFileName(_watcher.WatchedFile);
+            }
+
+            var args = new MessageEventArgs(
+                string.Format(CultureInfo.InvariantCulture, Res.SourceDocumentChanged, Environment.NewLine),
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+            OnMessage(args);
+
+            if (args.Result == MessageBoxResult.Yes)
+            {
+                await ReloadTsltnAsync().ConfigureAwait(false);
+            }
+        }
+
+
+
+        private async Task ReloadTsltnAsync()
+        {
+            OnRefreshData();
+
+            if ((_doc.TsltnFileName != null && !_doc.Changed) || await SaveTsltnAsync().ConfigureAwait(true))
+            {
+
+                OnHasContentChanged(false);
+
+                string? fileName = _doc.TsltnFileName;
+                _doc.CloseTsltn();
+
+                await OpenTsltnAsync(fileName).ConfigureAwait(false);
+            }
+            else
+            {
+                var args = new MessageEventArgs(
+                    Res.NotReloaded,
+                    MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+
+                OnMessage(args);
+            }
+        }
 
 
     }

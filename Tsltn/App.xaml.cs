@@ -14,7 +14,7 @@ namespace Tsltn
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public sealed partial class App : Application
     {
         public const string PROGRAM_NAME = "Tsltn";
 
@@ -28,13 +28,15 @@ namespace Tsltn
             base.OnStartup(e);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            new MainWindow(Document.Instance, FileController.GetInstance(Document.Instance),
+            MainWindow = new MainWindow(Document.Instance, FileController.GetInstance(Document.Instance, new FileWatcher()),
                 new RecentFilesMenu(
-                    //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!
                     Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)!
-                )).Show();
+                ));
+            
+            MainWindow.Show();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
@@ -45,5 +47,6 @@ namespace Tsltn
 
             e.Handled = true;
         }
+
     }
 }
