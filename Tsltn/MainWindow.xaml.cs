@@ -115,7 +115,7 @@ namespace Tsltn
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _fileController_RefreshData(object? sender, EventArgs e) => RefreshData();
+        private void _fileController_RefreshData(object? sender, EventArgs e) => Dispatcher.Invoke(RefreshData);
 
 
 
@@ -137,16 +137,20 @@ namespace Tsltn
 
         private void _fileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
         {
-            if(e.HasContent)
+            Dispatcher.BeginInvoke(() => ChangeContent(e.HasContent));
+        }
+
+        private void ChangeContent(bool showContent)
+        {
+            if (showContent)
             {
                 var cntr = new TsltnControl(this, _doc);
                 _ccContent.Content = cntr;
-                Dispatcher.BeginInvoke(new Action(() => cntr._tbOriginal.Focus()), DispatcherPriority.ApplicationIdle);
+                cntr._tbOriginal.Focus();
             }
             else
             {
                 _ccContent.Content = null;
-
             }
         }
 
@@ -154,7 +158,7 @@ namespace Tsltn
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void _fileController_Message(object? sender, MessageEventArgs e)
         {
-            e.Result = MessageBox.Show(this, e.Message, App.PROGRAM_NAME, e.Button, e.Image, e.DefaultResult);
+            e.Result = Dispatcher.Invoke(() => MessageBox.Show(this, e.Message, App.PROGRAM_NAME, e.Button, e.Image, e.DefaultResult), DispatcherPriority.Send);
         }
 
 
