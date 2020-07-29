@@ -57,9 +57,14 @@ namespace FolkerKinzel.Tsltn.Controllers
             get => _watchedFile;
             set
             {
-                _watchedFile = value;
+                lock (_lockObject)
+                {
+                    _watcher.EnableRaisingEvents = false;
+                    _raiseEvents = false;
+                    _watchedFile = value;
+                }
 
-                if(_watchedFile is string s)
+                if(value is string s)
                 {
                     try
                     {
@@ -67,19 +72,18 @@ namespace FolkerKinzel.Tsltn.Controllers
 
                         if (Directory.Exists(directory))
                         {
-                            _watcher.Path = directory;
-                            _watcher.Filter = Path.GetFileName(_watchedFile);
-
-                            _watcher.EnableRaisingEvents = true;
-                            RaiseEvents = true;
+                            lock (_lockObject)
+                            {
+                                _watcher.Path = directory;
+                                _watcher.Filter = Path.GetFileName(value);
+                                _watcher.EnableRaisingEvents = true;
+                                _raiseEvents = true;
+                            }
                             return;
                         }
                     }
                     catch { }
                 }
-
-                _watcher.EnableRaisingEvents = false;
-                RaiseEvents = false;
             }
         }
 
