@@ -30,6 +30,6 @@ namespace FolkerKinzel.Tsltn.Controllers
         void SuspendSourceFileObservation();
         void ResumeSourceFileObservation();
 
-        Task ChangeSourceDocumentAsync(string newSourceDocument);
+        Task ChangeSourceDocumentAsync(string? newSourceDocument);
     }
 }

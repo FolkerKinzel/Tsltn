@@ -74,7 +74,6 @@ namespace Tsltn
                 this._translation = _node.Translation;
                 this._hasTranslation = true;
             }
-            this.SourceFileName = _doc.SourceDocumentFileName;
 
             InitializeComponent();
 
@@ -177,7 +176,12 @@ namespace Tsltn
         }
 
 
-        public string? SourceFileName { get; }
+        internal void RefreshSourceFileName()
+        {
+            OnPropertyChanged(nameof(SourceFileName));
+        }
+
+        public string? SourceFileName => _doc.SourceDocumentFileName;
 
         public INode CurrentNode
         {
@@ -561,8 +565,8 @@ namespace Tsltn
 
         private void CheckXmlError(CancellationToken cancelToken)
         {
-            //try
-            //{
+            try
+            {
                 while (true)
                 {
                     Thread.Sleep(5000);
@@ -604,8 +608,8 @@ namespace Tsltn
                         break;
                     }
                 }
-            //}
-            //catch (TaskCanceledException) { }
+            }
+            catch (TaskCanceledException) { }
 
             Debug.WriteLine("CheckXmlError beendet.");
         }

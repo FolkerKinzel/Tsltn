@@ -36,6 +36,7 @@
         <CommandBinding Command="SaveAs" Executed="SaveAs_ExecutedAsync"  CanExecute="Close_CanExecute"/>
         <CommandBinding Command="New" Executed="New_ExecutedAsync"/>
         <CommandBinding Command="{x:Static cmd:TsltnCommand.Translate}" Executed="Translate_ExecutedAsync"  CanExecute="Close_CanExecute"></CommandBinding>
+        <CommandBinding Command="{x:Static cmd:TsltnCommand.ChangeSourceDocument}" Executed="ChangeSourceDocument_ExecutedAsync" CanExecute="Close_CanExecute"></CommandBinding>
     </Window.CommandBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -129,6 +130,32 @@
                 </MenuItem>
             </MenuItem>
 
+            
+            <MenuItem Header="{x:Static r:Res.ExtrasMenuHeader}" Padding="8,4">
+                <MenuItem Command="{x:Static cmd:TsltnCommand.ChangeSourceDocument}" Header="{x:Static r:Res.ChangeSourceFileMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+            </MenuItem>
+
             <MenuItem Header="{x:Static r:Res.HelpMenuHeader}" Padding="8,4">
                 <MenuItem Command="ApplicationCommands.Help" Header="{x:Static r:Res.HelpMenuItem}">
                     <MenuItem.Icon>
@@ -148,6 +175,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
         </Menu>
 
         <ContentControl Grid.Row="1" Name="_ccContent" DockPanel.Dock="Top" />

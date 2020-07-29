@@ -106,6 +106,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Change Source File ähnelt.
+        /// </summary>
+        public static string ChangeSourceFileMenuItem {
+            get {
+                return ResourceManager.GetString("ChangeSourceFileMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
         /// </summary>
         public static string CloseMenuItem {
@@ -129,6 +138,15 @@ namespace Tsltn.Resources {
         public static string CopyAll {
             get {
                 return ResourceManager.GetString("CopyAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Extras ähnelt.
+        /// </summary>
+        public static string ExtrasMenuHeader {
+            get {
+                return ResourceManager.GetString("ExtrasMenuHeader", resourceCulture);
             }
         }
         
@@ -228,6 +246,15 @@ namespace Tsltn.Resources {
         public static string NewMenuItem {
             get {
                 return ResourceManager.GetString("NewMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die New Source File ähnelt.
+        /// </summary>
+        public static string NewSourceFile {
+            get {
+                return ResourceManager.GetString("NewSourceFile", resourceCulture);
             }
         }
         
@@ -489,6 +516,15 @@ namespace Tsltn.Resources {
         public static string UnusedTranslationsExplanation {
             get {
                 return ResourceManager.GetString("UnusedTranslationsExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Visual Studio XML documentation file ähnelt.
+        /// </summary>
+        public static string XmlDocumentationFile {
+            get {
+                return ResourceManager.GetString("XmlDocumentationFile", resourceCulture);
             }
         }
     }

@@ -132,6 +132,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="ChangeSourceFileMenuItem" xml:space="preserve">
+    <value>Change Source File</value>
+  </data>
   <data name="CloseMenuItem" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -140,6 +143,9 @@
   </data>
   <data name="CopyAll" xml:space="preserve">
     <value>Copy All</value>
+  </data>
+  <data name="ExtrasMenuHeader" xml:space="preserve">
+    <value>Extras</value>
   </data>
   <data name="FileMenuHeader" xml:space="preserve">
     <value>File</value>
@@ -171,6 +177,9 @@
   </data>
   <data name="NewMenuItem" xml:space="preserve">
     <value>New</value>
+  </data>
+  <data name="NewSourceFile" xml:space="preserve">
+    <value>New Source File</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Next &gt;</value>
@@ -258,5 +267,8 @@
   </data>
   <data name="UnusedTranslationsExplanation" xml:space="preserve">
     <value>The file "{0}" contains unused translations. Check the boxes next to them, to remove the selected ones.</value>
+  </data>
+  <data name="XmlDocumentationFile" xml:space="preserve">
+    <value>Visual Studio XML documentation file</value>
   </data>
 </root>

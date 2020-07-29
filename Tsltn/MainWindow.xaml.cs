@@ -19,6 +19,7 @@ using Tsltn.Resources;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using Microsoft.Win32;
 
 namespace Tsltn
 {
@@ -303,6 +304,39 @@ namespace Tsltn
             _fileController.ResumeSourceFileObservation();
         }
 
+        private async void ChangeSourceDocument_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog()
+            {
+                FileName = _doc.SourceDocumentFileName,
+                AddExtension = true,
+                CheckFileExists = true,
+                CheckPathExists = true,
+
+                DefaultExt = ".xml",
+                Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
+                DereferenceLinks = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                Multiselect = false,
+                ValidateNames = true,
+                Title = Res.NewSourceFile
+
+                //ReadOnlyChecked = true,
+                //ShowReadOnly = true
+
+            };
+
+
+            if (dlg.ShowDialog() == true)
+            {
+                await _fileController.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(true);
+
+                if (_ccContent.Content is TsltnControl control)
+                {
+                    control.RefreshSourceFileName();
+                }
+            }
+        }
 
         #endregion
 

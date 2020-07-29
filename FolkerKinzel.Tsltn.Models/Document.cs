@@ -44,9 +44,10 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void ChangeSourceDocumentFileName(string? fileName)
         {
-            if(File.Exists(fileName))
+            var tsltn = _tsltn;
+            if(File.Exists(fileName) && tsltn != null)
             {
-                TsltnFileName = fileName;
+                tsltn.SourceDocumentFileName = fileName;
             }
         }
 
