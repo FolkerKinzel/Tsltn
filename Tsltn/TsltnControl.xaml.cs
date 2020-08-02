@@ -253,6 +253,8 @@ namespace Tsltn
                 CommandManager.InvalidateRequerySuggested();
                 _ = Task.Run(() => CheckXmlError(_cancellationTokenSource.Token));
             }), DispatcherPriority.ApplicationIdle);
+
+            Clipboard.Clear();
         }
 
 

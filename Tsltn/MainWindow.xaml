@@ -25,7 +25,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/StandardResourceDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+
         </ResourceDictionary>
     </Window.Resources>
     <Window.CommandBindings>
@@ -130,7 +130,126 @@
                 </MenuItem>
             </MenuItem>
 
-            
+            <MenuItem Header="{x:Static r:Res.EditMenuHeader}" Padding="8,4">
+                <MenuItem Command="Undo" Header="{x:Static r:Res.UndoMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+
+                <MenuItem Command="Redo" Header="{x:Static r:Res.RedoMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem Command="Cut" Header="{x:Static r:Res.CutMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+
+                <MenuItem Command="Copy" Header="{x:Static r:Res.CopyMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+
+                <MenuItem Command="Paste" Header="{x:Static r:Res.PasteMenuItem}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Icon">
+                                <Setter.Value>
+                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Trigger.Setters>
+                                        <Setter Property="Icon">
+                                            <Setter.Value>
+                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+            </MenuItem>
+
+
             <MenuItem Header="{x:Static r:Res.ExtrasMenuHeader}" Padding="8,4">
                 <MenuItem Command="{x:Static cmd:TsltnCommand.ChangeSourceDocument}" Header="{x:Static r:Res.ChangeSourceFileMenuItem}">
                     <MenuItem.Style>
@@ -180,7 +299,7 @@
 
         <ContentControl Grid.Row="1" Name="_ccContent" DockPanel.Dock="Top" />
 
-        
+
 
         <StatusBar Grid.Row="2" FontSize="16" FontWeight="Bold">
             <StatusBarItem Background="CornflowerBlue" Foreground="White">

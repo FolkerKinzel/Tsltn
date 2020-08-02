@@ -142,6 +142,33 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy ähnelt.
+        /// </summary>
+        public static string CopyMenuItem {
+            get {
+                return ResourceManager.GetString("CopyMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cut ähnelt.
+        /// </summary>
+        public static string CutMenuItem {
+            get {
+                return ResourceManager.GetString("CutMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Edit ähnelt.
+        /// </summary>
+        public static string EditMenuHeader {
+            get {
+                return ResourceManager.GetString("EditMenuHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Extras ähnelt.
         /// </summary>
         public static string ExtrasMenuHeader {
@@ -331,6 +358,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Paste ähnelt.
+        /// </summary>
+        public static string PasteMenuItem {
+            get {
+                return ResourceManager.GetString("PasteMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Pos1 ähnelt.
         /// </summary>
         public static string Pos1Key {
@@ -363,6 +399,15 @@ namespace Tsltn.Resources {
         public static string RecentFilesMenuItem {
             get {
                 return ResourceManager.GetString("RecentFilesMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Redo ähnelt.
+        /// </summary>
+        public static string RedoMenuItem {
+            get {
+                return ResourceManager.GetString("RedoMenuItem", resourceCulture);
             }
         }
         
@@ -480,6 +525,15 @@ namespace Tsltn.Resources {
         public static string Translation {
             get {
                 return ResourceManager.GetString("Translation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Undo ähnelt.
+        /// </summary>
+        public static string UndoMenuItem {
+            get {
+                return ResourceManager.GetString("UndoMenuItem", resourceCulture);
             }
         }
         

@@ -144,6 +144,15 @@
   <data name="CopyAll" xml:space="preserve">
     <value>Copy All</value>
   </data>
+  <data name="CopyMenuItem" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CutMenuItem" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="EditMenuHeader" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="ExtrasMenuHeader" xml:space="preserve">
     <value>Extras</value>
   </data>
@@ -205,6 +214,9 @@
   <data name="Original" xml:space="preserve">
     <value>Original</value>
   </data>
+  <data name="PasteMenuItem" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="Pos1Key" xml:space="preserve">
     <value>Pos1</value>
   </data>
@@ -216,6 +228,9 @@
   </data>
   <data name="RecentFilesMenuItem" xml:space="preserve">
     <value>Recent files</value>
+  </data>
+  <data name="RedoMenuItem" xml:space="preserve">
+    <value>Redo</value>
   </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
@@ -255,6 +270,9 @@
   </data>
   <data name="Translation" xml:space="preserve">
     <value>Translation</value>
+  </data>
+  <data name="UndoMenuItem" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected error: Try to save your work and restart the application.</value>
