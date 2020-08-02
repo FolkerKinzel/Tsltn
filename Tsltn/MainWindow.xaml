@@ -136,7 +136,7 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
                                 <Setter.Value>
-                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                    <Image Width="16" Height="16" Source="pics/Undo_16x.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -144,7 +144,7 @@
                                     <Trigger.Setters>
                                         <Setter Property="Icon">
                                             <Setter.Value>
-                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                                <Image Width="16" Height="16" Source="pics/Undo_grey_16x.png"/>
                                             </Setter.Value>
                                         </Setter>
                                     </Trigger.Setters>
@@ -159,7 +159,7 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
                                 <Setter.Value>
-                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                    <Image Width="16" Height="16" Source="pics/Redo_16x.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -167,7 +167,7 @@
                                     <Trigger.Setters>
                                         <Setter Property="Icon">
                                             <Setter.Value>
-                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                                <Image Width="16" Height="16" Source="pics/Redo_grey_16x.png"/>
                                             </Setter.Value>
                                         </Setter>
                                     </Trigger.Setters>
@@ -184,7 +184,7 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
                                 <Setter.Value>
-                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                    <Image Width="16" Height="16" Source="pics/Cut_16x.png" />
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -192,7 +192,7 @@
                                     <Trigger.Setters>
                                         <Setter Property="Icon">
                                             <Setter.Value>
-                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                                <Image Width="16" Height="16" Source="pics/Cut_16x.png" Opacity ="0.5"/>
                                             </Setter.Value>
                                         </Setter>
                                     </Trigger.Setters>
@@ -207,7 +207,7 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
                                 <Setter.Value>
-                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                    <Image Width="16" Height="16" Source="pics/Copy_16x.png" />
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -215,7 +215,7 @@
                                     <Trigger.Setters>
                                         <Setter Property="Icon">
                                             <Setter.Value>
-                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                                <Image Width="16" Height="16" Source="pics/Copy_16x.png" Opacity ="0.5"/>
                                             </Setter.Value>
                                         </Setter>
                                     </Trigger.Setters>
@@ -230,7 +230,7 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
                                 <Setter.Value>
-                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                    <Image Width="16" Height="16" Source="pics/Paste_16x.png" />
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -238,7 +238,7 @@
                                     <Trigger.Setters>
                                         <Setter Property="Icon">
                                             <Setter.Value>
-                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                                <Image Width="16" Height="16" Source="pics/Paste_16x.png" Opacity ="0.5"/>
                                             </Setter.Value>
                                         </Setter>
                                     </Trigger.Setters>

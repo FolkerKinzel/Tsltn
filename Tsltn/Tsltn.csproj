@@ -36,10 +36,15 @@
   <ItemGroup>
     <None Remove="HistoryTable_16x.png" />
     <None Remove="pics\CloseDocument_16x.png" />
+    <None Remove="pics\Copy_16x.png" />
+    <None Remove="pics\Cut_16x.png" />
     <None Remove="pics\Help_16x.png" />
     <None Remove="pics\InformationSymbol_16x.png" />
     <None Remove="pics\NewFile_16x.png" />
     <None Remove="pics\Open_16x.png" />
+    <None Remove="pics\Paste_16x.png" />
+    <None Remove="pics\Redo_16x.png" />
+    <None Remove="pics\Redo_grey_16x.png" />
     <None Remove="pics\SaveAs_16x.png" />
     <None Remove="pics\SaveAs_grey_16x.png" />
     <None Remove="pics\Save_16x.png" />
@@ -49,6 +54,8 @@
     <None Remove="pics\StatusInformation_16x.png" />
     <None Remove="pics\StatusWarning_16x.png" />
     <None Remove="pics\TranslateDocument_16x.png" />
+    <None Remove="pics\Undo_16x.png" />
+    <None Remove="pics\Undo_grey_16x.png" />
     <None Remove="pics\Web_16x.png" />
   </ItemGroup>
   <ItemGroup>
@@ -84,12 +91,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="pics\Copy_16x.png" />
+    <Resource Include="pics\Cut_16x.png" />
     <Resource Include="pics\Help_16x.png" />
     <Resource Include="pics\HistoryTable_16x.png" />
     <Resource Include="pics\CloseDocument_16x.png" />
     <Resource Include="pics\InformationSymbol_16x.png" />
     <Resource Include="pics\NewFile_16x.png" />
     <Resource Include="pics\Open_16x.png" />
+    <Resource Include="pics\Paste_16x.png" />
+    <Resource Include="pics\Redo_16x.png" />
+    <Resource Include="pics\Redo_grey_16x.png" />
     <Resource Include="pics\SaveAs_16x.png" />
     <Resource Include="pics\SaveAs_grey_16x.png" />
     <Resource Include="pics\Save_16x.png" />
@@ -99,6 +111,8 @@
     <Resource Include="pics\StatusInformation_16x.png" />
     <Resource Include="pics\StatusWarning_16x.png" />
     <Resource Include="pics\TranslateDocument_16x.png" />
+    <Resource Include="pics\Undo_16x.png" />
+    <Resource Include="pics\Undo_grey_16x.png" />
     <Resource Include="pics\Web_16x.png" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
