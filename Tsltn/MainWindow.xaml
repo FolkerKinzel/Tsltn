@@ -236,7 +236,7 @@
                             <Style.Triggers>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Trigger.Setters>
-                                        <Setter Property="Icon">
+                                        <Setter Property="Icon">  
                                             <Setter.Value>
                                                 <Image Width="16" Height="16" Source="pics/Paste_16x.png" Opacity ="0.5"/>
                                             </Setter.Value>
