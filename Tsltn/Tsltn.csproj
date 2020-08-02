@@ -35,6 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="HistoryTable_16x.png" />
+    <None Remove="pics\ChangeSourceDocument_16x.png" />
+    <None Remove="pics\ChangeSourceDocument_grey_16x.png" />
     <None Remove="pics\CloseDocument_16x.png" />
     <None Remove="pics\Copy_16x.png" />
     <None Remove="pics\Cut_16x.png" />
@@ -91,6 +93,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="pics\ChangeSourceDocument_16x.png" />
+    <Resource Include="pics\ChangeSourceDocument_grey_16x.png" />
     <Resource Include="pics\Copy_16x.png" />
     <Resource Include="pics\Cut_16x.png" />
     <Resource Include="pics\Help_16x.png" />

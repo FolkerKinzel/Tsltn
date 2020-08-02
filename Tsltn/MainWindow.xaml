@@ -256,7 +256,7 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
                                 <Setter.Value>
-                                    <Image Width="16" Height="16" Source="pics/Save_16x.png"/>
+                                    <Image Width="16" Height="16" Source="pics/ChangeSourceDocument_16x.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -264,7 +264,7 @@
                                     <Trigger.Setters>
                                         <Setter Property="Icon">
                                             <Setter.Value>
-                                                <Image Width="16" Height="16" Source="pics/Save_grey_16x.png"/>
+                                                <Image Width="16" Height="16" Source="pics/ChangeSourceDocument_grey_16x.png" Opacity="0.5"/>
                                             </Setter.Value>
                                         </Setter>
                                     </Trigger.Setters>
