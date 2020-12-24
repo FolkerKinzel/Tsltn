@@ -28,7 +28,7 @@
         <Label Content="{x:Static r:Res.GoTo}" Padding="0"></Label>
         <DockPanel>
             <Button DockPanel.Dock="Right" Command="{x:Static cmd:NavigationUserControlCommand.Search}" MinWidth="25" MinHeight="25" TabIndex="4" ToolTip="{x:Static r:Res.Search}">&#x2192;</Button>
-            <Button Name="_btnClear" DockPanel.Dock="Right" MinWidth="25" MinHeight="25" TabIndex="5" ToolTip="{x:Static r:Res.Clear}" FontSize="16" VerticalContentAlignment="Center"
+            <Button Name="_btnClear" DockPanel.Dock="Right" MinWidth="18" MinHeight="25" TabIndex="5" ToolTip="{x:Static r:Res.Clear}" FontSize="16" VerticalContentAlignment="Center"
                     Background="{Binding ElementName=_tbQuery, Path=Background}" BorderBrush="{Binding ElementName=_tbQuery, Path=BorderBrush}" 
                     BorderThickness="0,1,0,1" Foreground="Gray" Padding="0,0,0,5" Click="_btnClear_Click">x</Button>
             <TextBox Name="_tbQuery" AcceptsReturn="False" AcceptsTab="False"
