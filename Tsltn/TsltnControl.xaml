@@ -148,7 +148,7 @@
                  ScrollViewer.CanContentScroll="True"
                  TextWrapping="WrapWithOverflow" Padding="10" FontSize="22" Background="WhiteSmoke" />
 
-            <Grid Grid.Row="2" FocusManager.IsFocusScope="True">
+            <Grid Grid.Row="2" FocusManager.IsFocusScope="False">
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <Button Name="_btnFirstNode" Command="BrowseHome" Content="&lt;&lt;" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource Self}}">
                         <Button.Style>
@@ -208,7 +208,7 @@
 
 
 
-            <Button Grid.Row="2" HorizontalAlignment="Center" Command="{x:Static cmd:TsltnControlCommand.BrowseAll}"
+            <Button Name="_btnBrowseAll" Grid.Row="2" HorizontalAlignment="Center" Command="{x:Static cmd:TsltnControlCommand.BrowseAll}"
                 Content="{x:Static r:Res.BrowseAll}"></Button>
         </Grid>
         

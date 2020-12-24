@@ -21,9 +21,13 @@ namespace Tsltn
     /// </summary>
     public partial class SelectUnusedTranslationsWindow : Window //, INotifyPropertyChanged
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Argumente von öffentlichen Methoden validieren", Justification = "<Ausstehend>")]
         public SelectUnusedTranslationsWindow(string tsltnFileName, IEnumerable<KeyValuePair<long, string>> unusedTranslations)
         {
+            if(unusedTranslations is null)
+            {
+                throw new ArgumentNullException(nameof(unusedTranslations));
+            }
+
             foreach (var item in unusedTranslations)
             {
                 var cntr = new UnusedTranslationUserControl(item);

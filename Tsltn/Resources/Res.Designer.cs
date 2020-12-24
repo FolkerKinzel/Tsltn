@@ -106,11 +106,29 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Case-sensitive search ähnelt.
+        /// </summary>
+        public static string CaseSensitiveSearch {
+            get {
+                return ResourceManager.GetString("CaseSensitiveSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Change Source File ähnelt.
         /// </summary>
         public static string ChangeSourceFileMenuItem {
             get {
                 return ResourceManager.GetString("ChangeSourceFileMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Clear ähnelt.
+        /// </summary>
+        public static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
             }
         }
         
@@ -448,6 +466,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Search ähnelt.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Select translation ähnelt.
         /// </summary>
         public static string SelectTranslation {
@@ -570,6 +597,15 @@ namespace Tsltn.Resources {
         public static string UnusedTranslationsExplanation {
             get {
                 return ResourceManager.GetString("UnusedTranslationsExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Find whole word only ähnelt.
+        /// </summary>
+        public static string WholeWordOnly {
+            get {
+                return ResourceManager.GetString("WholeWordOnly", resourceCulture);
             }
         }
         

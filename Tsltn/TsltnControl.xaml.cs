@@ -374,7 +374,8 @@ namespace Tsltn
         private void _btnReset_Click(object sender, RoutedEventArgs e)
         {
             this.HasTranslation = false;
-            _btnNext.Focus();
+            _btnBrowseAll.Focus();
+            //_btnNext.Focus();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -586,7 +587,7 @@ namespace Tsltn
 
                     if (!HasTranslation)
                     {
-                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
+                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
                         continue;
                     }
 
@@ -597,11 +598,11 @@ namespace Tsltn
                         {
                             RemoveXmlErrorMessages();
                             Errors.Insert(0, new XmlDataError(CurrentNode, exceptionMessage));
-                        }, DispatcherPriority.SystemIdle);
+                        }, DispatcherPriority.SystemIdle, CancellationToken.None);
                     }
                     else
                     {
-                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle);
+                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
                     }
 
 

@@ -132,8 +132,14 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CaseSensitiveSearch" xml:space="preserve">
+    <value>Case-sensitive search</value>
+  </data>
   <data name="ChangeSourceFileMenuItem" xml:space="preserve">
     <value>Change Source File</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
   </data>
   <data name="CloseMenuItem" xml:space="preserve">
     <value>Close</value>
@@ -244,6 +250,9 @@
   <data name="SaveMenuItem" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="SelectTranslation" xml:space="preserve">
     <value>Select translation</value>
   </data>
@@ -285,6 +294,9 @@
   </data>
   <data name="UnusedTranslationsExplanation" xml:space="preserve">
     <value>The file "{0}" contains unused translations. Check the boxes next to them, to remove the selected ones.</value>
+  </data>
+  <data name="WholeWordOnly" xml:space="preserve">
+    <value>Find whole word only</value>
   </data>
   <data name="XmlDocumentationFile" xml:space="preserve">
     <value>Visual Studio XML documentation file</value>

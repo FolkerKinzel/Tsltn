@@ -13,6 +13,7 @@
         <Style.Setters>
             <Setter Property="MinWidth" Value="85"/>
             <Setter Property="Padding" Value="3"/>
+
         </Style.Setters>
     </Style>
 

@@ -29,8 +29,18 @@ namespace Tsltn
             InitializeComponent();
         }
 
+        private string? _pathFragment;
 
-        public string? PathFragment { get; set; }
+        public string? PathFragment
+        {
+            get => _pathFragment;
+            
+            set
+            {
+                _pathFragment = value;
+                OnPropertyChanged(nameof(PathFragment));
+            }
+        }
 
         public bool CaseSensitive { get; set; }
 
@@ -45,10 +55,19 @@ namespace Tsltn
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
+        private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !string.IsNullOrWhiteSpace(PathFragment);
+        }
+
         private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
+            DoBrowseForward();
+        }
 
+        private void DoBrowseForward()
+        {
             PathFragment = PathFragment?.Replace(" ", "", StringComparison.Ordinal);
 
             if (string.IsNullOrEmpty(PathFragment))
@@ -60,10 +79,20 @@ namespace Tsltn
             OnPropertyChanged(nameof(PathFragment));
         }
 
+        
 
-        private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            e.CanExecute = !(string.IsNullOrWhiteSpace(PathFragment));
+            if(e.Key == Key.Enter && !string.IsNullOrWhiteSpace(PathFragment))
+            {
+                DoBrowseForward();
+            }
+        }
+
+        private void _btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            PathFragment = "";
+            //CommandManager.InvalidateRequerySuggested();
         }
     }
 }
