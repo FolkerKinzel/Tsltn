@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
@@ -10,14 +9,12 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>1.2.0.0</FileVersion>
+    <FileVersion>1.2.0.3</FileVersion>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Resources\Res.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -25,16 +22,13 @@
       <DependentUpon>Res.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Resources\Res.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Res.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netstandard2.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName)" />
+    <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName) --revision" />
   </Target>
-
 </Project>

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppSetupName 'TsltnSetup'
-#define MyAppVersion "2.0.0.0"
+#define MyAppVersion "2.1.0.0"
 
 #define MyAppName "Tsltn"
 #define MyAppPublisher "Folker Kinzel"

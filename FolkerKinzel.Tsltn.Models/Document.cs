@@ -98,8 +98,6 @@ namespace FolkerKinzel.Tsltn.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage) => Utility.IsValidXml(translation, out exceptionMessage);
 
-
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public async Task WaitAllTasks()
         {
             try
@@ -126,8 +124,6 @@ namespace FolkerKinzel.Tsltn.Models
             InitFirstNode();
         }
 
-
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public bool OpenTsltn(string? tsltnFileName)
         {
             CloseTsltn();
