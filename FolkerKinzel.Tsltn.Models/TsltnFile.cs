@@ -148,8 +148,6 @@ namespace FolkerKinzel.Tsltn.Models
             this.Changed = false;
         }
 
-
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         internal static TsltnFile Load(string tsltnFileName)
         {
             using var reader = XmlReader.Create(tsltnFileName);
@@ -176,7 +174,6 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Argumente von öffentlichen Methoden validieren", Justification = "<Ausstehend>")]
-        [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         public void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();

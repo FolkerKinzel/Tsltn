@@ -39,6 +39,20 @@ namespace Tsltn
         //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         //}
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _ucSearch.NavigationRequested += _ucSearch_NavigationRequested;
+        }
+
+        private void _ucSearch_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
+        {
+            string match = AllTranslations.FirstOrDefault(s => s.StartsWith(e.PathFragment, StringComparison.OrdinalIgnoreCase));
+
+            if(match != null)
+            {
+                _lbTranslations.ScrollIntoView(match);
+            }
+        }
 
         internal bool? ShowDialog(Window owner)
         {
@@ -88,5 +102,7 @@ namespace Tsltn
             _lbTranslations.SelectedItem = cv.CurrentItem;
             _lbTranslations.ScrollIntoView(cv.CurrentItem);
         }
+
+        
     }
 }

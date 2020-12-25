@@ -78,6 +78,9 @@
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="SearchUserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Resources\Res.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -116,6 +119,12 @@
     <Resource Include="pics\Undo_16x.png" />
     <Resource Include="pics\Undo_grey_16x.png" />
     <Resource Include="pics\Web_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SearchUserControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName)" />

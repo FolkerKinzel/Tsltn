@@ -9,7 +9,7 @@
         Height="650" Width="500"
         MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
+        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -38,6 +38,7 @@
         <CommandBinding Command="MoveDown" Executed="MoveDown_Executed"/>
     </Window.CommandBindings>
     <DockPanel>
+        <local:SearchUserControl DockPanel.Dock="Top" x:Name="_ucSearch" Margin="0,0,0,5"></local:SearchUserControl>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" IsCancel="True" Content="{x:Static r:Res.Cancel}"/>
             <Button DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="OK_Click">
