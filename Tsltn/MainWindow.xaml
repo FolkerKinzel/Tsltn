@@ -296,6 +296,7 @@
             </MenuItem>
 
         </Menu>
+        <!--<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0">Hallo</TextBlock>-->
 
         <ContentControl Grid.Row="1" Name="_ccContent" DockPanel.Dock="Top" />
 

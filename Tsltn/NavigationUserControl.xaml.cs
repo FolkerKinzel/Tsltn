@@ -1,8 +1,11 @@
 ﻿using FolkerKinzel.Tsltn.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,23 +27,31 @@ namespace Tsltn
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        private const int MAX_ITEMS = 10;
+        private string _pathFragment = "";
+
+
         public NavigationUserControl()
         {
             InitializeComponent();
         }
 
-        private string? _pathFragment;
 
-        public string? PathFragment
+        public string PathFragment
         {
             get => _pathFragment;
-            
+
             set
             {
+                value = value?.Replace(" ", "", StringComparison.Ordinal) ?? "";
+
                 _pathFragment = value;
-                OnPropertyChanged(nameof(PathFragment));
+                OnPropertyChanged();
             }
         }
+
+
+        public ObservableCollection<string> ComboBoxItems { get; } = new ObservableCollection<string>();
 
         public bool CaseSensitive { get; set; }
 
@@ -52,7 +63,17 @@ namespace Tsltn
             NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(pathFragment, caseSensitive, wholeWord));
 
 
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private void ClearText_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = PathFragment.Length != 0;
+
+        private void ClearText_Executed(object sender, ExecutedRoutedEventArgs e) => PathFragment = "";
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+        }
 
 
         private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -64,35 +85,48 @@ namespace Tsltn
         {
             e.Handled = true;
             DoBrowseForward();
+
         }
 
         private void DoBrowseForward()
         {
-            PathFragment = PathFragment?.Replace(" ", "", StringComparison.Ordinal);
-
-            if (string.IsNullOrEmpty(PathFragment))
+            if (PathFragment.Length == 0)
             {
                 return;
             }
 
             OnNavigationRequested(PathFragment, CaseSensitive, WholeWord);
-            OnPropertyChanged(nameof(PathFragment));
+            SetComboBoxItem();
         }
 
-        
-
-        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void SetComboBoxItem()
         {
-            if(e.Key == Key.Enter && !string.IsNullOrWhiteSpace(PathFragment))
+            // Die lokale Kopie ist nötig, da PathFragment
+            // innerhalb der Methode geändert wird.
+            string value = PathFragment;
+            int index = ComboBoxItems.IndexOf(value);
+
+            if (index == -1)
             {
-                DoBrowseForward();
+                ComboBoxItems.Insert(0, value);
+            }
+            else if (index > 0)
+            {
+                ComboBoxItems.RemoveAt(index);
+                ComboBoxItems.Insert(0, value);
+            }
+
+            _myCb.SelectedIndex = 0;
+
+            if (ComboBoxItems.Count > MAX_ITEMS)
+            {
+                ComboBoxItems.RemoveAt(ComboBoxItems.Count - 1);
             }
         }
 
-        private void _btnClear_Click(object sender, RoutedEventArgs e)
-        {
-            PathFragment = "";
-            //CommandManager.InvalidateRequerySuggested();
-        }
+
+
+
+
     }
 }

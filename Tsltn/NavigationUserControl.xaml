@@ -6,33 +6,38 @@
              xmlns:local="clr-namespace:Tsltn"
              xmlns:r ="clr-namespace:Tsltn.Resources"
              xmlns:cmd ="clr-namespace:Tsltn.Commands"
+             xmlns:cmdMyComboBox ="clr-namespace:MyComboBoxes"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="200"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             MinWidth="220"
+             MinWidth="300"
             TextOptions.TextFormattingMode="Ideal">
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static cmd:NavigationUserControlCommand.Search}" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
+        <CommandBinding Command="{x:Static cmdMyComboBox:MyComboBoxCommand.ClearText}" Executed="ClearText_Executed" CanExecute="ClearText_CanExecute"/>
     </UserControl.CommandBindings>
     <UserControl.Resources>
-        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-            <Style.Setters>
-                <Setter Property="Padding" Value="0"/>
-                <Setter Property="MinWidth" Value="25"/>
-                <Setter Property="MinHeight" Value="25"/>
-                <Setter Property="IsThreeState" Value="False"/>
-            </Style.Setters>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/MyComboBoxTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                <Style.Setters>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="MinWidth" Value="25"/>
+                    <Setter Property="MinHeight" Value="25"/>
+                    <Setter Property="IsThreeState" Value="False"/>
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
         <Label Content="{x:Static r:Res.GoTo}" Padding="0"></Label>
         <DockPanel>
-            <Button DockPanel.Dock="Right" Command="{x:Static cmd:NavigationUserControlCommand.Search}" MinWidth="25" MinHeight="25" TabIndex="4" ToolTip="{x:Static r:Res.Search}">&#x2192;</Button>
-            <Button Name="_btnClear" DockPanel.Dock="Right" MinWidth="18" MinHeight="25" TabIndex="5" ToolTip="{x:Static r:Res.Clear}" FontSize="16" VerticalContentAlignment="Center"
-                    Background="{Binding ElementName=_tbQuery, Path=Background}" BorderBrush="{Binding ElementName=_tbQuery, Path=BorderBrush}" 
-                    BorderThickness="0,1,0,1" Foreground="Gray" Padding="0,0,0,5" Click="_btnClear_Click">x</Button>
-            <TextBox Name="_tbQuery" AcceptsReturn="False" AcceptsTab="False"
-                     Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" UndoLimit="10" TabIndex="1" PreviewKeyDown="TextBox_PreviewKeyDown" BorderThickness="1,1,0,1"/>
+            <Button DockPanel.Dock="Right" Command="{x:Static cmd:NavigationUserControlCommand.Search}" MinWidth="25" MinHeight="25" 
+                    TabIndex="4" ToolTip="{x:Static r:Res.Search}">&#x2192;</Button>
+            <ComboBox Name="_myCb" DockPanel.Dock="Left" TabIndex="1" Style="{DynamicResource MyComboBoxStyle}" IsEditable="True" IsReadOnly="False"
+                  Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ComboBoxItems}" SelectionChanged="ComboBox_SelectionChanged" Margin="0"></ComboBox>
         </DockPanel>
         <StackPanel Orientation="Horizontal">
             <ToggleButton IsChecked="{Binding CaseSensitive}" FontSize="16" TabIndex="2" Content="Aa" ToolTip="{x:Static r:Res.CaseSensitiveSearch}"></ToggleButton>

@@ -5,20 +5,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tsltn"
              xmlns:r ="clr-namespace:Tsltn.Resources"
-             xmlns:cmd ="clr-namespace:Tsltn.Commands"
+             xmlns:cmd ="clr-namespace:MyComboBoxes"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="200"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinWidth="220"
-            TextOptions.TextFormattingMode="Ideal" FontSize="16">
-    
+            TextOptions.TextFormattingMode="Ideal" FontSize="16" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="{x:Static cmd:MyComboBoxCommand.ClearText}" Executed="ClearText_Executed" CanExecute="ClearText_CanExecute"/>
+    </UserControl.CommandBindings>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/MyComboBoxTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <DockPanel>
-        <Label DockPanel.Dock="Left" Content="{x:Static r:Res.GoTo}" VerticalAlignment="Top" Padding="5,2,5,0"></Label>
-        <Button Name="_btnClear" VerticalAlignment="Top" DockPanel.Dock="Right" MinWidth="25" Height="25" TabIndex="5" ToolTip="{x:Static r:Res.Clear}" VerticalContentAlignment="Center"
-                    Background="{Binding ElementName=_tbQuery, Path=Background}" BorderBrush="{Binding ElementName=_tbQuery, Path=BorderBrush}" 
-                    BorderThickness="0,1,1,1" Foreground="Gray" Padding="0,0,0,7" Margin="0,0,5,0" Click="_btnClear_Click">x</Button>
-        <TextBox DockPanel.Dock="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" Name="_tbQuery" AcceptsReturn="False" AcceptsTab="False"
-                     Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" UndoLimit="10" TabIndex="1" MinHeight="25" BorderThickness="1,1,0,1"/>
+        <Label DockPanel.Dock="Left" Content="{x:Static r:Res.GoTo}" VerticalAlignment="Top" Padding="5,2,5,0" TabIndex="2"></Label>
+        <ComboBox Name="_myCb" DockPanel.Dock="Top" Style="{DynamicResource MyComboBoxStyle}" VerticalAlignment="Top" IsEditable="True" IsReadOnly="False"
+                  Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ComboBoxItems}" 
+                  SelectionChanged="ComboBox_SelectionChanged" Margin="0,0,5,0" TabIndex="1"></ComboBox>
     </DockPanel>
 
 </UserControl>

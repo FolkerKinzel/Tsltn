@@ -9,7 +9,8 @@
         Height="650" Width="500"
         MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded"
+        PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

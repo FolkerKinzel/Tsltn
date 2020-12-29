@@ -42,6 +42,7 @@ namespace Tsltn
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _ucSearch.NavigationRequested += _ucSearch_NavigationRequested;
+
         }
 
         private void _ucSearch_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
@@ -103,6 +104,19 @@ namespace Tsltn
             _lbTranslations.ScrollIntoView(cv.CurrentItem);
         }
 
-        
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!(Keyboard.FocusedElement is TextBox)) // ?.Name != "PART_EditableTextBox")
+            {
+                _ucSearch._myCb.Focus();
+            }
+
+        }
+
+        //private void Window_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    _ucSearch.Focus();
+
+        //}
     }
 }

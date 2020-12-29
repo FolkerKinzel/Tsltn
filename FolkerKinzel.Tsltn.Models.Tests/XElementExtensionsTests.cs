@@ -28,9 +28,9 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
             string s = root.InnerXml();
 
-            Assert.IsTrue(s.Contains($"<{CHILD} />"));
-            Assert.IsTrue(s.Contains(HALLO));
-            Assert.IsFalse(s.Contains(ROOT));
+            Assert.IsTrue(s.Contains($"<{CHILD} />", StringComparison.Ordinal));
+            Assert.IsTrue(s.Contains(HALLO, StringComparison.Ordinal));
+            Assert.IsFalse(s.Contains(ROOT, StringComparison.Ordinal));
         }
     }
 }

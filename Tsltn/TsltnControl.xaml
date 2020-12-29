@@ -146,7 +146,7 @@
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"
-                 TextWrapping="WrapWithOverflow" Padding="10" FontSize="22" Background="WhiteSmoke" />
+                 TextWrapping="Wrap" Padding="10" FontSize="22" Background="WhiteSmoke" />
 
             <Grid Grid.Row="2" FocusManager.IsFocusScope="False">
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -204,7 +204,7 @@
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"
-                 Padding="10" FontSize="22" Background="WhiteSmoke" TextWrapping="WrapWithOverflow" AcceptsReturn="True" />
+                 Padding="10" FontSize="22" Background="WhiteSmoke" TextWrapping="Wrap"  AcceptsReturn="True" />
 
 
 
