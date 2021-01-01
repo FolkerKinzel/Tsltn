@@ -197,10 +197,10 @@
                 </TextBlock>
             </Border>
             <Button Name="_btnReset" HorizontalAlignment="Right"
-                Content="{x:Static r:Res.Reset}" Click="_btnReset_Click" IsEnabled="{Binding HasTranslation}" />
+                Content="{x:Static r:Res.Reset}" Click="BtnReset_Click" IsEnabled="{Binding HasTranslation}" />
 
             <TextBox Name="_tbTranslation" Grid.Row="1" Text="{Binding Translation, UpdateSourceTrigger=PropertyChanged}"
-                 GotKeyboardFocus="_tbTranslation_GotKeyboardFocus"
+                 GotKeyboardFocus="TbTranslation_GotKeyboardFocus"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.CanContentScroll="True"

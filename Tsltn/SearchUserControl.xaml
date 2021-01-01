@@ -25,7 +25,7 @@
         <Label DockPanel.Dock="Left" Content="{x:Static r:Res.GoTo}" VerticalAlignment="Top" Padding="5,2,5,0" TabIndex="2"></Label>
         <ComboBox Name="_myCb" DockPanel.Dock="Top" Style="{DynamicResource MyComboBoxStyle}" VerticalAlignment="Top" IsEditable="True" IsReadOnly="False"
                   Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ComboBoxItems}" 
-                  SelectionChanged="ComboBox_SelectionChanged" Margin="0,0,5,0" TabIndex="1"></ComboBox>
+                  Margin="0,0,5,0" TabIndex="1"></ComboBox>
     </DockPanel>
 
 </UserControl>

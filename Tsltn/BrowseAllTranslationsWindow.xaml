@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsltn"
         xmlns:r ="clr-namespace:Tsltn.Resources"
+        xmlns:cmd="clr-namespace:Tsltn.Commands"
         mc:Ignorable="d"
         Height="650" Width="500"
         MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded"
+        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <ResourceDictionary>
@@ -35,14 +36,14 @@
            
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="MoveUp" Executed="MoveUp_Executed"/>
-        <CommandBinding Command="MoveDown" Executed="MoveDown_Executed"/>
+        <CommandBinding Command="{x:Static cmd:BrowseAllTranslationsCommand.MoveUp}" Executed="MoveUp_Executed"/>
+        <CommandBinding Command="{x:Static cmd:BrowseAllTranslationsCommand.MoveDown}" Executed="MoveDown_Executed"/>
     </Window.CommandBindings>
     <DockPanel>
         <local:SearchUserControl DockPanel.Dock="Top" x:Name="_ucSearch" Margin="0,0,0,5"></local:SearchUserControl>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" IsCancel="True" Content="{x:Static r:Res.Cancel}"/>
-            <Button DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="OK_Click">
+            <Button x:Name="_btnOK" DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="OK_Click">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                         <Style.Triggers>
@@ -66,7 +67,7 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" TextWrapping="WrapWithOverflow" FontSize="16"/>
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="16"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

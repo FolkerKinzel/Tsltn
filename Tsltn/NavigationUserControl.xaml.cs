@@ -50,12 +50,28 @@ namespace Tsltn
             }
         }
 
+        private static List<string> ComboBoxStore { get; } = new List<string>();
+
 
         public ObservableCollection<string> ComboBoxItems { get; } = new ObservableCollection<string>();
 
         public bool CaseSensitive { get; set; }
 
         public bool WholeWord { get; set; } = true;
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            foreach (string item in ComboBoxStore)
+            {
+                ComboBoxItems.Add(item);
+            }
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ComboBoxStore.Clear();
+            ComboBoxStore.AddRange(ComboBoxItems);
+        }
 
 
 
@@ -70,40 +86,24 @@ namespace Tsltn
 
         private void ClearText_Executed(object sender, ExecutedRoutedEventArgs e) => PathFragment = "";
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            e.Handled = true;
-        }
+        //private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    //e.Handled = true;
+        //    //OnNavigationRequested(PathFragment, CaseSensitive, WholeWord);
+        //}
 
-
-        private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = !string.IsNullOrWhiteSpace(PathFragment);
-        }
+        private void BrowseForward_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = PathFragment.Length != 0;
 
         private void BrowseForward_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            DoBrowseForward();
-
-        }
-
-        private void DoBrowseForward()
-        {
-            if (PathFragment.Length == 0)
-            {
-                return;
-            }
-
             OnNavigationRequested(PathFragment, CaseSensitive, WholeWord);
-            SetComboBoxItem();
         }
 
-        private void SetComboBoxItem()
+        
+
+        public void SetComboBoxItem(string value)
         {
-            // Die lokale Kopie ist nötig, da PathFragment
-            // innerhalb der Methode geändert wird.
-            string value = PathFragment;
             int index = ComboBoxItems.IndexOf(value);
 
             if (index == -1)
@@ -124,9 +124,23 @@ namespace Tsltn
             }
         }
 
+        private void MyCb_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter && PathFragment.Length != 0)
+            {
+                OnNavigationRequested(PathFragment, CaseSensitive, WholeWord);
+            }
+        }
 
-
-
-
+        private void ComboBoxItem_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListBoxItem lbi && lbi.DataContext is string s)
+            {
+                if (s.Length != 0)
+                {
+                    OnNavigationRequested(s, CaseSensitive, WholeWord);
+                }
+            }
+        }
     }
 }

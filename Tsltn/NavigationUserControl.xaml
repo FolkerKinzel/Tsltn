@@ -11,7 +11,9 @@
              d:DesignHeight="100" d:DesignWidth="200"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              MinWidth="300"
-            TextOptions.TextFormattingMode="Ideal">
+            TextOptions.TextFormattingMode="Ideal"
+             Loaded="UserControl_Loaded"
+             Unloaded="UserControl_Unloaded">
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static cmd:NavigationUserControlCommand.Search}" CanExecute="BrowseForward_CanExecute" Executed="BrowseForward_Executed"/>
         <CommandBinding Command="{x:Static cmdMyComboBox:MyComboBoxCommand.ClearText}" Executed="ClearText_Executed" CanExecute="ClearText_CanExecute"/>
@@ -37,7 +39,16 @@
             <Button DockPanel.Dock="Right" Command="{x:Static cmd:NavigationUserControlCommand.Search}" MinWidth="25" MinHeight="25" 
                     TabIndex="4" ToolTip="{x:Static r:Res.Search}">&#x2192;</Button>
             <ComboBox Name="_myCb" DockPanel.Dock="Left" TabIndex="1" Style="{DynamicResource MyComboBoxStyle}" IsEditable="True" IsReadOnly="False"
-                  Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ComboBoxItems}" SelectionChanged="ComboBox_SelectionChanged" Margin="0"></ComboBox>
+                  Text="{Binding PathFragment, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ComboBoxItems}" Margin="0"
+                      PreviewKeyDown="MyCb_PreviewKeyDown">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Style.Setters>
+                            <EventSetter Event="PreviewMouseUp" Handler="ComboBoxItem_PreviewMouseUp"/>
+                        </Style.Setters>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
         </DockPanel>
         <StackPanel Orientation="Horizontal">
             <ToggleButton IsChecked="{Binding CaseSensitive}" FontSize="16" TabIndex="2" Content="Aa" ToolTip="{x:Static r:Res.CaseSensitiveSearch}"></ToggleButton>

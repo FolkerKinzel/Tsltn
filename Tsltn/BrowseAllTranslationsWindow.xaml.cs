@@ -18,40 +18,32 @@ namespace Tsltn
     /// <summary>
     /// Interaktionslogik für BrowseAllTranslationsWindow.xaml
     /// </summary>
-    public partial class BrowseAllTranslationsWindow : Window //, INotifyPropertyChanged
+    public partial class BrowseAllTranslationsWindow : Window
     {
-        //public event PropertyChangedEventHandler? PropertyChanged;
-
 
         public BrowseAllTranslationsWindow(IEnumerable<KeyValuePair<long, string>> enumerable)
         {
             this.Title = $"{App.PROGRAM_NAME} - {Res.SelectTranslation}";
-            this.AllTranslations = enumerable.Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s).ToArray();
+            this.AllTranslations = enumerable.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s).ToArray();
 
             InitializeComponent();
+
+            _ucSearch.NavigationRequested += UcSearch_NavigationRequested;
         }
 
         public IEnumerable<string> AllTranslations { get; }
 
 
-        //private void OnPropertyChanged(string propName)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        //}
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            _ucSearch.NavigationRequested += _ucSearch_NavigationRequested;
-
-        }
-
-        private void _ucSearch_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
+        private void UcSearch_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
             string match = AllTranslations.FirstOrDefault(s => s.StartsWith(e.PathFragment, StringComparison.OrdinalIgnoreCase));
 
             if(match != null)
             {
                 _lbTranslations.ScrollIntoView(match);
+                _lbTranslations.SelectedItem = match;
+
+                _ucSearch.SetComboBoxItem(e.PathFragment);
             }
         }
 
@@ -62,20 +54,14 @@ namespace Tsltn
         }
 
 
-        private void OK_Click(object sender, RoutedEventArgs e)
-        {
-            this.DialogResult = true;
-        }
+        private void OK_Click(object sender, RoutedEventArgs e) => this.DialogResult = true;
 
 
-        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            this.DialogResult = true;
-        }
+        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e) => this.DialogResult = true;
 
         private void MoveUp_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var cv = CollectionViewSource.GetDefaultView(_lbTranslations.ItemsSource);
+            ICollectionView cv = CollectionViewSource.GetDefaultView(_lbTranslations.ItemsSource);
 
             cv.MoveCurrentToPrevious();
 
@@ -91,7 +77,7 @@ namespace Tsltn
 
         private void MoveDown_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var cv = CollectionViewSource.GetDefaultView(_lbTranslations.ItemsSource);
+            ICollectionView cv = CollectionViewSource.GetDefaultView(_lbTranslations.ItemsSource);
 
             cv.MoveCurrentToNext();
 
@@ -106,17 +92,25 @@ namespace Tsltn
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if(Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                if(!(FocusManager.GetFocusedElement(this) is ListBoxItem))
+                {
+                    // Klaut der ComboBox den Focus:
+                    _btnOK.Focus();
+                }
+                
+                e.Handled = false;
+
+                return;
+            }
+
             if (!(Keyboard.FocusedElement is TextBox)) // ?.Name != "PART_EditableTextBox")
             {
                 _ucSearch._myCb.Focus();
             }
-
         }
 
-        //private void Window_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    _ucSearch.Focus();
-
-        //}
+        
     }
 }

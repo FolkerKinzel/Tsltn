@@ -36,6 +36,7 @@
     <Compile Remove="UntranslatedNodeEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove=".editorconfig" />
     <None Remove="HistoryTable_16x.png" />
     <None Remove="pics\ChangeSourceDocument_16x.png" />
     <None Remove="pics\ChangeSourceDocument_grey_16x.png" />
@@ -67,7 +68,6 @@
     <Page Remove="TsltnPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="Resources\Help.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -129,4 +129,5 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName) --revision" />
   </Target>
+  
 </Project>

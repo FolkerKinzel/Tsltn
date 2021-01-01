@@ -34,22 +34,23 @@ namespace Tsltn
 
             set
             {
-                value = value?.TrimStart() ?? "";
-
                 // Die Überprüfung ist nötig, um eine
                 // Endlosschleife zu verhindern:
-                if (value != _pathFragment)
+                if (StringComparer.Ordinal.Equals(_pathFragment, value))
                 {
-                    _pathFragment = value;
-
-                    SetComboBoxItem(value);
-                    OnPropertyChanged();
+                    return;
                 }
 
-                if(_pathFragment.Length != 0)
+                value = value?.TrimStart() ?? "";
+
+                _pathFragment = value;
+                OnPropertyChanged();
+
+                if (value.Length != 0)
                 {
-                    OnNavigationRequested();
+                    OnNavigationRequested(value);
                 }
+
             }
         }
 
@@ -57,11 +58,18 @@ namespace Tsltn
 
         public ObservableCollection<string> ComboBoxItems { get; } = new ObservableCollection<string>();
 
+
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (var item in ComboBoxStore)
+            foreach (string item in ComboBoxStore)
             {
                 ComboBoxItems.Add(item);
+            }
+
+            if (ComboBoxItems.Count != 0)
+            {
+                PathFragment = ComboBoxItems[0];
             }
         }
 
@@ -71,7 +79,7 @@ namespace Tsltn
             ComboBoxStore.AddRange(ComboBoxItems);
         }
 
-        private void SetComboBoxItem(string value)
+        public void SetComboBoxItem(string value)
         {
             const StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
 
@@ -94,7 +102,14 @@ namespace Tsltn
             }
             else if (index == 0)
             {
-                ComboBoxItems[0] = value;
+                if (!StringComparer.Ordinal.Equals(ComboBoxItems[0], value))
+                {
+                    ComboBoxItems[0] = value;
+                }
+                //else
+                //{
+                //    //return;
+                //}
             }
             else if (index > 0)
             {
@@ -114,19 +129,18 @@ namespace Tsltn
 
         private void ClearText_Executed(object sender, ExecutedRoutedEventArgs e) => PathFragment = "";
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            e.Handled = true;
-        }
+        //private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    e.Handled = true;
+        //}
 
-
-        private void OnNavigationRequested() =>
-            NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(PathFragment, false, false));
+        private void OnNavigationRequested(string pathFragment) =>
+            NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(pathFragment, false, false));
 
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        
+
     }
 }

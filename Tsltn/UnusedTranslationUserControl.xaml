@@ -19,6 +19,6 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <CheckBox Name="_cbSelected" HorizontalAlignment="Center" VerticalAlignment="Top" IsChecked="{Binding Remove, Mode=TwoWay}" FontSize="16" Margin="0,4,0,0"/>
-        <TextBlock Grid.Column="1" TextAlignment="Justify" Text="{Binding Kvp.Value}" TextWrapping="WrapWithOverflow" Margin="0" Padding="0" VerticalAlignment="Top"/>
+        <TextBlock Grid.Column="1" TextAlignment="Left" Text="{Binding Kvp.Value}" TextWrapping="Wrap" Margin="0" Padding="0" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

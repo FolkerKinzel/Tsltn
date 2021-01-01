@@ -39,8 +39,7 @@ namespace Tsltn
         private bool _hasTranslation;
         private string? _sourceLanguage;
         private string? _targetLanguage;
-
-        INode? _nextUntranslatedNode;
+        private INode? _nextUntranslatedNode;
 
         private readonly StringBuilder _sb = new StringBuilder(1024);
 
@@ -81,7 +80,7 @@ namespace Tsltn
 
             _owner.TranslationErrors += MainWindow_TranslationErrors;
 
-            DataObject.AddPastingHandler(_tbTranslation, _tbTranslation_Paste);
+            DataObject.AddPastingHandler(_tbTranslation, TbTranslation_Paste);
 
             _btnPrevious.ToolTip = $"{Res.AltKey}+{Res.LeftKey}";
             _btnNext.ToolTip = $"{Res.AltKey}+{Res.RightKey}";
@@ -176,10 +175,7 @@ namespace Tsltn
         }
 
 
-        internal void RefreshSourceFileName()
-        {
-            OnPropertyChanged(nameof(SourceFileName));
-        }
+        internal void RefreshSourceFileName() => OnPropertyChanged(nameof(SourceFileName));
 
         public string? SourceFileName => _doc.SourceDocumentFileName;
 
@@ -201,10 +197,7 @@ namespace Tsltn
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
 
 
-        public void Dispose()
-        {
-            ((IDisposable)_cancellationTokenSource).Dispose();
-        }
+        public void Dispose() => ((IDisposable)_cancellationTokenSource).Dispose();
 
 
         internal void UpdateSource()
@@ -263,9 +256,9 @@ namespace Tsltn
             _cancellationTokenSource.Cancel();
 
             _owner.TranslationErrors -= MainWindow_TranslationErrors;
-            DataObject.RemovePastingHandler(_tbTranslation, _tbTranslation_Paste);
+            DataObject.RemovePastingHandler(_tbTranslation, TbTranslation_Paste);
 
-            this.Dispose();
+            Dispose();
         }
 
         private void MainWindow_TranslationErrors(object? sender, TranslationErrorsEventArgs e)
@@ -274,7 +267,7 @@ namespace Tsltn
             {
                 this.Errors.Clear();
 
-                foreach (var error in e.Errors)
+                foreach (DataError error in e.Errors)
                 {
                     this.Errors.Add(error);
                 }
@@ -353,7 +346,7 @@ namespace Tsltn
 
         private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            var target = _node.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
+            INode? target = _doc.FirstNode?.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
 
             if (target is null)
             {
@@ -364,6 +357,7 @@ namespace Tsltn
             else
             {
                 Navigate(target);
+                NavCtrl.SetComboBoxItem(e.PathFragment);
             }
         }
 
@@ -371,7 +365,7 @@ namespace Tsltn
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _btnReset_Click(object sender, RoutedEventArgs e)
+        private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
             this.HasTranslation = false;
             _btnBrowseAll.Focus();
@@ -379,10 +373,10 @@ namespace Tsltn
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _tbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => HasTranslation = true;
+        private void TbTranslation_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => HasTranslation = true;
 
 
-        private void _tbTranslation_Paste(object sender, DataObjectPastingEventArgs e)
+        private void TbTranslation_Paste(object sender, DataObjectPastingEventArgs e)
         {
             e.CancelCommand();
             _sb.Clear().Append(Clipboard.GetText())
@@ -454,35 +448,15 @@ namespace Tsltn
 
         #region Commands
 
-        private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = CurrentNode.HasAncestor;
-        }
+        private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode.HasAncestor;
 
-        private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            Navigate(_doc.FirstNode);
-            //e.Handled = true;
-        }
+        private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(_doc.FirstNode);
 
-        private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            Navigate(_node.GetAncestor());
-            //e.Handled = true;
-            //_btnPrevious.Focus();
-        }
+        private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(_node.GetAncestor());
 
-        private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = CurrentNode.HasDescendant;
-        }
+        private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode.HasDescendant;
 
-        private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            Navigate(CurrentNode.GetDescendant());
-            //e.Handled = true;
-            //_btnNext.Focus();
-        }
+        private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(CurrentNode.GetDescendant());
 
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -516,21 +490,18 @@ namespace Tsltn
             _btnNext.Focus();
         }
 
-        private void NextToTranslate_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = _nextUntranslatedNode != null;
-        }
+        private void NextToTranslate_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = _nextUntranslatedNode != null;
 
         private async void NextToTranslate_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.HasTranslation)
             {
-                this.Navigate(_nextUntranslatedNode);
+                Navigate(_nextUntranslatedNode);
             }
             else
             {
-                var next = await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true);
-                this.Navigate(next);
+                INode? next = await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true);
+                Navigate(next);
             }
 
             _btnNextToTranslate.Focus();
@@ -587,7 +558,7 @@ namespace Tsltn
 
                     if (!HasTranslation)
                     {
-                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
+                        Dispatcher.Invoke(() => RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
                         continue;
                     }
 
@@ -602,7 +573,7 @@ namespace Tsltn
                     }
                     else
                     {
-                        Dispatcher.Invoke(() => this.RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
+                        Dispatcher.Invoke(() => RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
                     }
 
 
@@ -620,9 +591,9 @@ namespace Tsltn
 
         private void RemoveXmlErrorMessages()
         {
-            var thisErrors = Errors.Where(x => x is XmlDataError && this.CurrentNode.ReferencesSameXml(x.Node!)).ToArray();
+            DataError[] thisErrors = Errors.Where(x => x is XmlDataError && this.CurrentNode.ReferencesSameXml(x.Node!)).ToArray();
 
-            foreach (var error in thisErrors)
+            foreach (DataError error in thisErrors)
             {
                 Errors.Remove(error);
             }
@@ -640,7 +611,7 @@ namespace Tsltn
 
             this.CurrentNode = node;
 
-            var transl = node.Translation;
+            string? transl = node.Translation;
             this.Translation = transl;
 
             // Die lokale Variable muss benutzt werden,
