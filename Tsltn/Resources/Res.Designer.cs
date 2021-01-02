@@ -97,6 +97,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Use STRG+Up or STRG+Down to browse the translations! ähnelt.
+        /// </summary>
+        public static string BrowseTranslationsTip {
+            get {
+                return ResourceManager.GetString("BrowseTranslationsTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
         /// </summary>
         public static string Cancel {
@@ -327,15 +336,6 @@ namespace Tsltn.Resources {
         public static string NodePath {
             get {
                 return ResourceManager.GetString("NodePath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No element was found, that contains &quot;{0}&quot; in its path. ähnelt.
-        /// </summary>
-        public static string NoElementFound {
-            get {
-                return ResourceManager.GetString("NoElementFound", resourceCulture);
             }
         }
         

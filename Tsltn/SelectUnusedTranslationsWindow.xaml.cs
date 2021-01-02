@@ -28,12 +28,12 @@ namespace Tsltn
                 throw new ArgumentNullException(nameof(unusedTranslations));
             }
 
-            foreach (var item in unusedTranslations)
+            foreach (KeyValuePair<long, string> item in unusedTranslations)
             {
                 var cntr = new UnusedTranslationUserControl(item);
                 Controls.Add(cntr);
-                cntr._cbSelected.Unchecked += _cbSelected_Unchecked;
-                cntr._cbSelected.Checked += _cbSelected_Checked;
+                cntr._cbSelected.Unchecked += CbSelected_Unchecked;
+                cntr._cbSelected.Checked += CbSelected_Checked;
             }
 
             Controls.Sort((a, b) => StringComparer.Ordinal.Compare(a.Kvp.Value, b.Kvp.Value));
@@ -46,7 +46,7 @@ namespace Tsltn
             InitializeComponent();
         }
 
-        private void _cbSelected_Unchecked(object sender, RoutedEventArgs e)
+        private void CbSelected_Unchecked(object sender, RoutedEventArgs e)
         {
             if(Controls.Any(x => x.Remove))
             {
@@ -59,7 +59,7 @@ namespace Tsltn
         }
 
 
-        private void _cbSelected_Checked(object sender, RoutedEventArgs e)
+        private void CbSelected_Checked(object sender, RoutedEventArgs e)
         {
             if (Controls.Any(x => !x.Remove))
             {
@@ -83,10 +83,7 @@ namespace Tsltn
 
         public List<UnusedTranslationUserControl> Controls { get; } = new List<UnusedTranslationUserControl>();
 
-        private void OK_Click(object sender, RoutedEventArgs e)
-        {
-            this.DialogResult = true;
-        }
+        private void OK_Click(object sender, RoutedEventArgs e) => this.DialogResult = true;
 
         internal bool? ShowDialog(Window owner)
         {
@@ -98,7 +95,7 @@ namespace Tsltn
         {
             bool newVal = (_cbAlleKeine.IsChecked == true);
 
-            foreach (var cntr in Controls)
+            foreach (UnusedTranslationUserControl cntr in Controls)
             {
                 cntr.Remove = newVal;
             }

@@ -1,5 +1,5 @@
 # Tsltn
-![version](https://img.shields.io/badge/version-2.2-blue)
+![version](https://img.shields.io/badge/version-2.3-blue)
 
 Tool to translate the Visual Studio XML documentation file into different languages (for Localization of IntelliSense and project reference).
 

@@ -8,8 +8,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>2.2.0.6</FileVersion>
-    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.3.0.3</FileVersion>
+    <AssemblyVersion>2.3.0.0</AssemblyVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -129,5 +129,4 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName) --revision" />
   </Target>
-  
 </Project>

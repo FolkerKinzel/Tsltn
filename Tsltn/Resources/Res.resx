@@ -129,6 +129,9 @@
   <data name="BrowseAll" xml:space="preserve">
     <value>Browse all</value>
   </data>
+  <data name="BrowseTranslationsTip" xml:space="preserve">
+    <value>Use STRG+Up or STRG+Down to browse the translations!</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -204,9 +207,6 @@
   </data>
   <data name="NodePath" xml:space="preserve">
     <value>Node path:</value>
-  </data>
-  <data name="NoElementFound" xml:space="preserve">
-    <value>No element was found, that contains "{0}" in its path.</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>

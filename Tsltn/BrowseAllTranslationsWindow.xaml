@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Tsltn"
         xmlns:r ="clr-namespace:Tsltn.Resources"
         xmlns:cmd="clr-namespace:Tsltn.Commands"
+        xmlns:resources="clr-namespace:Tsltn.Resources"
         mc:Ignorable="d"
         Height="650" Width="500"
         MaxHeight="{x:Static SystemParameters.PrimaryScreenHeight}"
@@ -40,7 +41,8 @@
         <CommandBinding Command="{x:Static cmd:BrowseAllTranslationsCommand.MoveDown}" Executed="MoveDown_Executed"/>
     </Window.CommandBindings>
     <DockPanel>
-        <local:SearchUserControl DockPanel.Dock="Top" x:Name="_ucSearch" Margin="0,0,0,5"></local:SearchUserControl>
+        <local:SearchUserControl DockPanel.Dock="Top" x:Name="_ucSearch" Margin="0"></local:SearchUserControl>
+        <TextBlock DockPanel.Dock="Top" Text="{x:Static resources:Res.BrowseTranslationsTip}" TextAlignment="Center" FontSize="10"/>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Background="{x:Static SystemColors.MenuBarBrush}">
             <Button DockPanel.Dock="Right" IsCancel="True" Content="{x:Static r:Res.Cancel}"/>
             <Button x:Name="_btnOK" DockPanel.Dock="Right" IsDefault="True" Content="{x:Static r:Res.OK}" Click="OK_Click">

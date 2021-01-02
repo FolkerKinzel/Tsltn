@@ -19,8 +19,8 @@ namespace FolkerKinzel.Tsltn.Models.Tests
             const string HALLO = "hallo";
 
 
-            XElement root = new XElement(ROOT);
-            XElement child = new XElement(CHILD);
+            var root = new XElement(ROOT);
+            var child = new XElement(CHILD);
             root.Add(new XText(HALLO));
             root.Add(child);
 

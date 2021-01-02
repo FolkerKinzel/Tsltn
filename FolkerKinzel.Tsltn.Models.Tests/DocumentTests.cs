@@ -24,7 +24,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         {
             string tsltnPath = Path.Combine(TestContext.TestRunResultsDirectory, "test.tsltn");
 
-            var doc = Document.Instance;
+            Document doc = Document.Instance;
 
             doc.NewTsltn(TestFiles.TestXml);
 

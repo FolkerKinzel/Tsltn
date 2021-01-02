@@ -348,13 +348,7 @@ namespace Tsltn
         {
             INode? target = _doc.FirstNode?.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
 
-            if (target is null)
-            {
-                MessageBox.Show(
-                    _owner,
-                    string.Format(CultureInfo.CurrentCulture, Res.NoElementFound, e.PathFragment));
-            }
-            else
+            if (!(target is null))
             {
                 Navigate(target);
                 NavCtrl.SetComboBoxItem(e.PathFragment);
