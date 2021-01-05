@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using Tsltn.Resources;
+using System.Text.RegularExpressions;
 
 namespace Tsltn
 {
@@ -28,7 +29,6 @@ namespace Tsltn
             base.OnStartup(e);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             MainWindow = new MainWindow(Document.Instance, FileController.GetInstance(Document.Instance, new FileWatcher()),
@@ -39,7 +39,6 @@ namespace Tsltn
             MainWindow.Show();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show($"{Res.UnexpectedError}{Environment.NewLine}{Environment.NewLine}{e.Exception.Message}",

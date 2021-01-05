@@ -44,7 +44,8 @@ namespace FolkerKinzel.Tsltn.Models
 
         public void ChangeSourceDocumentFileName(string? fileName)
         {
-            var tsltn = _tsltn;
+            TsltnFile? tsltn = _tsltn;
+
             if(File.Exists(fileName) && tsltn != null)
             {
                 tsltn.SourceDocumentFileName = fileName;
@@ -190,7 +191,7 @@ namespace FolkerKinzel.Tsltn.Models
             out List<KeyValuePair<long, string>> unusedTranslations)
         {
             var cloneDoc = new XDocument(_xmlDocument);
-            var node = GetFirstNode(cloneDoc);
+            XElement? node = GetFirstNode(cloneDoc);
 
             errors = new List<DataError>();
             var used = new List<KeyValuePair<long, string>>();
@@ -199,7 +200,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 try
                 {
-                    var trans = GetTranslation(node);
+                    KeyValuePair<long, string>? trans = GetTranslation(node);
 
                     if (trans.HasValue)
                     {
@@ -290,20 +291,23 @@ namespace FolkerKinzel.Tsltn.Models
 
         private static XElement? GetFirstNode(XDocument xDoc)
         {
-            var members = xDoc.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
+            IEnumerable<XElement>? members = xDoc.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
 
             if (members is null)
             {
                 return null;
             }
 
-            foreach (var member in members)
+            foreach (XElement member in members)
             {
                 foreach (XElement section in member.Elements())
                 {
-                    var el = ExtractDescendant(section);
+                    XElement? el = ExtractDescendant(section);
 
-                    if (el != null) return el;
+                    if (el != null)
+                    {
+                        return el;
+                    }
                 }
             }
         
@@ -326,9 +330,9 @@ namespace FolkerKinzel.Tsltn.Models
 
                 lock (_lockObject)
                 {
-                    foreach (var sibling in currentNode.ElementsAfterSelf())
+                    foreach (XElement sibling in currentNode.ElementsAfterSelf())
                     {
-                        var el = ExtractDescendant(sibling);
+                        XElement? el = ExtractDescendant(sibling);
 
                         if (el != null)
                         {
@@ -360,9 +364,9 @@ namespace FolkerKinzel.Tsltn.Models
 
                 lock (_lockObject)
                 {
-                    foreach (var sibling in currentNode.ElementsBeforeSelf().Reverse())
+                    foreach (XElement? sibling in currentNode.ElementsBeforeSelf().Reverse())
                     {
-                        var el = ExtractAncestor(sibling);
+                        XElement? el = ExtractAncestor(sibling);
 
                         if (el != null)
                         {
@@ -504,7 +508,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             static XElement? ExtractDescendantFromContainer(XElement container)
             {
-                foreach (var innerElement in container.Elements())
+                foreach (XElement innerElement in container.Elements())
                 {
                     string innerElementName = innerElement.Name.LocalName;
                     if (Utility.IsContainerSection(innerElementName))
@@ -542,7 +546,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             static XElement? ExtractAncestorFromContainer(XElement container)
             {
-                foreach (var innerElement in container.Elements().Reverse())
+                foreach (XElement innerElement in container.Elements().Reverse())
                 {
                     if (Utility.IsContainerSection(innerElement.Name.LocalName))
                     {

@@ -5,4 +5,5 @@ using System.Text;
 
 
     [assembly: InternalsVisibleTo("FolkerKinzel.Tsltn.Models.Tests")]
+    [assembly: InternalsVisibleTo("FolkerKinzel.XmlFragmentsTests")]
 

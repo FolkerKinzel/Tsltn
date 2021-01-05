@@ -15,7 +15,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
             Debug.Assert(node != null);
 
-            var reader = node.CreateReader();
+            System.Xml.XmlReader reader = node.CreateReader();
             reader.MoveToContent();
 
             return reader.ReadInnerXml();

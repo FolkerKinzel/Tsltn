@@ -8,7 +8,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <FileVersion>2.3.0.3</FileVersion>
+    <FileVersion>2.3.0.4</FileVersion>
     <AssemblyVersion>2.3.0.0</AssemblyVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>

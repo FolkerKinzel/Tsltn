@@ -1,7 +1,7 @@
 ﻿using System.IO;
 
 
-namespace FolkerKinzel.Tsltn.Models.Tests
+namespace FolkerKinzel.XmlFragments.Tests
 {
     internal static class TestFiles
     {
@@ -10,7 +10,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
 
         static TestFiles()
         {
-            ProjectDirectory = Properties.Resources.ProjDir.Trim();
+            ProjectDirectory = XmlFragmentsTests.Properties.Resources.ProjDir.Trim();
             _testFileDirectory = Path.Combine(ProjectDirectory, TEST_FILE_DIRECTORY_NAME);
         }
 
@@ -21,7 +21,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         internal static string ProjectDirectory { get; }
 
 
-        internal static string TestXml => Path.Combine(_testFileDirectory, "Test.xml");
+        internal static string TestXml => Path.Combine(_testFileDirectory, "Test1.txt");
 
         
 

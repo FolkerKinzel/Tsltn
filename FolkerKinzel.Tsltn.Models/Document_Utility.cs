@@ -75,7 +75,6 @@ namespace FolkerKinzel.Tsltn.Models
                 }
             }
 
-            [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
             internal static bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage)
             {
                 exceptionMessage = null;
@@ -122,8 +121,8 @@ namespace FolkerKinzel.Tsltn.Models
 
                 if (node is XCodeCloneElement clone)
                 {
-                    var sourceCodeNodes = clone.Source.Elements(Sandcastle.CODE).ToArray();
-                    var nodeCodeNodes = node.Elements(Sandcastle.CODE).ToArray();
+                    XElement[] sourceCodeNodes = clone.Source.Elements(Sandcastle.CODE).ToArray();
+                    XElement[] nodeCodeNodes = node.Elements(Sandcastle.CODE).ToArray();
 
                     int end = Math.Min(sourceCodeNodes.Length, nodeCodeNodes.Length);
 

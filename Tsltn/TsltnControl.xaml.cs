@@ -446,11 +446,19 @@ namespace Tsltn
 
         private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(_doc.FirstNode);
 
-        private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(_node.GetAncestor());
+        private async void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            INode? ancestor = await Task.Run(() => _node.GetAncestor()).ConfigureAwait(true);
+            Navigate(ancestor);
+        }
 
         private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode.HasDescendant;
 
-        private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(CurrentNode.GetDescendant());
+        private async void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            INode? descendant = await Task.Run(() => CurrentNode.GetDescendant()).ConfigureAwait(true);
+            Navigate(descendant);
+        }
 
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -461,9 +469,6 @@ namespace Tsltn
 
             _tbOriginal.Focus();
         }
-
-
-
 
 
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)

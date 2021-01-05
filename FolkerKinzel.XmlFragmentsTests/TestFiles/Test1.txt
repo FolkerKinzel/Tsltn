@@ -1,0 +1,22 @@
+<remarks>
+
+      <c>true</c>, wenn sämtliche in <paramref name="flags"/> gesetzten 
+Flags auch in <paramref name="value"/>
+            gesetzt sind. (Wenn <paramref name="flags"/>&#160;<see cref="F:FolkerKinzel.CsvTools.CsvOptions.None"/> ist, wird nur dann <c>true</c> zurückgegeben,
+            wenn 
+auch <paramref name="value"/>&#160;<see cref="F:FolkerKinzel.CsvTools.CsvOptions.None"/> ist.<note type="note">In den folgenden Code-Beispielen wurde - der 
+         leichteren Lesbarkeit wegen - auf Ausnahmebehandlung 
+verzichtet.</note>
+            <para>Speichern des Inhalts einer <see cref="T:System.Data.DataTable"/> als CSV-Datei und Einlesen von Daten einer CSV-Datei in
+            eine <see cref="T:System.Data.DataTable"/>:</para>
+            <code language="cs" source="..\Examples\CsvToDataTable.cs"/><para>Die Informationen könnnen in verschiedenen Formaten vorliegen:</para>
+            <list type="bullet">
+            <item>eingebettete Binärdaten</item>
+            <item>Verweise auf Binärdaten (z.B. Urls)</item>
+            <item>als freier Text vorliegende Information</item>
+            </list>
+            <para>Verwenden Sie die <see cref="T:FolkerKinzel.VCards.Models.DataUrl"/>-Klasse, um
+            einzubettende Binärdaten oder freien Text zu übergeben oder diese Informationen aus der Property
+            wieder auszulesen.</para>
+
+            </remarks>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FolkerKinzel.XmlFragments;
+using System;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
@@ -9,7 +10,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         private readonly string _nodePath;
         private readonly string _innerXml;
 
-        private const string NonBreakingSpace = "&#160;";
+        //private const string NonBreakingSpace = "&#160;";
 
 
         internal Node(XElement el)
@@ -20,7 +21,8 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             // ignoriert werden:
             this.ID = Document.GetNodeID(el, out _innerXml, out _nodePath);
 
-            _innerXml = _innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim();
+            //_innerXml = _innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim();
+            _innerXml = XmlFragmentBeautifier.Beautify(_innerXml);
 
             this.HasAncestor = !(Document.Instance.FirstNode is null) && !ReferencesSameXml(Document.Instance.FirstNode);
 
@@ -65,7 +67,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             {
                 return null;
             }
-            var el = Document.GetPreviousNode(XmlNode);
+            XElement? el = Document.GetPreviousNode(XmlNode);
             return el is null ? null : new Node(el);
         }
 
@@ -75,7 +77,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             {
                 return null;
             }
-            var el = Document.GetNextNode(XmlNode);
+            XElement? el = Document.GetNextNode(XmlNode);
             return el is null ? null : new Node(el);
         }
 
@@ -94,7 +96,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
                 unTrans = Document.GetNextNode(unTrans);
             }
 
-            Node? firstNode = (Node?)Document.Instance.FirstNode;
+            var firstNode = (Node?)Document.Instance.FirstNode;
 
             if (firstNode != null)
             {

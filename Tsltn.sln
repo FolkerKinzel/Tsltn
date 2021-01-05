@@ -12,12 +12,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3963D10D-3D33-4296-B742-88397241561B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragmentTools.csproj = FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragmentTools.csproj
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.Tsltn.Controllers", "FolkerKinzel.Tsltn.Controllers\FolkerKinzel.Tsltn.Controllers.csproj", "{50C76A8D-E275-4C44-8866-DF53855D2056}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileWatcherTest", "FileWatcherTest\FileWatcherTest.csproj", "{EA377AFC-F8A5-41F8-A311-9589003650AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.XmlFragments", "FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragments.csproj", "{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolkerKinzel.XmlFragmentsTests", "FolkerKinzel.XmlFragmentsTests\FolkerKinzel.XmlFragmentsTests.csproj", "{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +72,22 @@ Global
 		{EA377AFC-F8A5-41F8-A311-9589003650AC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA377AFC-F8A5-41F8-A311-9589003650AC}.Release|x86.ActiveCfg = Release|Any CPU
 		{EA377AFC-F8A5-41F8-A311-9589003650AC}.Release|x86.Build.0 = Release|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Debug|x86.Build.0 = Debug|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Release|x86.ActiveCfg = Release|Any CPU
+		{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}.Release|x86.Build.0 = Release|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Debug|x86.Build.0 = Debug|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
