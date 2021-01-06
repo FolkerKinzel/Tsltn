@@ -17,7 +17,7 @@ Tsltn creates its own *.tsltn file type, which is a XML file, that holds your tr
 the original file together with a special hash, that connects the translations with the corresponding sections of
 the original file.
 
-Tsltn is completely free of charge, even for commercial purposes.
+Tsltn is completely free of charge, even for commercial purposes. Thanks.
 
 
 
