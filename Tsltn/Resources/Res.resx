@@ -156,6 +156,9 @@
   <data name="CopyMenuItem" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Copy Text</value>
+  </data>
   <data name="CutMenuItem" xml:space="preserve">
     <value>Cut</value>
   </data>

@@ -39,6 +39,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static cmd:BrowseAllTranslationsCommand.MoveUp}" Executed="MoveUp_Executed"/>
         <CommandBinding Command="{x:Static cmd:BrowseAllTranslationsCommand.MoveDown}" Executed="MoveDown_Executed"/>
+        <CommandBinding Command="{x:Static cmd:BrowseAllTranslationsCommand.CopyText}" Executed="CopyText_Executed"/>
     </Window.CommandBindings>
     <DockPanel>
         <local:SearchUserControl DockPanel.Dock="Top" x:Name="_ucSearch" Margin="0"></local:SearchUserControl>
@@ -56,6 +57,7 @@
                     </Style>
                 </Button.Style>
             </Button>
+            <Button DockPanel.Dock="Left" Command="{x:Static cmd:BrowseAllTranslationsCommand.CopyText}" Content="{x:Static r:Res.CopyText}"/>
         </DockPanel>
         <ListBox Name="_lbTranslations" DockPanel.Dock="Top" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                  ItemsSource="{Binding AllTranslations}" IsSynchronizedWithCurrentItem="True">

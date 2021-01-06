@@ -224,7 +224,7 @@
 
         
 
-        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext"/>
+        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="CornflowerBlue"/>
 
         <ListBox Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding Errors}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Focusable="False">
             <ListBox.ItemContainerStyle>
