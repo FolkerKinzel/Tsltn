@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Tsltn.Resources;
 
 namespace Tsltn
@@ -109,6 +110,17 @@ namespace Tsltn
             {
                 _ucSearch._myCb.Focus();
             }
+        }
+
+
+        //private void CopyText_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        //    => e.CanExecute = !string.IsNullOrWhiteSpace(_lbTranslations?.SelectedItem as string);
+
+
+        private void CopyText_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Clipboard.SetText(_lbTranslations.SelectedItem as string);
+            Dispatcher.BeginInvoke( new Action(() => this.DialogResult = false), DispatcherPriority.ApplicationIdle);
         }
 
         
