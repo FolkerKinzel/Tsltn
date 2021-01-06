@@ -33,7 +33,6 @@ namespace Tsltn
     {
         private readonly MainWindow _owner;
         private INode _node;
-        //private bool _hasDocumentUntranslatedNodes;
         private string _translation = "";
         private readonly IDocument _doc;
         private bool _hasTranslation;
@@ -87,9 +86,6 @@ namespace Tsltn
             _btnNextToTranslate.ToolTip = $"{Res.ShiftKey}+{Res.AltKey}+{Res.RightKey}";
             _btnFirstNode.ToolTip = $"{Res.AltKey}+{Res.Pos1Key}";
         }
-
-
-
 
 
         public bool HasTranslation
@@ -189,9 +185,6 @@ namespace Tsltn
                 OnPropertyChanged();
             }
         }
-
-
-
 
 
         public ObservableCollection<DataError> Errors { get; } = new ObservableCollection<DataError>();
@@ -477,14 +470,22 @@ namespace Tsltn
 
             if (true == allWnd.ShowDialog(_owner))
             {
-                if (allWnd._lbTranslations.SelectedItem is string s)
+                if(allWnd.TextCopied)
+                {
+                    if(_tbTranslation.SelectionStart == 0)
+                    {
+                        _tbTranslation.SelectionStart = _tbTranslation.Text.Length;
+                    }
+
+                    _tbTranslation.Focus();
+                    return;
+                }
+                else if (allWnd._lbTranslations.SelectedItem is string s)
                 {
                     this.HasTranslation = true;
                     this.Translation = s;
                 }
             }
-
-            e.Handled = true;
 
             _btnNext.Focus();
         }

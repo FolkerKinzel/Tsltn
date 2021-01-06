@@ -34,19 +34,8 @@ namespace Tsltn
 
         public IEnumerable<string> AllTranslations { get; }
 
+        internal bool TextCopied { get; private set; }
 
-        private void UcSearch_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
-        {
-            string match = AllTranslations.FirstOrDefault(s => s.StartsWith(e.PathFragment, StringComparison.OrdinalIgnoreCase));
-
-            if(match != null)
-            {
-                _lbTranslations.ScrollIntoView(match);
-                _lbTranslations.SelectedItem = match;
-
-                _ucSearch.SetComboBoxItem(e.PathFragment);
-            }
-        }
 
         internal bool? ShowDialog(Window owner)
         {
@@ -54,6 +43,19 @@ namespace Tsltn
             return ShowDialog();
         }
 
+
+        private void UcSearch_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
+        {
+            string match = AllTranslations.FirstOrDefault(s => s.StartsWith(e.PathFragment, StringComparison.OrdinalIgnoreCase));
+
+            if (match != null)
+            {
+                _lbTranslations.ScrollIntoView(match);
+                _lbTranslations.SelectedItem = match;
+
+                _ucSearch.SetComboBoxItem(e.PathFragment);
+            }
+        }
 
         private void OK_Click(object sender, RoutedEventArgs e) => this.DialogResult = true;
 
@@ -120,7 +122,8 @@ namespace Tsltn
         private void CopyText_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Clipboard.SetText(_lbTranslations.SelectedItem as string);
-            Dispatcher.BeginInvoke( new Action(() => this.DialogResult = false), DispatcherPriority.ApplicationIdle);
+            TextCopied = true;
+            Dispatcher.BeginInvoke( new Action(() => this.DialogResult = true), DispatcherPriority.ApplicationIdle);
         }
 
         

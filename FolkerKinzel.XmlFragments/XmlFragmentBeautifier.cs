@@ -8,8 +8,8 @@ namespace FolkerKinzel.XmlFragments
     public static class XmlFragmentBeautifier
     {
         private const string NonBreakingSpace = "&#160;";
-        private const RegexOptions SINGLE_LINE = RegexOptions.Singleline | RegexOptions.Compiled;
-        private const int MATCH_TIMEOUT = 500;
+        private const RegexOptions SINGLE_LINE = RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled;
+        private const int MATCH_TIMEOUT = 100;
 
         private static readonly Regex[] _blockTags = new Regex[]
         {
@@ -28,8 +28,6 @@ namespace FolkerKinzel.XmlFragments
             new Regex(@"\s+", SINGLE_LINE, TimeSpan.FromMilliseconds(MATCH_TIMEOUT));
 
 
-
-
         public static string Beautify(string s)
         {
             if(s is null)
@@ -38,15 +36,30 @@ namespace FolkerKinzel.XmlFragments
             }
 
             s = s.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal);
-            s = _singleWhiteSpace.Replace(s, " ");
-            s = _multiWhiteSpace.Replace(s, " ");
+
+            try
+            {
+                s = _singleWhiteSpace.Replace(s, " ");
+                s = _multiWhiteSpace.Replace(s, " ");
+            }
+            catch(RegexMatchTimeoutException)
+            {
+                return s;
+            }
 
             var allBlockTags = new List<Match>();
 
             foreach (Regex blockTag in _blockTags)
             {
-                MatchCollection? matches = blockTag.Matches(s);
-                allBlockTags.AddRange(matches);
+                try
+                {
+                    MatchCollection? matches = blockTag.Matches(s);
+                    allBlockTags.AddRange(matches);
+                }
+                catch (RegexMatchTimeoutException)
+                {
+
+                }
             }
 
             if (allBlockTags.Count == 0)
