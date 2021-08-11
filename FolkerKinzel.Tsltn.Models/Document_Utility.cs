@@ -203,19 +203,19 @@ namespace FolkerKinzel.Tsltn.Models
                 lock (_lockObject)
                 {
                     FillStringBuilder(node);
-                    return _sb.GetStableHashCode(HashType.Ordinal);
+                    return _sb.GetPersistentHashCode(HashType.Ordinal);
                 }
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static int GetNodePathHash(string nodePath) => nodePath.GetStableHashCode(HashType.Ordinal);
+            private static int GetNodePathHash(string nodePath) => nodePath.GetPersistentHashCode(HashType.Ordinal);
 
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private static int GetContentHash(XElement node, out string innerXml)
             {
                 innerXml = node.InnerXml();
-                return innerXml.GetStableHashCode(HashType.AlphaNumericNoCase);
+                return innerXml.GetPersistentHashCode(HashType.AlphaNumericIgnoreCase);
             }
 
 

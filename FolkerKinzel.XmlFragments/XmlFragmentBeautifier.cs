@@ -80,17 +80,15 @@ namespace FolkerKinzel.XmlFragments
 
                     if(length != 0)
                     {
-                        sb.Append(s.AsSpan(currentIndex, length));
-                        sb.Append(Environment.NewLine);
+                        _ = sb.Append(s.AsSpan(currentIndex, length)).Append(Environment.NewLine);
                     }
-                    
-                    sb.Append(s.AsSpan(match.Index, match.Length));
-                    sb.Append(Environment.NewLine);
+
+                    _ = sb.Append(s.AsSpan(match.Index, match.Length)).Append(Environment.NewLine);
                     currentIndex = match.Index + match.Length;
                 }
 
-                sb.Append(s.AsSpan(GetSpanStart(s, currentIndex, s.Length), GetSpanLength(s, currentIndex, s.Length - currentIndex)));
-                return sb.ToString();
+                return sb.Append(s.AsSpan(GetSpanStart(s, currentIndex, s.Length), GetSpanLength(s, currentIndex, s.Length - currentIndex)))
+                         .ToString();
             }
         }
 

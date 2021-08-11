@@ -9,6 +9,8 @@
     <AssemblyName>FolkerKinzel.Tsltn.Models.Tests</AssemblyName>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <NeutralLanguage>en</NeutralLanguage>
+
   </PropertyGroup>
 
   <ItemGroup>

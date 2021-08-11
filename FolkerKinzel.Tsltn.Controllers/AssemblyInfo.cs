@@ -1,5 +1,9 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Windows;
+
+[assembly:CLSCompliant(true)]
+
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
