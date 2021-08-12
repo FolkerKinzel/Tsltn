@@ -5,10 +5,10 @@ using System.Threading;
 
 namespace FileWatcherTest
 {
-    class Program
+    internal class Program
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Nicht verwendete Parameter entfernen", Justification = "<Ausstehend>")]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             const string TEST_DIRECTORY_NAME = "TestDirectory";
             const string ALT_DIRECTORY_NAME = "TestDirectory2";
@@ -30,17 +30,15 @@ namespace FileWatcherTest
                 Directory.Delete(altDirectoryPath, true);
             }
 
-            Directory.CreateDirectory(testDirectoryPath);
+            _ = Directory.CreateDirectory(testDirectoryPath);
             //Directory.CreateDirectory(altDirectoryPath);
 
             string testFilePath = Path.Combine(testDirectoryPath, TEST_FILE_NAME);
             string otherFilePath = Path.Combine(testDirectoryPath, OTHER_FILE_NAME);
 
 
-            using var fileWatcher = new FileWatcher
-            {
-                WatchedFile = testFilePath
-            };
+            using FileWatcher fileWatcher = FileWatcher.Instance;
+            fileWatcher.WatchedFile = testFilePath;
 
             Console.WriteLine("Create File");
             File.WriteAllText(testFilePath, "");
@@ -81,7 +79,7 @@ namespace FileWatcherTest
             //Directory.Move(testDirectoryPath, altDirectoryPath);
 
 
-            Console.ReadLine();
+            _ = Console.ReadLine();
 
         }
     }

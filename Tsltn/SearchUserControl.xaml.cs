@@ -81,6 +81,11 @@ namespace Tsltn
 
         public void SetComboBoxItem(string value)
         {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             const StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
 
             if (value.Length < 2)

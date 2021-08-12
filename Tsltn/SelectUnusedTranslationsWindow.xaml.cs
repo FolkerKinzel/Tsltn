@@ -47,29 +47,11 @@ namespace Tsltn
         }
 
         private void CbSelected_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if(Controls.Any(x => x.Remove))
-            {
-                _cbAlleKeine.IsChecked = null;
-            }
-            else
-            {
-                _cbAlleKeine.IsChecked = false;
-            }
-        }
+            => _cbAlleKeine.IsChecked = Controls.Any(x => x.Remove) ? null : (bool?)false;
 
 
-        private void CbSelected_Checked(object sender, RoutedEventArgs e)
-        {
-            if (Controls.Any(x => !x.Remove))
-            {
-                _cbAlleKeine.IsChecked = null;
-            }
-            else
-            {
-                _cbAlleKeine.IsChecked = true;
-            }
-        }
+        private void CbSelected_Checked(object sender, RoutedEventArgs e) 
+            => _cbAlleKeine.IsChecked = Controls.Any(x => !x.Remove) ? null : (bool?)true;
 
         //public event PropertyChangedEventHandler? PropertyChanged;
 

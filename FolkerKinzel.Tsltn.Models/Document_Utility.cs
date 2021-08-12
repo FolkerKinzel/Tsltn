@@ -53,9 +53,7 @@ namespace FolkerKinzel.Tsltn.Models
                     string regex;
                     lock (_lockObject)
                     {
-                        _sb.Clear();
-                        _sb.Append(@"\b").Append(Regex.Escape(pathFragment)).Append(@"\b");
-
+                        _ = _sb.Clear().Append(@"\b").Append(Regex.Escape(pathFragment)).Append(@"\b");
                         regex = _sb.ToString();
                     }
 
@@ -83,7 +81,7 @@ namespace FolkerKinzel.Tsltn.Models
                 {
                     lock (_lockObject)
                     {
-                        _sb.Clear().Append("<R>").Append(translation).Append("</R>");
+                        _ = _sb.Clear().Append("<R>").Append(translation).Append("</R>");
                         _ = XElement.Parse(_sb.ToString(), LoadOptions.None);
                     }
                 }

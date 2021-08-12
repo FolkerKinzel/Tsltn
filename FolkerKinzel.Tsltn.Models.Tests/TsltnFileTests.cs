@@ -14,12 +14,6 @@ namespace FolkerKinzel.Tsltn.Models.Tests
     [TestClass()]
     public class TsltnFileTests
     {
-        public void TsltnFileTest()
-        {
-            Assert.Fail();
-        }
-
-
         [TestMethod()]
         public void XmlSerializationTest()
         {
@@ -37,10 +31,10 @@ namespace FolkerKinzel.Tsltn.Models.Tests
             var auto2 = new XElement(SUMMARY, "Car 2");
             tsltn.SetTranslation(Document.GetNodeID(auto2), "Auto 2");
 
-            XElement parent1 = new XElement("Node1", "Hi Manual");
+            var parent1 = new XElement("Node1", "Hi Manual");
             tsltn.SetTranslation(Document.GetNodeID(parent1), "Hallo Manual");
 
-            XElement parent2 = new XElement("Node2", "Manual 2");
+            var parent2 = new XElement("Node2", "Manual 2");
             tsltn.SetTranslation(Document.GetNodeID(parent2), "manuell 2");
 
 

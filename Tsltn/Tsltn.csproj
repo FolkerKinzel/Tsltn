@@ -36,7 +36,6 @@
     <Compile Remove="UntranslatedNodeEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove=".editorconfig" />
     <None Remove="HistoryTable_16x.png" />
     <None Remove="pics\ChangeSourceDocument_16x.png" />
     <None Remove="pics\ChangeSourceDocument_grey_16x.png" />
