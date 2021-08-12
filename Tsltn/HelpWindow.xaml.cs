@@ -22,7 +22,7 @@ namespace Tsltn
     {
         public HelpWindow()
         {
-            this.Title = $"{App.PROGRAM_NAME} - {Res.HelpWindowTitle}";
+            this.Title = $"{App.ProgramName} - {Res.HelpWindowTitle}";
             InitializeComponent();
             this._fdsvContent.Document = (FlowDocument)XamlReader.Parse(Res.Help);
         }

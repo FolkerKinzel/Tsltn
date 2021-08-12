@@ -46,7 +46,7 @@ namespace Tsltn
 
             this._recentFilesMenu = recentFilesMenu;
 
-            _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.PROGRAM_NAME);
+            _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.ProgramName);
         }
 
         public void Dispose()
@@ -160,7 +160,7 @@ namespace Tsltn
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
         private void _fileController_Message(object? sender, MessageEventArgs e)
         {
-            e.Result = Dispatcher.Invoke(() => MessageBox.Show(this, e.Message, App.PROGRAM_NAME, e.Button, e.Image, e.DefaultResult), DispatcherPriority.Send);
+            e.Result = Dispatcher.Invoke(() => MessageBox.Show(this, e.Message, App.ProgramName, e.Button, e.Image, e.DefaultResult), DispatcherPriority.Send);
         }
 
 
@@ -183,7 +183,7 @@ namespace Tsltn
         private void Info_Click(object sender, RoutedEventArgs e)
         {
             StringBuilder sb = new StringBuilder(64);
-            sb.Append(App.PROGRAM_NAME);
+            sb.Append(App.ProgramName);
             sb.Append(Environment.NewLine);
             sb.Append("Version: ");
             sb.Append(((AssemblyFileVersionAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyFileVersionAttribute)))?.Version);
@@ -191,7 +191,7 @@ namespace Tsltn
             sb.Append(Environment.NewLine);
             sb.Append(((AssemblyCopyrightAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute)))?.Copyright);
 
-            MessageBox.Show(sb.ToString(), $"{App.PROGRAM_NAME} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+            MessageBox.Show(sb.ToString(), $"{App.ProgramName} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
         }
 
 

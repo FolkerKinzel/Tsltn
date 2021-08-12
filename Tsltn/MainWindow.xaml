@@ -13,7 +13,7 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         WindowStyle="ThreeDBorderWindow"  ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
-        Title = "{x:Static local:App.PROGRAM_NAME}"
+        Title = "{x:Static local:App.ProgramName}"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         Closed="Window_Closed"

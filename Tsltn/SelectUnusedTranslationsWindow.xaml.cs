@@ -40,7 +40,7 @@ namespace Tsltn
 
             Explanation = string.Format(CultureInfo.CurrentCulture, Res.UnusedTranslationsExplanation, tsltnFileName);
 
-            Title = string.Format(CultureInfo.CurrentCulture, $"{App.PROGRAM_NAME} - {Res.UnusedTranslations}");
+            Title = string.Format(CultureInfo.CurrentCulture, $"{App.ProgramName} - {Res.UnusedTranslations}");
 
 
             InitializeComponent();

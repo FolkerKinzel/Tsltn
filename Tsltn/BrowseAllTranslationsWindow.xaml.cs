@@ -24,7 +24,7 @@ namespace Tsltn
 
         public BrowseAllTranslationsWindow(IEnumerable<KeyValuePair<long, string>> enumerable)
         {
-            this.Title = $"{App.PROGRAM_NAME} - {Res.SelectTranslation}";
+            this.Title = $"{App.ProgramName} - {Res.SelectTranslation}";
             this.AllTranslations = enumerable.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => x.Value).Distinct(StringComparer.Ordinal).OrderBy(s => s).ToArray();
 
             InitializeComponent();

@@ -55,8 +55,8 @@ namespace FolkerKinzel.Tsltn.Controllers
                 CheckFileExists = true,
                 CheckPathExists = true,
 
-                DefaultExt = TSLTN_FILE_EXTENSION,
-                Filter = $"{Res.TsltnFile} (*{TSLTN_FILE_EXTENSION})|*{TSLTN_FILE_EXTENSION}",
+                DefaultExt = TsltnFileExtension,
+                Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
                 DereferenceLinks = true,
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 Multiselect = false,
@@ -86,9 +86,9 @@ namespace FolkerKinzel.Tsltn.Controllers
                 CheckFileExists = false,
                 CheckPathExists = true,
                 CreatePrompt = false,
-                Filter = $"{Res.TsltnFile} (*{TSLTN_FILE_EXTENSION})|*{TSLTN_FILE_EXTENSION}",
+                Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
                 InitialDirectory = _doc.TsltnFileName != null ? Path.GetDirectoryName(_doc.TsltnFileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                DefaultExt = TSLTN_FILE_EXTENSION,
+                DefaultExt = TsltnFileExtension,
                 DereferenceLinks = true
             };
 

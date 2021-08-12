@@ -17,7 +17,7 @@ namespace Tsltn
     /// </summary>
     public sealed partial class App : Application
     {
-        public const string PROGRAM_NAME = "Tsltn";
+        public const string ProgramName = "Tsltn";
 
         public const string OnlineHelpUrl = "https://github.com/FolkerKinzel/Tsltn";
 
@@ -31,7 +31,7 @@ namespace Tsltn
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            MainWindow = new MainWindow(Document.Instance, FileController.GetInstance(Document.Instance, new FileWatcher()),
+            MainWindow = new MainWindow(Document.Instance, FileController.GetInstance(Document.Instance, FileWatcher.Instance),
                 new RecentFilesMenu(
                     Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)!
                 ));
@@ -42,7 +42,7 @@ namespace Tsltn
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show($"{Res.UnexpectedError}{Environment.NewLine}{Environment.NewLine}{e.Exception.Message}",
-                App.PROGRAM_NAME, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 
             e.Handled = true;
         }

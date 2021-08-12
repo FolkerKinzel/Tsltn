@@ -24,7 +24,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         public event EventHandler<EventArgs>? Reload;
 
 
-        public FileWatcher()
+        private FileWatcher()
         {
             _watcher.Changed += Watcher_Changed;
             _watcher.Renamed += Watcher_Renamed;
@@ -32,6 +32,8 @@ namespace FolkerKinzel.Tsltn.Controllers
             //_watcher.Deleted += Watcher_Changed;
 
         }
+
+        public static FileWatcher Instance { get; } = new FileWatcher();
 
         public bool RaiseEvents
         {

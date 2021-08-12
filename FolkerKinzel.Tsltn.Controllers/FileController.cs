@@ -23,7 +23,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         private readonly IFileWatcher _watcher;
         private static FileController? _instance;
 
-        public const string TSLTN_FILE_EXTENSION = ".tsltn";
+        public const string TsltnFileExtension = ".tsltn";
 
         public FileController(IFileAccess document, IFileWatcher fileWatcher)
         {
@@ -53,7 +53,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 if (filename is null && _doc.SourceDocumentFileName != null)
                 {
                     this.OnRefreshData();
-                    return $"{System.IO.Path.GetFileNameWithoutExtension(_doc.SourceDocumentFileName)}.{_doc.TargetLanguage ?? Res.Language}{TSLTN_FILE_EXTENSION}";
+                    return $"{System.IO.Path.GetFileNameWithoutExtension(_doc.SourceDocumentFileName)}.{_doc.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
                 }
 
                 return filename ?? "";
