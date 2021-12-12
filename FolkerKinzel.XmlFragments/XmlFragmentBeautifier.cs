@@ -78,6 +78,8 @@ namespace FolkerKinzel.XmlFragments
                     currentIndex = GetSpanStart(s, currentIndex, match.Index);
                     int length = GetSpanLength(s, currentIndex, match.Index - currentIndex);
 
+                    //ReadOnlySpan<char> span = s.AsSpan().Trim();
+
                     if(length != 0)
                     {
                         _ = sb.Append(s.AsSpan(currentIndex, length)).Append(Environment.NewLine);
@@ -87,7 +89,7 @@ namespace FolkerKinzel.XmlFragments
                     currentIndex = match.Index + match.Length;
                 }
 
-                return sb.Append(s.AsSpan(GetSpanStart(s, currentIndex, s.Length), GetSpanLength(s, currentIndex, s.Length - currentIndex)))
+                return sb.Append(s.AsSpan(currentIndex).Trim())
                          .ToString();
             }
         }
