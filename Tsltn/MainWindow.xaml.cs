@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using System.IO;
 
 namespace Tsltn
 {
@@ -314,7 +315,7 @@ namespace Tsltn
         {
             var dlg = new OpenFileDialog()
             {
-                FileName = _doc.SourceDocumentFileName,
+                FileName = Path.GetFileName(_doc.SourceDocumentFileName) ?? "",
                 AddExtension = true,
                 CheckFileExists = true,
                 CheckPathExists = true,
@@ -322,7 +323,7 @@ namespace Tsltn
                 DefaultExt = ".xml",
                 Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
                 DereferenceLinks = true,
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                InitialDirectory = Path.GetDirectoryName(_doc.SourceDocumentFileName) ?? "",
                 Multiselect = false,
                 ValidateNames = true,
                 Title = Res.NewSourceFile

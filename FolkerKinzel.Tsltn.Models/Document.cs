@@ -136,7 +136,7 @@ namespace FolkerKinzel.Tsltn.Models
 
             _tsltn = TsltnFile.Load(tsltnFileName);
 
-            this.TsltnFileName = tsltnFileName;
+            TsltnFileName = tsltnFileName;
 
             return LoadSourceDocument(_tsltn.SourceDocumentFileName);
         }
@@ -251,7 +251,7 @@ namespace FolkerKinzel.Tsltn.Models
         public void CloseTsltn()
         {
             _tsltn = null;
-            this.TsltnFileName = null;
+            TsltnFileName = null;
             FirstNode = null;
 
             Utility.Cleanup();
