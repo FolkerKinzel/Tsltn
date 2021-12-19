@@ -24,10 +24,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         {
             string tsltnPath = Path.Combine(TestContext.TestRunResultsDirectory, "test.tsltn");
 
-            Document doc = Document.Instance;
-
-            doc.NewTsltn(TestFiles.TestXml);
-
+            var doc = Document.OpenTsltn(TestFiles.TestXml, out bool _);
 
             doc.SourceLanguage = "de";
             doc.TargetLanguage = "en";
@@ -51,9 +48,9 @@ namespace FolkerKinzel.Tsltn.Models.Tests
            
             doc.SaveTsltnAs(tsltnPath);
 
-            doc.OpenTsltn(tsltnPath);
+            doc = Document.OpenTsltn(tsltnPath, out bool _);
 
-            XElement? section = Document.GetFirstNode();
+            XElement? section = doc.GetFirstNode();
 
 
             //foreach (var nd in node.Document.Root.DescendantNodes())
@@ -70,13 +67,13 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                section = Document.GetNextNode(section);
+                section = doc.GetNextNode(section);
 
                 if(section is null)
                 {
                     continue;
                 }
-                Document.GetNodeID(section, out _, out s);
+                doc.GetNodeID(section, out _, out s);
              
                 Assert.IsNotNull(s);
             }
@@ -88,13 +85,13 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                section = Document.GetPreviousNode(section);
+                section = doc.GetPreviousNode(section);
 
                 if (section is null)
                 {
                     continue;
                 }
-                Document.GetNodeID(section, out _, out s);
+                doc.GetNodeID(section, out _, out s);
 
                 Assert.IsNotNull(s);
 

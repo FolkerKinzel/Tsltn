@@ -15,38 +15,38 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public partial class Document : IDocument, IFileAccess
     {
-        private static class Utility
+        private class Utility
         {
             private const int LIST_MAX_CAPACITY = 8;
             private const int STRING_BUILDER_MAX_CAPACITY = 1024;
 
-            private static readonly StringBuilder _sb = new StringBuilder(STRING_BUILDER_MAX_CAPACITY);
-            private static readonly List<string> _list = new List<string>(LIST_MAX_CAPACITY);
+            private readonly StringBuilder _sb = new StringBuilder(STRING_BUILDER_MAX_CAPACITY);
+            private readonly List<string> _list = new List<string>(LIST_MAX_CAPACITY);
 
-            private static readonly object _lockObject = new object();
+            private readonly object _lockObject = new object();
 
-            internal static void Cleanup()
-            {
-                lock (_lockObject)
-                {
-                    if (_sb.Capacity > STRING_BUILDER_MAX_CAPACITY)
-                    {
-                        Debug.WriteLine("Reset StringBuilder Capacity", "Utility");
-                        _sb.Clear();
-                        _sb.Capacity = STRING_BUILDER_MAX_CAPACITY;
-                    }
+            //internal static void Cleanup()
+            //{
+            //    lock (_lockObject)
+            //    {
+            //        if (_sb.Capacity > STRING_BUILDER_MAX_CAPACITY)
+            //        {
+            //            Debug.WriteLine("Reset StringBuilder Capacity", "Utility");
+            //            _sb.Clear();
+            //            _sb.Capacity = STRING_BUILDER_MAX_CAPACITY;
+            //        }
 
-                    if (_list.Capacity > LIST_MAX_CAPACITY)
-                    {
-                        Debug.WriteLine("Reset List Capacity", "Utility");
-                        _list.Clear();
-                        _list.Capacity = LIST_MAX_CAPACITY;
-                    }
-                }
-            }
+            //        if (_list.Capacity > LIST_MAX_CAPACITY)
+            //        {
+            //            Debug.WriteLine("Reset List Capacity", "Utility");
+            //            _list.Clear();
+            //            _list.Capacity = LIST_MAX_CAPACITY;
+            //        }
+            //    }
+            //}
 
 
-            internal static bool ContainsPathFragment(string nodePath, string pathFragment, bool ignoreCase, bool wholeWord)
+            internal bool ContainsPathFragment(string nodePath, string pathFragment, bool ignoreCase, bool wholeWord)
             {
                 if (wholeWord)
                 {
@@ -73,29 +73,7 @@ namespace FolkerKinzel.Tsltn.Models
                 }
             }
 
-            internal static bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage)
-            {
-                exceptionMessage = null;
-
-                try
-                {
-                    lock (_lockObject)
-                    {
-                        _ = _sb.Clear().Append("<R>").Append(translation).Append("</R>");
-                        _ = XElement.Parse(_sb.ToString(), LoadOptions.None);
-                    }
-                }
-                catch (XmlException e)
-                {
-                    exceptionMessage = e.Message;
-                    return false;
-                }
-                catch (Exception)
-                {
-
-                }
-                return true;
-            }
+            
 
 
             /// <summary>
@@ -106,7 +84,7 @@ namespace FolkerKinzel.Tsltn.Models
             /// <param name="translation">XML, das den übersetzten Inhalt von <paramref name="node"/>
             /// bilden soll.</param>
             /// <exception cref="XmlException">Der Inhalt von <paramref name="translation"/> war kein gültiges Xml.</exception>
-            internal static void Translate(XElement node, string translation)
+            internal void Translate(XElement node, string translation)
             {
                 XElement tmp;
                 lock (_lockObject)
@@ -155,7 +133,7 @@ namespace FolkerKinzel.Tsltn.Models
 
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal static long GetNodeID(XElement node)
+            internal long GetNodeID(XElement node)
             {
                 int nodePathHash = GetNodePathHash(node);
                 int contentHash = GetContentHash(node, out _);
@@ -164,7 +142,7 @@ namespace FolkerKinzel.Tsltn.Models
 
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal static long GetNodeID(XElement node, out string innerXml, out string nodePath)
+            internal long GetNodeID(XElement node, out string innerXml, out string nodePath)
             {
                 nodePath = GetNodePath(node);
                 int nodePathHash = GetNodePathHash(nodePath);
@@ -174,7 +152,7 @@ namespace FolkerKinzel.Tsltn.Models
 
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal static string GetNodePath(XElement? node)
+            internal string GetNodePath(XElement? node)
             {
                 lock (_lockObject)
                 {
@@ -196,7 +174,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static int GetNodePathHash(XElement? node)
+            private int GetNodePathHash(XElement? node)
             {
                 lock (_lockObject)
                 {
@@ -217,10 +195,10 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
 
-            private static void FillStringBuilder(XElement? node)
+            private void FillStringBuilder(XElement? node)
             {
                 _list.Clear();
-                _sb.Clear();
+                _ = _sb.Clear();
 
                 if (node is null)
                 {
@@ -289,7 +267,7 @@ namespace FolkerKinzel.Tsltn.Models
                             // Membernamen fangen mit der Art des Members an, z.B. "T:" für Type oder "P:" für Property.
                             // Das ist für die Übersetzung nicht relevant und kann weggelassen werden.
 
-                            _sb.Append(memberName, 2, length - 2);
+                            _ = _sb.Append(memberName, 2, length - 2);
                         }
                         else
                         {

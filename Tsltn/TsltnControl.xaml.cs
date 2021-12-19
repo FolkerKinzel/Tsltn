@@ -23,6 +23,8 @@ using System.Threading;
 using System.Diagnostics;
 using System.Windows.Threading;
 using System.Web;
+using System.Xml.Linq;
+using System.Xml;
 
 namespace Tsltn
 {
@@ -41,6 +43,8 @@ namespace Tsltn
         private INode? _nextUntranslatedNode;
 
         private readonly StringBuilder _sb = new StringBuilder(1024);
+        private readonly object _lockObject = new object();
+
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
@@ -556,7 +560,7 @@ namespace Tsltn
                     }
 
 
-                    if (!_doc.IsValidXml(Translation, out string? exceptionMessage))
+                    if (!IsValidXml(Translation, out string? exceptionMessage))
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -579,6 +583,30 @@ namespace Tsltn
             catch (TaskCanceledException) { }
 
             Debug.WriteLine("CheckXmlError beendet.");
+        }
+
+        private bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage)
+        {
+            exceptionMessage = null;
+
+            try
+            {
+                lock (_lockObject)
+                {
+                    _ = _sb.Clear().Append("<R>").Append(translation).Append("</R>");
+                    _ = XElement.Parse(_sb.ToString(), LoadOptions.None);
+                }
+            }
+            catch (XmlException e)
+            {
+                exceptionMessage = e.Message;
+                return false;
+            }
+            catch
+            {
+
+            }
+            return true;
         }
 
 

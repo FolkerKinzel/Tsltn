@@ -31,18 +31,16 @@ namespace Tsltn
 
         public event EventHandler<TranslationErrorsEventArgs>? TranslationErrors;
 
-        private readonly IDocument _doc;
         private readonly IFileController _fileController;
         private readonly IRecentFilesMenu _recentFilesMenu;
         private bool _isCommandEnabled = true;
 
-        public MainWindow(IDocument doc, IFileController fileController, IRecentFilesMenu recentFilesMenu)
+        public MainWindow(IFileController fileController, IRecentFilesMenu recentFilesMenu)
         {
-            _doc = doc;
             _fileController = fileController;
             InitializeComponent();
 
-            this._recentFilesMenu = recentFilesMenu;
+            _recentFilesMenu = recentFilesMenu;
 
             _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.ProgramName);
         }

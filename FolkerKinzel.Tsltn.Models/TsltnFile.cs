@@ -11,11 +11,12 @@ using System.Runtime.CompilerServices;
 using FolkerKinzel.Tsltn.Models.Intls;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.ComponentModel;
 
 namespace FolkerKinzel.Tsltn.Models
 {
     [XmlRoot("Tsltn")]
-    public sealed class TsltnFile : IXmlSerializable
+    public sealed class TsltnFile : IXmlSerializable, INotifyPropertyChanged
     {
         private const string FILE_VERSION = "1.0";
 
@@ -34,6 +35,11 @@ namespace FolkerKinzel.Tsltn.Models
         private string? _sourceDocumentAbsolutePath;
         private string? _sourceLanguage;
         private string? _targetLanguage;
+        private bool _changed;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
 
         /// <summary>
         /// ctor
@@ -50,6 +56,7 @@ namespace FolkerKinzel.Tsltn.Models
                 // umgewandelt. In der Anwendung wird nur der absolute Pfad benutzt.
 
                 _sourceDocumentRelativePath = _sourceDocumentAbsolutePath = value;
+                //OnPropertyChanged();
                 Changed = true;
             }
         }
@@ -61,6 +68,7 @@ namespace FolkerKinzel.Tsltn.Models
             set
             {
                 _sourceLanguage = value;
+                //OnPropertyChanged();
                 this.Changed = true;
             }
         }
@@ -72,12 +80,25 @@ namespace FolkerKinzel.Tsltn.Models
             set
             {
                 _targetLanguage = value;
+                //OnPropertyChanged();
                 this.Changed = true;
             }
         }
 
 
-        internal bool Changed { get; private set; }
+        internal bool Changed
+        {
+            get
+            {
+                return _changed;
+            }
+
+            private set
+            {
+                _changed = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         internal void SetTranslation(long nodeID, string? transl)

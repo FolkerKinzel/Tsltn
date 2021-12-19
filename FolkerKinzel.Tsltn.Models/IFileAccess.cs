@@ -6,10 +6,10 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public interface IFileAccess : IDocument
     {
-        string? TsltnFileName { get; }
-        void CloseTsltn();
-        void NewTsltn(string sourceDocumentFileName);
-        bool OpenTsltn(string? tsltnFileName);
+        //string? TsltnFileName { get;}
+        //void CloseTsltn();
+        //void NewTsltn(string sourceDocumentFileName);
+        //bool OpenTsltn(string? tsltnFileName);
         void SaveTsltnAs(string tsltnFileName);
 
         bool ReloadSourceDocument(string fileName);

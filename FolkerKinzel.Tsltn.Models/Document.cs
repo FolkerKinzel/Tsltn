@@ -19,16 +19,40 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public partial class Document : IDocument, IFileAccess
     {
-        private static TsltnFile? _tsltn;
-        private static XDocument? _xmlDocument;
-        private static readonly object _lockObject = new object();
+        private readonly TsltnFile _tsltn;
+        private XDocument? _xmlDocument;
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        private Document() { }
+        private readonly Utility _utility = new Utility();
 
-        public static Document Instance { get; } = new Document();
+        private readonly object _lockObject = new object();
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+        private Document(TsltnFile tsltnFile)
+        {
+            _tsltn = tsltnFile;
+            _tsltn.PropertyChanged += Tsltn_PropertyChanged;
+        }
+
+        private void Tsltn_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(TsltnFile.Changed))
+            {
+                OnPropertyChanged(nameof(Changed));
+            }
+
+            //switch (e.PropertyName)
+            //{
+            //    case nameof(TsltnFile.Changed):
+            //        OnPropertyChanged(nameof(Changed));
+            //        break;
+            //    default:
+            //        break;
+            //}
+        }
+
 
         #region IDocument
 
@@ -36,29 +60,56 @@ namespace FolkerKinzel.Tsltn.Models
 
         public bool Changed => _tsltn?.Changed ?? false;
 
-        public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
+        //public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
 
 
-        public string? TsltnFileName { get; private set; }
+        //public string? TsltnFileName 
+        //{
+        //    get
+        //    {
+        //        return _tsltnFileName;
+        //    }
+
+        //    set
+        //    {
+        //        _tsltnFileName = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
 
 
-        public void ChangeSourceDocumentFileName(string? fileName)
+        //public void ChangeSourceDocumentFileName(string? fileName)
+        //{
+        //    TsltnFile? tsltn = _tsltn;
+
+        //    if(File.Exists(fileName) && tsltn != null)
+        //    {
+        //        tsltn.SourceDocumentFileName = fileName;
+        //    }
+        //}
+
+
+        public string? SourceDocumentFileName
         {
-            TsltnFile? tsltn = _tsltn;
-
-            if(File.Exists(fileName) && tsltn != null)
+            get
             {
-                tsltn.SourceDocumentFileName = fileName;
+                return _tsltn.SourceDocumentFileName;
+            }
+
+            set
+            {
+                _tsltn.SourceDocumentFileName = value;
+                OnPropertyChanged();
             }
         }
 
-
-        public string? SourceDocumentFileName => _tsltn?.SourceDocumentFileName;
-
-
         public string? SourceLanguage
         {
-            get => _tsltn?.SourceLanguage;
+            get
+            {
+                return _tsltn?.SourceLanguage;
+            }
+
             set
             {
                 if (_tsltn != null)
@@ -67,6 +118,7 @@ namespace FolkerKinzel.Tsltn.Models
                     if (!StringComparer.Ordinal.Equals(_tsltn.SourceLanguage, value))
                     {
                         _tsltn.SourceLanguage = value;
+                        OnPropertyChanged();
                     }
                 }
             }
@@ -75,7 +127,11 @@ namespace FolkerKinzel.Tsltn.Models
 
         public string? TargetLanguage
         {
-            get => _tsltn?.TargetLanguage;
+            get
+            {
+                return _tsltn?.TargetLanguage;
+            }
+
             set
             {
                 if (_tsltn != null)
@@ -84,6 +140,7 @@ namespace FolkerKinzel.Tsltn.Models
                     if (!StringComparer.Ordinal.Equals(_tsltn.TargetLanguage, value))
                     {
                         _tsltn.TargetLanguage = value;
+                        OnPropertyChanged();
                     }
                 }
             }
@@ -96,49 +153,52 @@ namespace FolkerKinzel.Tsltn.Models
 
         #region Methods
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage) => Utility.IsValidXml(translation, out exceptionMessage);
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage) => _utility.IsValidXml(translation, out exceptionMessage);
 
-        public async Task WaitAllTasks()
+        //public async Task WaitAllTasks()
+        //{
+        //    try
+        //    {
+        //        await Task.WhenAll(Tasks.ToArray()).ConfigureAwait(false);
+        //    }
+        //    catch { }
+
+        //    Tasks.Clear();
+        //}
+
+
+        public static Document NewTsltn(string sourceDocumentFileName)
         {
-            try
-            {
-                await Task.WhenAll(Tasks.ToArray()).ConfigureAwait(false);
-            }
-            catch { }
+            //CloseTsltn();
 
-            Tasks.Clear();
-        }
-
-
-        public void NewTsltn(string sourceDocumentFileName)
-        {
-            CloseTsltn();
-
-            _xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
-
-            _tsltn = new TsltnFile()
+            var doc = new Document(new TsltnFile()
             {
                 SourceDocumentFileName = sourceDocumentFileName
-            };
-            
-            InitFirstNode();
+            });
+
+            doc._xmlDocument = XDocument.Load(sourceDocumentFileName, LoadOptions.None);
+            doc.InitFirstNode();
+
+            return doc;
         }
 
-        public bool OpenTsltn(string? tsltnFileName)
+        public static Document OpenTsltn(string? tsltnFileName, out bool sourceDocumentFound)
         {
-            CloseTsltn();
+            //CloseTsltn();
 
             if (tsltnFileName is null)
             {
                 throw new ArgumentNullException(nameof(tsltnFileName));
             }
 
-            _tsltn = TsltnFile.Load(tsltnFileName);
 
-            TsltnFileName = tsltnFileName;
+            var doc = new Document(TsltnFile.Load(tsltnFileName));
+            //doc.TsltnFileName = tsltnFileName;
 
-            return LoadSourceDocument(_tsltn.SourceDocumentFileName);
+            sourceDocumentFound = doc.LoadSourceDocument(doc.SourceDocumentFileName);
+
+            return doc;
         }
 
 
@@ -180,7 +240,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
             _tsltn?.Save(tsltnFileName);
-            this.TsltnFileName = tsltnFileName;
+            //this.TsltnFileName = tsltnFileName;
         }
 
 
@@ -208,7 +268,7 @@ namespace FolkerKinzel.Tsltn.Models
 
                         lock (_lockObject)
                         {
-                            Utility.Translate(node, trans.Value.Value);
+                            _utility.Translate(node, trans.Value.Value);
                         }
                     }
                 }
@@ -222,21 +282,18 @@ namespace FolkerKinzel.Tsltn.Models
             cloneDoc.Save(outFileName);
 
             unusedTranslations = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
+        }
 
+        private KeyValuePair<long, string>? GetTranslation(XElement node)
+        {
+            long nodePathHash = GetNodeID(node);
 
-            /////////////////////////////////////////////
-
-            static KeyValuePair<long, string>? GetTranslation(XElement node)
+            if (TryGetTranslation(nodePathHash, out string? manualTransl))
             {
-                long nodePathHash = GetNodeID(node);
-
-                if (TryGetTranslation(nodePathHash, out string? manualTransl))
-                {
-                    return new KeyValuePair<long, string>(nodePathHash, manualTransl);
-                }
-
-                return null;
+                return new KeyValuePair<long, string>(nodePathHash, manualTransl);
             }
+
+            return null;
         }
 
 
@@ -248,43 +305,26 @@ namespace FolkerKinzel.Tsltn.Models
         public void RemoveTranslation(long id) => SetTranslation(id, null);
 
 
-        public void CloseTsltn()
-        {
-            _tsltn = null;
-            TsltnFileName = null;
-            FirstNode = null;
+        //public void CloseTsltn()
+        //{
+        //    //_tsltn = null;
+        //    //TsltnFileName = null;
+        //    //FirstNode = null;
 
-            Utility.Cleanup();
-        }
-
-        #endregion
+        //    _utility.Cleanup();
+        //}
 
         #endregion
 
-        #region internal static
+        #endregion
 
-        internal static XElement? GetFirstNode()
+        #region internal
+
+        internal XElement? GetFirstNode()
         {
             lock (_lockObject)
             {
                 return _xmlDocument is null ? null : GetFirstNode(_xmlDocument);
-
-                //var members = _xmlDocument?.Root.Element(Sandcastle.MEMBERS)?.Elements(Sandcastle.MEMBER);
-
-                //if (members is null)
-                //{
-                //    return null;
-                //}
-
-                //foreach (var member in members)
-                //{
-                //    foreach (XElement section in member.Elements())
-                //    {
-                //        var el = ExtractDescendant(section);
-
-                //        if (el != null) return el;
-                //    }
-                //}
             }
         }
 
@@ -314,7 +354,7 @@ namespace FolkerKinzel.Tsltn.Models
             return null;
         }
 
-        internal static XElement? GetNextNode(XElement? currentNode)
+        internal XElement? GetNextNode(XElement? currentNode)
         {
             while (true)
             {
@@ -348,7 +388,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal static XElement? GetPreviousNode(XElement? currentNode)
+        internal XElement? GetPreviousNode(XElement? currentNode)
         {
             while (true)
             {
@@ -386,10 +426,10 @@ namespace FolkerKinzel.Tsltn.Models
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void SetTranslation(long nodeID, string? transl) => _tsltn?.SetTranslation(nodeID, transl);
+        internal void SetTranslation(long nodeID, string? transl) => _tsltn?.SetTranslation(nodeID, transl);
 
 
-        internal static bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
+        internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
         {
             if (_tsltn is null)
             {
@@ -403,63 +443,63 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal static bool GetHasTranslation(long id) => _tsltn?.HasTranslation(id) ?? false;
+        internal bool GetHasTranslation(long id) => _tsltn?.HasTranslation(id) ?? false;
 
 
 
-        internal static long GetNodeID(XElement node, out string innerXml, out string nodePath)
+        internal long GetNodeID(XElement node, out string innerXml, out string nodePath)
         {
             lock (_lockObject)
             {
-                return Utility.GetNodeID(node, out innerXml, out nodePath);
+                return _utility.GetNodeID(node, out innerXml, out nodePath);
             }
         }
 
-        internal static long GetNodeID(XElement node)
+        internal long GetNodeID(XElement node)
         {
             lock (_lockObject)
             {
-                return Utility.GetNodeID(node);
+                return _utility.GetNodeID(node);
             }
         }
 
 
-        internal static INode? FindNode(XElement current, string nodePathFragment, bool ignoreCase, bool wholeWord)
+        internal INode? FindNode(XElement current, string nodePathFragment, bool ignoreCase, bool wholeWord)
         {
-            XElement? node = Document.GetNextNode(current);
+            XElement? node = GetNextNode(current);
 
             while (node != null)
             {
-                if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
+                if (_utility.ContainsPathFragment(_utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
                 {
                     return new Node(node);
                 }
 
-                node = Document.GetNextNode(node);
+                node = GetNextNode(node);
             }
 
 
-            if (Utility.ContainsPathFragment(Document.Instance.FirstNode!.NodePath, nodePathFragment, ignoreCase, wholeWord))
+            if (_utility.ContainsPathFragment(FirstNode!.NodePath, nodePathFragment, ignoreCase, wholeWord))
             {
-                return Document.Instance.FirstNode;
+                return FirstNode;
             }
 
-            if (object.ReferenceEquals(current, ((Node?)Document.Instance.FirstNode)!.XmlNode))
+            if (object.ReferenceEquals(current, ((Node?)FirstNode)!.XmlNode))
             {
                 return null;
             }
 
 
-            node = Document.GetNextNode(((Node)Document.Instance.FirstNode).XmlNode);
+            node = GetNextNode(((Node)FirstNode).XmlNode);
 
             while (node != null && !object.ReferenceEquals(node, current))
             {
-                if (Utility.ContainsPathFragment(Utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
+                if (_utility.ContainsPathFragment(_utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
                 {
                     return new Node(node);
                 }
 
-                node = Document.GetNextNode(node);
+                node = GetNextNode(node);
             }
 
             return null;

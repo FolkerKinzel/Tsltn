@@ -19,9 +19,8 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         {
             //string tsltnPath = Path.Combine(TestContext.TestRunResultsDirectory, "test.tsltn");
 
-            Document doc = Document.Instance;
+            var doc = Document.OpenTsltn(TestFiles.TestXml, out bool _);
 
-            doc.NewTsltn(TestFiles.TestXml);
 
             INode? node = doc.FirstNode;
 

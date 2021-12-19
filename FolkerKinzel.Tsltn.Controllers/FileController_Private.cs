@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -79,6 +80,12 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private bool GetTsltnOutFileName(ref string fileName)
         {
+            if (FileName.Length == 0 && CurrentDocument?.SourceDocumentFileName != null)
+            {
+                OnRefreshData();
+                fileName = $"{Path.GetFileNameWithoutExtension(CurrentDocument.SourceDocumentFileName)}.{CurrentDocument.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
+            }
+
             var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
             {
                 FileName = Path.GetFileName(fileName),
@@ -87,7 +94,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
-                InitialDirectory = _doc.TsltnFileName != null ? Path.GetDirectoryName(_doc.TsltnFileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                InitialDirectory = FileName.Length != 0 ? Path.GetDirectoryName(FileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 DefaultExt = TsltnFileExtension,
                 DereferenceLinks = true
             };
@@ -110,7 +117,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private bool GetXmlOutFileName([NotNullWhen(true)] out string? fileName)
         {
-            fileName = _doc.SourceDocumentFileName;
+            fileName = CurrentDocument?.SourceDocumentFileName;
 
             var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
             {
@@ -145,9 +152,11 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private async Task<bool> DoSaveTsltnAsync(string? fileName)
         {
+            Debug.Assert(_doc != null);
+
             if (fileName is null)
             {
-                fileName = _doc.TsltnFileName ?? this.FileName;
+                fileName = FileName;
 
                 if (!GetTsltnOutFileName(ref fileName))
                 {
@@ -157,14 +166,11 @@ namespace FolkerKinzel.Tsltn.Controllers
             
             OnRefreshData();
 
-            await _doc.WaitAllTasks().ConfigureAwait(false);
+            //await _doc.WaitAllTasks().ConfigureAwait(false);
 
             try
             {
-                var task = Task.Run(() => _doc.SaveTsltnAs(fileName));
-                _doc.Tasks.Add(task);
-                await task.ConfigureAwait(false);
-
+                await Task.Run(() => _doc.SaveTsltnAs(fileName)).ConfigureAwait(false);
                 OnNewFileName(FileName);
             }
             catch (Exception e)
@@ -181,9 +187,12 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private async void FileWatcher_Reload(object? sender, EventArgs e)
         {
-            if (_watcher.WatchedFile != _doc.SourceDocumentFileName)
+            if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
             {
-                _doc.ChangeSourceDocumentFileName(_watcher.WatchedFile);
+                if (CurrentDocument != null)
+                {
+                    CurrentDocument.SourceDocumentFileName = _watcher.WatchedFile;
+                }
             }
 
             var args = new MessageEventArgs(
@@ -201,16 +210,20 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private async Task ReloadTsltnAsync()
         {
+            if(CurrentDocument is null)
+            {
+                return;
+            }
+
             OnRefreshData();
 
-            if ((_doc.TsltnFileName != null && !_doc.Changed) || await SaveTsltnAsync().ConfigureAwait(false))
+            if ((FileName.Length != 0 && !CurrentDocument.Changed) || await SaveTsltnAsync().ConfigureAwait(false))
             {
-
                 OnHasContentChanged(false);
 
-                string? fileName = _doc.TsltnFileName;
-                _doc.CloseTsltn();
+                string? fileName = FileName;
 
+                _ = await CloseTsltnAsync(false).ConfigureAwait(false);
                 await OpenTsltnAsync(fileName).ConfigureAwait(false);
             }
             else

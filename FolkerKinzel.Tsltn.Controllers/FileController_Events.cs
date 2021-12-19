@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace FolkerKinzel.Tsltn.Controllers
@@ -18,7 +19,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         public event EventHandler<BadFileNameEventArgs>? BadFileName;
 
 
-        private void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        private void OnPropertyChanged([CallerMemberName] string propName = "" ) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
         private void OnFileDialog(ShowFileDialogEventArgs e) => ShowFileDialog?.Invoke(this, e);
 

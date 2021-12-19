@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -19,15 +20,15 @@ namespace FolkerKinzel.Tsltn.Controllers
     [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
     public sealed partial class FileController : INotifyPropertyChanged, IFileController, IDisposable
     {
-        private readonly IFileAccess _doc;
+        private IFileAccess? _doc;
         private readonly IFileWatcher _watcher;
         private static FileController? _instance;
-
+        private string _fileName = "";
         public const string TsltnFileExtension = ".tsltn";
 
-        public FileController(IFileAccess document, IFileWatcher fileWatcher)
+        public FileController(IFileWatcher fileWatcher)
         {
-            this._doc = document ?? throw new ArgumentNullException(nameof(document));
+            //this._doc = document ?? throw new ArgumentNullException(nameof(document));
             this._watcher = fileWatcher ?? throw new ArgumentNullException(nameof(fileWatcher));
 
             fileWatcher.Reload += FileWatcher_Reload;
@@ -35,28 +36,35 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
 
-        public static FileController GetInstance(IFileAccess document, IFileWatcher fileWatcher)
+        public static FileController GetInstance(IFileWatcher fileWatcher)
         {
-            _instance ??= new FileController(document, fileWatcher);
+            _instance ??= new FileController(fileWatcher);
             return _instance;
         }
 
 
         #region Properties
 
+        public IDocument? CurrentDocument
+        {
+            get => _doc;
+        }
+
+
+
         public string FileName
         {
             get
             {
-                string? filename = _doc.TsltnFileName;
+                
 
-                if (filename is null && _doc.SourceDocumentFileName != null)
-                {
-                    this.OnRefreshData();
-                    return $"{System.IO.Path.GetFileNameWithoutExtension(_doc.SourceDocumentFileName)}.{_doc.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
-                }
+                return _fileName;
+            }
 
-                return filename ?? "";
+            private set
+            {
+                _fileName = value;
+                OnPropertyChanged();
             }
         }
 
@@ -65,47 +73,51 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         #region Methods
 
-        public void Dispose()
-        {
-            _watcher.Dispose();
-        }
+        public void Dispose() => _watcher.Dispose();
 
-        public async Task<bool> CloseTsltnAsync()
+        public async Task<bool> CloseTsltnAsync() => await CloseTsltnAsync(true).ConfigureAwait(false);
+
+
+        public async Task<bool> CloseTsltnAsync(bool handleChanges)
         {
-            if (_doc.SourceDocumentFileName is null)
+            if (CurrentDocument is null)
             {
                 return true;
             }
 
-            OnRefreshData();
-
-            if (_doc.Changed)
+            if (handleChanges)
             {
-                var args = new MessageEventArgs(
-                    string.Format(CultureInfo.CurrentCulture, Res.FileWasChanged, System.IO.Path.GetFileName(this.FileName), Environment.NewLine),
-                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+                OnRefreshData();
 
-                OnMessage(args);
-
-                switch (args.Result)
+                if (CurrentDocument.Changed)
                 {
-                    case MessageBoxResult.Yes:
-                        {
-                            if (!await SaveTsltnAsync().ConfigureAwait(true))
+                    var args = new MessageEventArgs(
+                        string.Format(CultureInfo.CurrentCulture, Res.FileWasChanged, System.IO.Path.GetFileName(this.FileName), Environment.NewLine),
+                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+
+                    OnMessage(args);
+
+                    switch (args.Result)
+                    {
+                        case MessageBoxResult.Yes:
                             {
-                                return false;
+                                if (!await SaveTsltnAsync().ConfigureAwait(true))
+                                {
+                                    return false;
+                                }
                             }
-                        }
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                    default:
-                        return false;
+                            break;
+                        case MessageBoxResult.No:
+                            break;
+                        default:
+                            return false;
+                    }
                 }
             }
 
             OnHasContentChanged(false);
-            _doc.CloseTsltn();
+            _doc = null;
+            OnPropertyChanged(nameof(CurrentDocument));
             _watcher.WatchedFile = null;
             OnPropertyChanged(nameof(FileName));
 
@@ -114,7 +126,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<bool> SaveTsltnAsync() => DoSaveTsltnAsync(_doc.TsltnFileName);
+        public Task<bool> SaveTsltnAsync() => DoSaveTsltnAsync(FileName);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
@@ -143,31 +155,9 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return;
             }
 
-            if (_doc.SourceDocumentFileName != null)
+            if(!await CloseTsltnAsync(true).ConfigureAwait(true))
             {
-                OnRefreshData();
-
-                if (_doc.Changed)
-                {
-                    var arg = new MessageEventArgs(
-                        string.Format(CultureInfo.CurrentCulture, Res.FileWasChanged, System.IO.Path.GetFileName(this.FileName), Environment.NewLine),
-                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
-
-                    OnMessage(arg);
-
-                    switch (arg.Result)
-                    {
-                        case MessageBoxResult.Yes:
-                            {
-                                await DoSaveTsltnAsync(FileName).ConfigureAwait(false);
-                            }
-                            break;
-                        case MessageBoxResult.No:
-                            break;
-                        default:
-                            return;
-                    }
-                }
+                return;
             }
 
             if (fileName is null)
@@ -180,8 +170,12 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                if (!await Task.Run(() => _doc.OpenTsltn(fileName)).ConfigureAwait(false))
+                if (!await Task.Run(() => { _doc = Document.OpenTsltn(fileName, out bool sourceDocumentFound); return sourceDocumentFound; }).ConfigureAwait(false))
                 {
+                    Debug.Assert(_doc != null);
+                    Debug.Assert(CurrentDocument != null);
+
+                    OnPropertyChanged(nameof(CurrentDocument));
                     OnHasContentChanged(false);
                     OnPropertyChanged(nameof(FileName));
                     OnMessage(new MessageEventArgs(
@@ -190,11 +184,10 @@ namespace FolkerKinzel.Tsltn.Controllers
                             MessageBoxImage.Exclamation,
                             MessageBoxResult.OK));
 
-
                     string? xmlFileName = null;
                     try
                     {
-                        xmlFileName = System.IO.Path.GetFileName(_doc.SourceDocumentFileName);
+                        xmlFileName = System.IO.Path.GetFileName(CurrentDocument.SourceDocumentFileName);
                     }
                     catch { }
 
@@ -202,11 +195,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     {
                         if (!GetXmlInFileName(ref xmlFileName))
                         {
-                            OnHasContentChanged(false);
-                            _doc.CloseTsltn();
-                            _watcher.WatchedFile = null;
-                            OnPropertyChanged(nameof(FileName));
-
+                            _ = await CloseTsltnAsync(false).ConfigureAwait(false);
                             return;
                         }
 
@@ -214,8 +203,9 @@ namespace FolkerKinzel.Tsltn.Controllers
                     } while (!_doc.ReloadSourceDocument(xmlFileName));
                 }
 
+                Debug.Assert(CurrentDocument != null);
 
-                if (_doc.FirstNode is null)
+                if (CurrentDocument.FirstNode is null)
                 {
                     OnHasContentChanged(false);
 
@@ -223,7 +213,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                         string.Format(
                             CultureInfo.CurrentCulture,
                             Res.EmptyOrInvalidFile,
-                            Environment.NewLine, System.IO.Path.GetFileName(_doc.SourceDocumentFileName), Res.XmlDocumentationFile),
+                            Environment.NewLine, System.IO.Path.GetFileName(CurrentDocument.SourceDocumentFileName), Res.XmlDocumentationFile),
                         MessageBoxButton.OK,
                         MessageBoxImage.Information,
                         MessageBoxResult.OK));
@@ -233,17 +223,14 @@ namespace FolkerKinzel.Tsltn.Controllers
                     OnHasContentChanged(true);
                 }
 
-                _watcher.WatchedFile = _doc.SourceDocumentFileName;
+                _watcher.WatchedFile = CurrentDocument.SourceDocumentFileName;
                 OnPropertyChanged(nameof(FileName));
                 OnNewFileName(FileName);
             }
             catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                OnHasContentChanged(false);
-                _doc.CloseTsltn();
-                _watcher.WatchedFile = null;
-                OnPropertyChanged(nameof(FileName));
+                _ = await CloseTsltnAsync(false).ConfigureAwait(true);
                 OnBadFileName(fileName);
             }
         }
@@ -251,7 +238,10 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public async Task NewTsltnAsync()
         {
-            await CloseTsltnAsync().ConfigureAwait(false);
+            if(!await CloseTsltnAsync(true).ConfigureAwait(false))
+            {
+                return;
+            }
 
             string? xmlFileName = null;
 
@@ -259,9 +249,11 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 try
                 {
-                    await Task.Run(() => _doc.NewTsltn(xmlFileName)).ConfigureAwait(false);
+                    _ = await Task.Run(() => _doc = Document.NewTsltn(xmlFileName)).ConfigureAwait(false);
+                    Debug.Assert(CurrentDocument != null);
+                    OnPropertyChanged(nameof(CurrentDocument));
 
-                    if (_doc.FirstNode is null)
+                    if (CurrentDocument.FirstNode is null)
                     {
                         OnMessage(new MessageEventArgs(
                             string.Format(CultureInfo.CurrentCulture, Res.EmptyOrInvalidFile, Environment.NewLine, xmlFileName, Res.XmlDocumentationFile),
@@ -269,11 +261,11 @@ namespace FolkerKinzel.Tsltn.Controllers
                             MessageBoxImage.Exclamation,
                             MessageBoxResult.OK));
 
-                        _doc.CloseTsltn();
+                        _ = await CloseTsltnAsync(false).ConfigureAwait(false);
                     }
                     else
                     {
-                        _watcher.WatchedFile = _doc.SourceDocumentFileName;
+                        _watcher.WatchedFile = CurrentDocument.SourceDocumentFileName;
                         OnHasContentChanged(true);
                     }
 
@@ -296,7 +288,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public void ResumeSourceFileObservation()
         {
-            if (_watcher.WatchedFile != _doc.SourceDocumentFileName)
+            if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
             {
                 FileWatcher_Reload(this, EventArgs.Empty);
             }
@@ -306,10 +298,9 @@ namespace FolkerKinzel.Tsltn.Controllers
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
         {
-            await _doc.WaitAllTasks().ConfigureAwait(false);
+            //await _doc.WaitAllTasks().ConfigureAwait(false);
 
-
-            if (!await DoSaveTsltnAsync(_doc.TsltnFileName).ConfigureAwait(false))
+            if(_doc is null || !await DoSaveTsltnAsync(FileName).ConfigureAwait(false))
             {
                 return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
             }
@@ -336,9 +327,14 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public Task ChangeSourceDocumentAsync(string? newSourceDocument)
         {
-            _doc.ChangeSourceDocumentFileName(newSourceDocument);
+            if (_doc != null)
+            {
+                _doc.SourceDocumentFileName = newSourceDocument;
 
-            return ReloadTsltnAsync();
+                return ReloadTsltnAsync();
+            }
+
+            return Task.CompletedTask;
         }
 
 
