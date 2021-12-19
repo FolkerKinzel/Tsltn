@@ -2,6 +2,7 @@
 ## Roadmap
 
 ### 2.6
+- [x] Dependency update.
 - [x] Bugfix in XmlFragmentBeautifier.
 - [x] Extras -> Change Source File: Initial directory should be the current source file 
 directory.

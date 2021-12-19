@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30002.166
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tsltn", "Tsltn\Tsltn.csproj", "{880C084F-8F4D-4085-AF93-84125638D678}"
 EndProject
@@ -12,7 +12,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3963D10D-3D33-4296-B742-88397241561B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragmentTools.csproj = FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragmentTools.csproj
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -22,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileWatcherTest", "FileWatc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.XmlFragments", "FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragments.csproj", "{F92EAE7A-4FB0-4055-9D68-6E14CEEE3C72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolkerKinzel.XmlFragmentsTests", "FolkerKinzel.XmlFragmentsTests\FolkerKinzel.XmlFragmentsTests.csproj", "{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.XmlFragmentsTests", "FolkerKinzel.XmlFragmentsTests\FolkerKinzel.XmlFragmentsTests.csproj", "{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
