@@ -140,7 +140,7 @@ namespace Tsltn
                     OnPropertyChanged();
 
                     // wirft ggf. CultureNotFoundException
-                    CultureInfo.GetCultureInfoByIetfLanguageTag(_sourceLanguage);
+                    _ = CultureInfo.GetCultureInfoByIetfLanguageTag(_sourceLanguage);
                 }
             }
         }
@@ -525,7 +525,7 @@ namespace Tsltn
             }
             else
             {
-                Errors.Remove(MissingTranslationWarning);
+                _ = Errors.Remove(MissingTranslationWarning);
             }
         }
 
@@ -588,7 +588,7 @@ namespace Tsltn
 
             foreach (DataError error in thisErrors)
             {
-                Errors.Remove(error);
+                _ = Errors.Remove(error);
             }
         }
 
@@ -605,11 +605,11 @@ namespace Tsltn
             this.CurrentNode = node;
 
             string? transl = node.Translation;
-            this.Translation = transl;
+            Translation = transl;
 
             // Die lokale Variable muss benutzt werden,
             // da Translation nie null zurückgibt.
-            this.HasTranslation = transl != null;
+            HasTranslation = transl != null;
         }
 
 

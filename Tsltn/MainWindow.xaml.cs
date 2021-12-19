@@ -1,26 +1,23 @@
-﻿using FolkerKinzel.Tsltn.Controllers;
-using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.RecentFiles.WPF;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Tsltn.Resources;
-using System.Collections;
-using System.Collections.Generic;
 using System.Windows.Threading;
+using FolkerKinzel.RecentFiles.WPF;
+using FolkerKinzel.Tsltn.Controllers;
+using FolkerKinzel.Tsltn.Models;
 using Microsoft.Win32;
-using System.IO;
+using Tsltn.Resources;
 
 namespace Tsltn
 {
@@ -41,8 +38,8 @@ namespace Tsltn
 
         public MainWindow(IDocument doc, IFileController fileController, IRecentFilesMenu recentFilesMenu)
         {
-            this._doc = doc;
-            this._fileController = fileController;
+            _doc = doc;
+            _fileController = fileController;
             InitializeComponent();
 
             this._recentFilesMenu = recentFilesMenu;
@@ -106,16 +103,11 @@ namespace Tsltn
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_BadFileName(object? sender, BadFileNameEventArgs e)
-        {
-            _doc.Tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
-        }
+            => _doc.Tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
 
-        private void _fileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e)
-        {
-            //e.Result = e.Dialog.ShowDialog(this);
-
+        private void _fileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e) =>
             Dispatcher.Invoke(() => e.ShowDialog(this), DispatcherPriority.Send);
-        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_RefreshData(object? sender, EventArgs e) => Dispatcher.Invoke(RefreshData);
@@ -133,9 +125,7 @@ namespace Tsltn
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _fileController_NewFileName(object? sender, NewFileNameEventArgs e)
-        {
-            _doc.Tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
-        }
+            => _doc.Tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
 
 
         private void _fileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
@@ -159,10 +149,8 @@ namespace Tsltn
 
 
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        private void _fileController_Message(object? sender, MessageEventArgs e)
-        {
-            e.Result = Dispatcher.Invoke(() => MessageBox.Show(this, e.Message, App.ProgramName, e.Button, e.Image, e.DefaultResult), DispatcherPriority.Send);
-        }
+        private void _fileController_Message(object? sender, MessageEventArgs e) 
+            => e.Result = Dispatcher.Invoke(() => MessageBox.Show(this, e.Message, App.ProgramName, e.Button, e.Image, e.DefaultResult), DispatcherPriority.Send);
 
 
         private void RecentFilesMenu_RecentFileSelected(object? sender, RecentFileSelectedEventArgs e)
@@ -206,7 +194,7 @@ namespace Tsltn
                 try
                 {
                     // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
+                    _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
                 }
                 catch
                 { }
@@ -291,7 +279,7 @@ namespace Tsltn
 
             OnTranslationErrors(Errors);
 
-        
+
             if (UnusedTranslations.Any())
             {
                 var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(_fileController.FileName), UnusedTranslations);
@@ -352,7 +340,7 @@ namespace Tsltn
 
         private void OnTranslationErrors(IEnumerable<DataError> errors) => TranslationErrors?.Invoke(this, new TranslationErrorsEventArgs(errors));
 
-        
+
 
         private void RefreshData()
         {
@@ -376,6 +364,6 @@ namespace Tsltn
             }
         }
 
-        
+
     }
 }
