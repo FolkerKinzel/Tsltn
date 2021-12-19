@@ -31,6 +31,8 @@ namespace FolkerKinzel.Tsltn.Controllers
             //_watcher.Created += Watcher_Changed;
             //_watcher.Deleted += Watcher_Changed;
 
+            
+
         }
 
         public static FileWatcher Instance { get; } = new FileWatcher();
@@ -85,10 +87,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             }
         }
 
-        public void Dispose()
-        {
-            ((IDisposable)_watcher).Dispose();
-        }
+        public void Dispose() => ((IDisposable)_watcher).Dispose();
 
 
         private void Watcher_Renamed(object sender, RenamedEventArgs e)

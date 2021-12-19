@@ -195,14 +195,7 @@ namespace Tsltn
 
         internal void UpdateSource()
         {
-            if (HasTranslation)
-            {
-                _node.Translation = this.Translation.Trim();
-            }
-            else
-            {
-                _node.Translation = null;
-            }
+            _node.Translation = HasTranslation ? Translation.Trim() : null;
 
 
             if (!Validation.GetHasError(_tbSourceLanguage))
