@@ -17,7 +17,7 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public partial class Document : IDocument, IFileAccess
+    public partial class Document : IDocument, IFileAccess, IDocumentNodes
     {
         private readonly TsltnFile _tsltn;
         private XDocument? _xmlDocument;
@@ -30,7 +30,14 @@ namespace FolkerKinzel.Tsltn.Models
 
         private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-        private Document(TsltnFile tsltnFile)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="tsltnFile">The <see cref="TsltnFile"/> to work with.</param>
+        /// <remarks>
+        /// Let this ctor be internal to make the class testable.
+        /// </remarks>
+        internal Document(TsltnFile tsltnFile)
         {
             _tsltn = tsltnFile;
             _tsltn.PropertyChanged += Tsltn_PropertyChanged;
@@ -42,15 +49,6 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 OnPropertyChanged(nameof(Changed));
             }
-
-            //switch (e.PropertyName)
-            //{
-            //    case nameof(TsltnFile.Changed):
-            //        OnPropertyChanged(nameof(Changed));
-            //        break;
-            //    default:
-            //        break;
-            //}
         }
 
 
@@ -58,115 +56,12 @@ namespace FolkerKinzel.Tsltn.Models
 
         #region Properties
 
-        public bool Changed => _tsltn?.Changed ?? false;
 
-        //public ConcurrentBag<Task> Tasks { get; } = new ConcurrentBag<Task>();
-
-
-        //public string? TsltnFileName 
-        //{
-        //    get
-        //    {
-        //        return _tsltnFileName;
-        //    }
-
-        //    set
-        //    {
-        //        _tsltnFileName = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
-
-        //public void ChangeSourceDocumentFileName(string? fileName)
-        //{
-        //    TsltnFile? tsltn = _tsltn;
-
-        //    if(File.Exists(fileName) && tsltn != null)
-        //    {
-        //        tsltn.SourceDocumentFileName = fileName;
-        //    }
-        //}
-
-
-        public string? SourceDocumentFileName
-        {
-            get
-            {
-                return _tsltn.SourceDocumentFileName;
-            }
-
-            set
-            {
-                _tsltn.SourceDocumentFileName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string? SourceLanguage
-        {
-            get
-            {
-                return _tsltn?.SourceLanguage;
-            }
-
-            set
-            {
-                if (_tsltn != null)
-                {
-                    value = string.IsNullOrWhiteSpace(value) ? null : value;
-                    if (!StringComparer.Ordinal.Equals(_tsltn.SourceLanguage, value))
-                    {
-                        _tsltn.SourceLanguage = value;
-                        OnPropertyChanged();
-                    }
-                }
-            }
-        }
-
-
-        public string? TargetLanguage
-        {
-            get
-            {
-                return _tsltn?.TargetLanguage;
-            }
-
-            set
-            {
-                if (_tsltn != null)
-                {
-                    value = string.IsNullOrWhiteSpace(value) ? null : value;
-                    if (!StringComparer.Ordinal.Equals(_tsltn.TargetLanguage, value))
-                    {
-                        _tsltn.TargetLanguage = value;
-                        OnPropertyChanged();
-                    }
-                }
-            }
-        }
-
-        public INode? FirstNode { get; private set; }
 
 
         #endregion
 
         #region Methods
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage) => _utility.IsValidXml(translation, out exceptionMessage);
-
-        //public async Task WaitAllTasks()
-        //{
-        //    try
-        //    {
-        //        await Task.WhenAll(Tasks.ToArray()).ConfigureAwait(false);
-        //    }
-        //    catch { }
-
-        //    Tasks.Clear();
-        //}
-
 
         public static Document NewTsltn(string sourceDocumentFileName)
         {
@@ -232,7 +127,7 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        public void SaveTsltnAs(string tsltnFileName)
+        public void Save(string tsltnFileName)
         {
             if (tsltnFileName is null)
             {
@@ -274,7 +169,7 @@ namespace FolkerKinzel.Tsltn.Models
                 }
                 catch (XmlException e)
                 {
-                    errors.Add(new XmlDataError(new Node(node), e.Message));
+                    errors.Add(new XmlDataError(new Node(node, this), e.Message));
                 }
                 node = GetNextNode(node);
             }
@@ -297,12 +192,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => _tsltn?.GetAllTranslations() ?? Array.Empty<KeyValuePair<long, string>>();
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveTranslation(long id) => SetTranslation(id, null);
+       
 
 
         //public void CloseTsltn()
@@ -354,7 +244,7 @@ namespace FolkerKinzel.Tsltn.Models
             return null;
         }
 
-        internal XElement? GetNextNode(XElement? currentNode)
+        public XElement? GetNextNode(XElement? currentNode)
         {
             while (true)
             {
@@ -388,7 +278,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal XElement? GetPreviousNode(XElement? currentNode)
+        public XElement? GetPreviousNode(XElement? currentNode)
         {
             while (true)
             {
@@ -426,10 +316,10 @@ namespace FolkerKinzel.Tsltn.Models
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void SetTranslation(long nodeID, string? transl) => _tsltn?.SetTranslation(nodeID, transl);
+        public void SetTranslation(long nodeID, string? transl) => _tsltn.SetTranslation(nodeID, transl);
 
 
-        internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
+        public bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
         {
             if (_tsltn is null)
             {
@@ -443,11 +333,11 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal bool GetHasTranslation(long id) => _tsltn?.HasTranslation(id) ?? false;
+        public bool GetHasTranslation(long id) => _tsltn.HasTranslation(id);
 
 
 
-        internal long GetNodeID(XElement node, out string innerXml, out string nodePath)
+        public long GetNodeID(XElement node, out string innerXml, out string nodePath)
         {
             lock (_lockObject)
             {
@@ -455,7 +345,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        internal long GetNodeID(XElement node)
+        public long GetNodeID(XElement node)
         {
             lock (_lockObject)
             {
@@ -464,7 +354,7 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        internal INode? FindNode(XElement current, string nodePathFragment, bool ignoreCase, bool wholeWord)
+        public INode? FindNode(XElement current, string nodePathFragment, bool ignoreCase, bool wholeWord)
         {
             XElement? node = GetNextNode(current);
 
@@ -472,7 +362,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 if (_utility.ContainsPathFragment(_utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
                 {
-                    return new Node(node);
+                    return new Node(node, this);
                 }
 
                 node = GetNextNode(node);
@@ -496,7 +386,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 if (_utility.ContainsPathFragment(_utility.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
                 {
-                    return new Node(node);
+                    return new Node(node, this);
                 }
 
                 node = GetNextNode(node);
@@ -520,7 +410,7 @@ namespace FolkerKinzel.Tsltn.Models
                 return;
             }
 
-            FirstNode = new Node(firstNode);
+            FirstNode = new Node(firstNode, this);
         }
 
         #region private static

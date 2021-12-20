@@ -1,30 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using FolkerKinzel.Tsltn.Models;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Tsltn.Resources;
-using System.Runtime.CompilerServices;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
-using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
-using System.Web;
-using System.Xml.Linq;
 using System.Xml;
+using System.Xml.Linq;
+using FolkerKinzel.Tsltn.Models;
+using Tsltn.Resources;
 
 namespace Tsltn
 {
@@ -41,6 +34,7 @@ namespace Tsltn
         private string? _sourceLanguage;
         private string? _targetLanguage;
         private INode? _nextUntranslatedNode;
+        private readonly ConcurrentBag<Task> _tasks = new ConcurrentBag<Task>();
 
         private readonly StringBuilder _sb = new StringBuilder(1024);
         private readonly object _lockObject = new object();
@@ -67,19 +61,19 @@ namespace Tsltn
 
             //this.DataContext = this;
 
-            this._owner = owner;
-            this._doc = doc;
-            this._node = doc.FirstNode!;
+            _owner = owner;
+            _doc = doc;
+            _node = doc.FirstNode!;
 
             if (_node.Translation != null)
             {
-                this._translation = _node.Translation;
-                this._hasTranslation = true;
+                _translation = _node.Translation;
+                _hasTranslation = true;
             }
 
             InitializeComponent();
 
-            this.NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
+            NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
 
             _owner.TranslationErrors += MainWindow_TranslationErrors;
 
@@ -107,10 +101,11 @@ namespace Tsltn
                         Translation = "";
                     }
 
-                    _doc.Tasks.Add(CheckUntranslatedNodesAsync());
+                    _tasks.Add(CheckUntranslatedNodesAsync());
                 }
             }
         }
+
 
 
         [AllowNull]
@@ -130,7 +125,7 @@ namespace Tsltn
             get => _sourceLanguage;
             set
             {
-                this.Errors.Remove(MissingSourceLanguage);
+                Errors.Remove(MissingSourceLanguage);
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -155,13 +150,13 @@ namespace Tsltn
             get => _targetLanguage;
             set
             {
-                this.Errors.Remove(MissingTargetLanguage);
+                Errors.Remove(MissingTargetLanguage);
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     _targetLanguage = null;
                     OnPropertyChanged();
-                    this.Errors.Insert(0, MissingTargetLanguage);
+                    Errors.Insert(0, MissingTargetLanguage);
                 }
                 else
                 {
@@ -169,7 +164,7 @@ namespace Tsltn
                     OnPropertyChanged();
 
                     // wirft ggf. CultureNotFoundException
-                    CultureInfo.GetCultureInfoByIetfLanguageTag(_targetLanguage);
+                    _ = CultureInfo.GetCultureInfoByIetfLanguageTag(_targetLanguage);
                 }
             }
         }
@@ -224,13 +219,13 @@ namespace Tsltn
 
         private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.SourceLanguage = _doc.SourceLanguage;
-            this.TargetLanguage = _doc.TargetLanguage;
+            SourceLanguage = _doc.SourceLanguage;
+            TargetLanguage = _doc.TargetLanguage;
 
 
             // Möglichst nicht INNERHALB des Loaded-Eventhandlers auf den VisualTree
             // zugreifen: Das führt zu schwer identifizierbaren Fehlern:
-            _ = this.Dispatcher.BeginInvoke(new Action(async () =>
+            _ = Dispatcher.BeginInvoke(new Action(async () =>
             {
                 await CheckUntranslatedNodesAsync().ConfigureAwait(true);
                 CommandManager.InvalidateRequerySuggested();
@@ -241,9 +236,11 @@ namespace Tsltn
         }
 
 
-        private void TsltnControl_Unloaded(object sender, RoutedEventArgs e)
+        private async void TsltnControl_Unloaded(object sender, RoutedEventArgs e)
         {
             _cancellationTokenSource.Cancel();
+
+            await Task.WhenAll(_tasks).ConfigureAwait(false);
 
             _owner.TranslationErrors -= MainWindow_TranslationErrors;
             DataObject.RemovePastingHandler(_tbTranslation, TbTranslation_Paste);
@@ -259,28 +256,28 @@ namespace Tsltn
 
                 foreach (DataError error in e.Errors)
                 {
-                    this.Errors.Add(error);
+                    Errors.Add(error);
                 }
 
                 if (SourceLanguage is null)
                 {
-                    this.Errors.Add(MissingSourceLanguage);
+                    Errors.Add(MissingSourceLanguage);
                 }
                 else if (Validation.GetHasError(_tbSourceLanguage))
                 {
-                    this.Errors.Add(InvalidSourceLanguage);
+                    Errors.Add(InvalidSourceLanguage);
                 }
 
                 if (TargetLanguage is null)
                 {
-                    this.Errors.Add(MissingTargetLanguage);
+                    Errors.Add(MissingTargetLanguage);
                 }
                 else if (Validation.GetHasError(_tbTargetLanguage))
                 {
-                    this.Errors.Add(InvalidTargetLanguage);
+                    Errors.Add(InvalidTargetLanguage);
                 }
 
-                _doc.Tasks.Add(CheckUntranslatedNodesAsync());
+                _tasks.Add(CheckUntranslatedNodesAsync());
             }
         }
 
@@ -292,12 +289,12 @@ namespace Tsltn
                 if (object.ReferenceEquals(err, InvalidSourceLanguage) ||
                     object.ReferenceEquals(err, MissingSourceLanguage))
                 {
-                    Keyboard.Focus(_tbSourceLanguage);
+                    _ = Keyboard.Focus(_tbSourceLanguage);
                 }
                 else if (object.ReferenceEquals(err, InvalidTargetLanguage) ||
                     object.ReferenceEquals(err, MissingTargetLanguage))
                 {
-                    Keyboard.Focus(_tbTargetLanguage);
+                    _ = Keyboard.Focus(_tbTargetLanguage);
                 }
                 else
                 {
@@ -314,20 +311,20 @@ namespace Tsltn
             {
                 if (tb.Name == nameof(_tbSourceLanguage))
                 {
-                    this.Errors.Remove(InvalidSourceLanguage);
+                    Errors.Remove(InvalidSourceLanguage);
 
                     if (Validation.GetHasError(_tbSourceLanguage))
                     {
-                        this.Errors.Insert(0, InvalidSourceLanguage);
+                        Errors.Insert(0, InvalidSourceLanguage);
                     }
                 }
                 else
                 {
-                    this.Errors.Remove(InvalidTargetLanguage);
+                    Errors.Remove(InvalidTargetLanguage);
 
                     if (Validation.GetHasError(_tbTargetLanguage))
                     {
-                        this.Errors.Insert(0, InvalidTargetLanguage);
+                        Errors.Insert(0, InvalidTargetLanguage);
                     }
                 }
             }
@@ -351,8 +348,8 @@ namespace Tsltn
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
-            this.HasTranslation = false;
-            _btnBrowseAll.Focus();
+            HasTranslation = false;
+            _ = _btnBrowseAll.Focus();
             //_btnNext.Focus();
         }
 
@@ -396,12 +393,12 @@ namespace Tsltn
                         {
                             if (char.IsWhiteSpace(current) && char.IsPunctuation(previous)) // das '=' - Zeichen ist nicht Punctuation
                             {
-                                _sb.Remove(i, 1);
+                                _ = _sb.Remove(i, 1);
                                 continue;
                             }
                             else if (char.IsPunctuation(current) && char.IsWhiteSpace(previous))
                             {
-                                _sb.Remove(i + 1, 1);
+                                _ = _sb.Remove(i + 1, 1);
                             }
                         }
                         break;
@@ -457,7 +454,7 @@ namespace Tsltn
             //e.Handled = true;
             //_btnNext.Focus();
 
-            _tbOriginal.Focus();
+            _ = _tbOriginal.Focus();
         }
 
 
@@ -467,31 +464,31 @@ namespace Tsltn
 
             if (true == allWnd.ShowDialog(_owner))
             {
-                if(allWnd.TextCopied)
+                if (allWnd.TextCopied)
                 {
-                    if(_tbTranslation.SelectionStart == 0)
+                    if (_tbTranslation.SelectionStart == 0)
                     {
                         _tbTranslation.SelectionStart = _tbTranslation.Text.Length;
                     }
 
-                    _tbTranslation.Focus();
+                    _ = _tbTranslation.Focus();
                     return;
                 }
                 else if (allWnd._lbTranslations.SelectedItem is string s)
                 {
-                    this.HasTranslation = true;
-                    this.Translation = s;
+                    HasTranslation = true;
+                    Translation = s;
                 }
             }
 
-            _btnNext.Focus();
+            _ = _btnNext.Focus();
         }
 
         private void NextToTranslate_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = _nextUntranslatedNode != null;
 
         private async void NextToTranslate_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (this.HasTranslation)
+            if (HasTranslation)
             {
                 Navigate(_nextUntranslatedNode);
             }
@@ -501,7 +498,7 @@ namespace Tsltn
                 Navigate(next);
             }
 
-            _btnNextToTranslate.Focus();
+            _ = _btnNextToTranslate.Focus();
         }
 
         #endregion
@@ -515,7 +512,7 @@ namespace Tsltn
         private async Task CheckUntranslatedNodesAsync()
         {
             UpdateSource();
-            _nextUntranslatedNode = this.HasTranslation ? await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true) : this.CurrentNode;
+            _nextUntranslatedNode = HasTranslation ? await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true) : CurrentNode;
 
 
             if (_nextUntranslatedNode != null)
@@ -602,7 +599,7 @@ namespace Tsltn
                 exceptionMessage = e.Message;
                 return false;
             }
-            catch
+            catch(Exception)
             {
 
             }
@@ -612,7 +609,7 @@ namespace Tsltn
 
         private void RemoveXmlErrorMessages()
         {
-            DataError[] thisErrors = Errors.Where(x => x is XmlDataError && this.CurrentNode.ReferencesSameXml(x.Node!)).ToArray();
+            DataError[] thisErrors = Errors.Where(x => x is XmlDataError && CurrentNode.ReferencesSameXml(x.Node!)).ToArray();
 
             foreach (DataError error in thisErrors)
             {
@@ -630,7 +627,7 @@ namespace Tsltn
 
             UpdateSource();
 
-            this.CurrentNode = node;
+            CurrentNode = node;
 
             string? transl = node.Translation;
             Translation = transl;

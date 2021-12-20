@@ -19,11 +19,13 @@ namespace FolkerKinzel.Tsltn.Controllers
         event EventHandler? RefreshData;
         event EventHandler<ShowFileDialogEventArgs>? ShowFileDialog;
 
-        Task<bool> CloseTsltnAsync();
-        Task NewTsltnAsync();
+        IDocument? CurrentDocument { get; }
+
+        Task<bool> CloseDocumentAsync();
+        Task NewDocumentAsync();
         Task OpenTsltnFromCommandLineAsync(string commandLineArg);
-        Task OpenTsltnAsync(string? fileName);
-        Task<bool> SaveTsltnAsync();
+        Task LoadDocumentAsync(string? fileName);
+        Task<bool> SaveDocumentAsync();
         Task<bool> SaveAsTsltnAsync();
         Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync();
 

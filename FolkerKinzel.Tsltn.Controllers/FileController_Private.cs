@@ -170,7 +170,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                await Task.Run(() => _doc.SaveTsltnAs(fileName)).ConfigureAwait(false);
+                await Task.Run(() => _doc.Save(fileName)).ConfigureAwait(false);
                 OnNewFileName(FileName);
             }
             catch (Exception e)
@@ -217,14 +217,14 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             OnRefreshData();
 
-            if ((FileName.Length != 0 && !CurrentDocument.Changed) || await SaveTsltnAsync().ConfigureAwait(false))
+            if ((FileName.Length != 0 && !CurrentDocument.Changed) || await SaveDocumentAsync().ConfigureAwait(false))
             {
                 OnHasContentChanged(false);
 
                 string? fileName = FileName;
 
                 _ = await CloseTsltnAsync(false).ConfigureAwait(false);
-                await OpenTsltnAsync(fileName).ConfigureAwait(false);
+                await LoadDocumentAsync(fileName).ConfigureAwait(false);
             }
             else
             {

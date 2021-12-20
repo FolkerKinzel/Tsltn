@@ -12,8 +12,7 @@
     <FileVersion>2.5.0.6</FileVersion>
     <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Binaries\**" />

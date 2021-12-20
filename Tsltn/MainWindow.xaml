@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsltn"
-        xmlns:models="clr-namespace:FolkerKinzel.Tsltn.Models;assembly=FolkerKinzel.Tsltn.Models"
         xmlns:r ="clr-namespace:Tsltn.Resources"
         xmlns:cmd ="clr-namespace:Tsltn.Commands"
         mc:Ignorable="d"
@@ -65,7 +64,7 @@
                         <Image Width="16" Height="16" Source="pics/CloseDocument_16x.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem x:Name="_miSave" Command="Save" Loaded="_miSave_Loaded" Header="{x:Static r:Res.SaveMenuItem}">
+                <MenuItem x:Name="_miSave" Command="Save" Loaded="MiSave_Loaded" Header="{x:Static r:Res.SaveMenuItem}">
                     <MenuItem.Style>
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Icon">
@@ -304,7 +303,7 @@
 
         <StatusBar Grid.Row="2" FontSize="16" FontWeight="Bold">
             <StatusBarItem Background="CornflowerBlue" Foreground="White">
-                <TextBlock Text="{Binding FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
+                <TextBlock Text="{Binding Controller.FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
             </StatusBarItem>
         </StatusBar>
 

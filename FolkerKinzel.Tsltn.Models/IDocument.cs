@@ -18,15 +18,5 @@ namespace FolkerKinzel.Tsltn.Models
 
         void RemoveTranslation(long id);
 
-        //bool IsValidXml(string translation, [NotNullWhen(false)] out string? exceptionMessage);
-
-        //void ChangeSourceDocumentFileName(string? fileName);
-
-
-        //ConcurrentBag<Task> Tasks { get; }
-
-        //Task WaitAllTasks();
-
-
     }
 }

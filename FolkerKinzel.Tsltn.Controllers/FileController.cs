@@ -75,7 +75,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public void Dispose() => _watcher.Dispose();
 
-        public async Task<bool> CloseTsltnAsync() => await CloseTsltnAsync(true).ConfigureAwait(false);
+        public async Task<bool> CloseDocumentAsync() => await CloseTsltnAsync(true).ConfigureAwait(false);
 
 
         public async Task<bool> CloseTsltnAsync(bool handleChanges)
@@ -101,7 +101,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     {
                         case MessageBoxResult.Yes:
                             {
-                                if (!await SaveTsltnAsync().ConfigureAwait(true))
+                                if (!await SaveDocumentAsync().ConfigureAwait(true))
                                 {
                                     return false;
                                 }
@@ -126,7 +126,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<bool> SaveTsltnAsync() => DoSaveTsltnAsync(FileName);
+        public Task<bool> SaveDocumentAsync() => DoSaveTsltnAsync(FileName);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
@@ -144,10 +144,10 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return Task.CompletedTask;
             }
 
-            return OpenTsltnAsync(commandLineArg);
+            return LoadDocumentAsync(commandLineArg);
         }
 
-        public async Task OpenTsltnAsync(string? fileName)
+        public async Task LoadDocumentAsync(string? fileName)
         {
             if (StringComparer.OrdinalIgnoreCase.Equals(fileName, this.FileName))
             {
@@ -236,7 +236,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         }
 
 
-        public async Task NewTsltnAsync()
+        public async Task NewDocumentAsync()
         {
             if(!await CloseTsltnAsync(true).ConfigureAwait(false))
             {

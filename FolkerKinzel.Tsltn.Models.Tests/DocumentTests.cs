@@ -46,7 +46,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
             //doc.AddManualTranslation(txt3, "manuell 3");
 
            
-            doc.SaveTsltnAs(tsltnPath);
+            doc.Save(tsltnPath);
 
             doc = Document.OpenTsltn(tsltnPath, out bool _);
 

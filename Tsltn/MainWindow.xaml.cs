@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,13 +32,13 @@ namespace Tsltn
 
         public event EventHandler<TranslationErrorsEventArgs>? TranslationErrors;
 
-        private readonly IFileController _fileController;
         private readonly IRecentFilesMenu _recentFilesMenu;
         private bool _isCommandEnabled = true;
+        private readonly ConcurrentBag<Task> _tasks = new ConcurrentBag<Task>();
 
         public MainWindow(IFileController fileController, IRecentFilesMenu recentFilesMenu)
         {
-            _fileController = fileController;
+            Controller = fileController;
             InitializeComponent();
 
             _recentFilesMenu = recentFilesMenu;
@@ -45,13 +46,13 @@ namespace Tsltn
             _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.ProgramName);
         }
 
+
         public void Dispose()
         {
-            _fileController.Dispose();
+            Controller.Dispose();
             _recentFilesMenu.Dispose();
         }
 
-        public string FileName => _fileController.FileName;
 
         public bool IsCommandEnabled
         {
@@ -59,22 +60,24 @@ namespace Tsltn
             private set
             {
                 _isCommandEnabled = value;
-                OnPropertyChanged(nameof(IsCommandEnabled));
+                OnPropertyChanged();
             }
         }
+
+        public IFileController Controller { get; }
 
 
         #region EventHandler
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _fileController.HasContentChanged += _fileController_HasContentChanged;
-            _fileController.Message += _fileController_Message;
-            _fileController.NewFileName += _fileController_NewFileName;
-            _fileController.PropertyChanged += _fileController_PropertyChanged;
-            _fileController.RefreshData += _fileController_RefreshData;
-            _fileController.ShowFileDialog += _fileController_ShowFileDialog;
-            _fileController.BadFileName += _fileController_BadFileName;
+            Controller.HasContentChanged += FileController_HasContentChanged;
+            Controller.Message += FileController_Message;
+            Controller.NewFileName += FileController_NewFileName;
+            //Controller.PropertyChanged += _fileController_PropertyChanged;
+            Controller.RefreshData += FileController_RefreshData;
+            Controller.ShowFileDialog += FileController_ShowFileDialog;
+            Controller.BadFileName += FileController_BadFileName;
             _recentFilesMenu.Initialize(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
 
@@ -84,60 +87,59 @@ namespace Tsltn
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (!await _fileController.CloseTsltnAsync().ConfigureAwait(true))
+            if (!await Controller.CloseDocumentAsync().ConfigureAwait(true))
             {
                 e.Cancel = true;
             }
         }
 
-        [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
+        //[SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
         private async void Window_Closed(object sender, EventArgs e)
         {
-            await _doc.WaitAllTasks().ConfigureAwait(false);
+            await Task.WhenAll(_tasks).ConfigureAwait(false);
             Dispose();
         }
 
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _fileController_BadFileName(object? sender, BadFileNameEventArgs e)
-            => _doc.Tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
+        private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
+            => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
 
-        private void _fileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e) =>
+        private void FileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e) =>
             Dispatcher.Invoke(() => e.ShowDialog(this), DispatcherPriority.Send);
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _fileController_RefreshData(object? sender, EventArgs e) => Dispatcher.Invoke(RefreshData);
+        private void FileController_RefreshData(object? sender, EventArgs e) => Dispatcher.Invoke(RefreshData);
 
 
 
-        private void _fileController_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(_fileController.FileName))
-            {
-                OnPropertyChanged(nameof(FileName));
-            }
-        }
+        //private void _fileController_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(Controller.FileName))
+        //    {
+        //        OnPropertyChanged(nameof(FileName));
+        //    }
+        //}
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _fileController_NewFileName(object? sender, NewFileNameEventArgs e)
-            => _doc.Tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
+        private void FileController_NewFileName(object? sender, NewFileNameEventArgs e)
+            => _tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
 
 
-        private void _fileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
-        {
-            Dispatcher.BeginInvoke(() => ChangeContent(e.HasContent));
-        }
+        private void FileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
+            => Dispatcher.BeginInvoke(() => ChangeContent(e.HasContent));
 
         private void ChangeContent(bool showContent)
         {
             if (showContent)
             {
-                var cntr = new TsltnControl(this, _doc);
+                Debug.Assert(Controller.CurrentDocument != null);
+                var cntr = new TsltnControl(this, Controller.CurrentDocument);
                 _ccContent.Content = cntr;
-                cntr._tbOriginal.Focus();
+                _ = cntr._tbOriginal.Focus();
             }
             else
             {
@@ -147,7 +149,7 @@ namespace Tsltn
 
 
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
-        private void _fileController_Message(object? sender, MessageEventArgs e) 
+        private void FileController_Message(object? sender, MessageEventArgs e)
             => e.Result = Dispatcher.Invoke(() => MessageBox.Show(this, e.Message, App.ProgramName, e.Button, e.Image, e.DefaultResult), DispatcherPriority.Send);
 
 
@@ -155,30 +157,30 @@ namespace Tsltn
         {
             if (System.IO.File.Exists(e.FileName))
             {
-                _ = _fileController.OpenTsltnAsync(e.FileName);
+                _ = Controller.LoadDocumentAsync(e.FileName);
             }
             else
             {
-                _doc.Tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
+                _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
             }
         }
 
 
-        private void miQuit_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void miQuit_Click(object sender, RoutedEventArgs e) => Close();
 
 
         private void Info_Click(object sender, RoutedEventArgs e)
         {
-            StringBuilder sb = new StringBuilder(64);
-            sb.Append(App.ProgramName);
-            sb.Append(Environment.NewLine);
-            sb.Append("Version: ");
-            sb.Append(((AssemblyFileVersionAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyFileVersionAttribute)))?.Version);
-            sb.Append(Environment.NewLine);
-            sb.Append(Environment.NewLine);
-            sb.Append(((AssemblyCopyrightAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute)))?.Copyright);
+            StringBuilder sb = new StringBuilder(64)
+            .Append(App.ProgramName)
+            .Append(Environment.NewLine)
+            .Append("Version: ")
+            .Append(((AssemblyFileVersionAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyFileVersionAttribute)))?.Version)
+            .AppendLine()
+            .AppendLine()
+            .Append(((AssemblyCopyrightAttribute?)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute)))?.Copyright);
 
-            MessageBox.Show(sb.ToString(), $"{App.ProgramName} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+            _ = MessageBox.Show(sb.ToString(), $"{App.ProgramName} - {Res.About}", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
         }
 
 
@@ -202,7 +204,7 @@ namespace Tsltn
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _miSave_Loaded(object sender, RoutedEventArgs e) => RefreshData();
+        private void MiSave_Loaded(object sender, RoutedEventArgs e) => RefreshData();
 
         #endregion
 
@@ -219,19 +221,19 @@ namespace Tsltn
         private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            _ = _fileController.NewTsltnAsync();
+            _ = Controller.NewDocumentAsync();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            _ = _fileController.OpenTsltnAsync(null);
+            _ = Controller.LoadDocumentAsync(null);
         }
 
         private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = IsCommandEnabled && _doc.SourceDocumentFileName != null;
+            e.CanExecute = IsCommandEnabled && Controller.CurrentDocument?.SourceDocumentFileName != null;
         }
 
 
@@ -239,12 +241,12 @@ namespace Tsltn
         private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            _ = _fileController.CloseTsltnAsync();
+            _ = Controller.CloseDocumentAsync();
         }
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = IsCommandEnabled && _doc.Changed;
+            e.CanExecute = IsCommandEnabled && (Controller.CurrentDocument?.Changed ?? false);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -252,7 +254,7 @@ namespace Tsltn
         {
             e.Handled = true;
             IsCommandEnabled = false;
-            await _fileController.SaveTsltnAsync().ConfigureAwait(false);
+            await Controller.SaveDocumentAsync().ConfigureAwait(false);
             IsCommandEnabled = true;
         }
 
@@ -261,17 +263,17 @@ namespace Tsltn
         {
             e.Handled = true;
             IsCommandEnabled = false;
-            await _fileController.SaveAsTsltnAsync().ConfigureAwait(false);
+            await Controller.SaveAsTsltnAsync().ConfigureAwait(false);
             IsCommandEnabled = true;
         }
 
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             IsCommandEnabled = false;
-            _fileController.SuspendSourceFileObservation();
+            Controller.SuspendSourceFileObservation();
             e.Handled = true;
 
-            var (Errors, UnusedTranslations) = await _fileController.TranslateAsync().ConfigureAwait(true);
+            (IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations) = await Controller.TranslateAsync().ConfigureAwait(true);
 
             IsCommandEnabled = true;
 
@@ -280,7 +282,7 @@ namespace Tsltn
 
             if (UnusedTranslations.Any())
             {
-                var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(_fileController.FileName), UnusedTranslations);
+                var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(Controller.FileName), UnusedTranslations);
 
                 if (true == wnd.ShowDialog(this))
                 {
@@ -288,20 +290,21 @@ namespace Tsltn
                     {
                         if (cntr.Remove)
                         {
-                            _doc.RemoveTranslation(cntr.Kvp.Key);
+                            Controller.CurrentDocument?.RemoveTranslation(cntr.Kvp.Key);
                         }
                     }
                 }
             }
 
-            _fileController.ResumeSourceFileObservation();
+            Controller.ResumeSourceFileObservation();
         }
 
         private async void ChangeSourceDocument_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
+            string? sourceFilePath = Controller.CurrentDocument?.SourceDocumentFileName;
             var dlg = new OpenFileDialog()
             {
-                FileName = Path.GetFileName(_doc.SourceDocumentFileName) ?? "",
+                FileName = Path.GetFileName(sourceFilePath) ?? "",
                 AddExtension = true,
                 CheckFileExists = true,
                 CheckPathExists = true,
@@ -309,7 +312,7 @@ namespace Tsltn
                 DefaultExt = ".xml",
                 Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
                 DereferenceLinks = true,
-                InitialDirectory = Path.GetDirectoryName(_doc.SourceDocumentFileName) ?? "",
+                InitialDirectory = Path.GetDirectoryName(sourceFilePath) ?? "",
                 Multiselect = false,
                 ValidateNames = true,
                 Title = Res.NewSourceFile
@@ -322,7 +325,7 @@ namespace Tsltn
 
             if (dlg.ShowDialog() == true)
             {
-                await _fileController.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(true);
+                await Controller.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(true);
 
                 if (_ccContent.Content is TsltnControl control)
                 {
@@ -334,7 +337,7 @@ namespace Tsltn
         #endregion
 
 
-        private void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
         private void OnTranslationErrors(IEnumerable<DataError> errors) => TranslationErrors?.Invoke(this, new TranslationErrorsEventArgs(errors));
 
@@ -357,7 +360,7 @@ namespace Tsltn
             if (args.Length > 1)
             {
                 IsCommandEnabled = false;
-                await _fileController.OpenTsltnFromCommandLineAsync(args[1]).ConfigureAwait(true);
+                await Controller.OpenTsltnFromCommandLineAsync(args[1]).ConfigureAwait(true);
                 IsCommandEnabled = true;
             }
         }
