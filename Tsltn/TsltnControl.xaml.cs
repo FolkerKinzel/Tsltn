@@ -609,7 +609,7 @@ namespace Tsltn
 
         private void RemoveXmlErrorMessages()
         {
-            DataError[] thisErrors = Errors.Where(x => x is XmlDataError && CurrentNode.ReferencesSameXml(x.Node!)).ToArray();
+            DataError[] thisErrors = Errors.Where(x => x is XmlDataError && CurrentNode.Equals(x.Node)).ToArray();
 
             foreach (DataError error in thisErrors)
             {
@@ -620,7 +620,7 @@ namespace Tsltn
 
         private void Navigate(INode? node)
         {
-            if (node is null || node.ReferencesSameXml(CurrentNode))
+            if (node is null || node.Equals(CurrentNode))
             {
                 return;
             }

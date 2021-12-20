@@ -74,9 +74,6 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        
-
-
         //public bool ReloadSourceDocument(string fileName)
         //{
         //    Debug.Assert(_tsltn != null);
@@ -112,7 +109,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             errors = new List<DataError>();
 
-            if (Navigator is null)
+            if (Navigator is null || FirstNode is null)
             {
                 unusedTranslations = new List<KeyValuePair<long, string>>();
                 return;
@@ -140,7 +137,7 @@ namespace FolkerKinzel.Tsltn.Models
                 }
                 catch (XmlException e)
                 {
-                    errors.Add(new XmlDataError(new Node(node, this), e.Message));
+                    errors.Add(new XmlDataError(new Node(node, this, nav, new Node(nav.GetFirstXElement()!, this, nav, null)), e.Message));
                 }
                 node = nav.GetNextXElement(node);
             }
@@ -187,17 +184,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         #region private
 
-        
-
-        //private KeyValuePair<long, string>? GetTranslation(XElement node)
-        //{
-        //    long nodePathHash = GetNodeID(node);
-
-        //    return TryGetTranslation(nodePathHash, out string? manualTransl)
-        //        ? (KeyValuePair<long, string>?)new KeyValuePair<long, string>(nodePathHash, manualTransl)
-        //        : null;
-        //}
-
         private Node? GetFirstNode()
         {
             if(Navigator is null)
@@ -206,7 +192,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
             XElement? firstXElement = Navigator.GetFirstXElement();
-            return firstXElement is null ? null : new Node(firstXElement, this);
+            return firstXElement is null ? null : new Node(firstXElement, this, Navigator, null);
         }
 
         #endregion

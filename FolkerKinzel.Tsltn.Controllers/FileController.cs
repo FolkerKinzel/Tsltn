@@ -47,7 +47,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public IDocument? CurrentDocument
         {
-            get => _doc;
+            get => (IDocument?)_doc;
         }
 
 
@@ -56,7 +56,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             get
             {
-                
+
 
                 return _fileName;
             }
@@ -155,7 +155,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return;
             }
 
-            if(!await CloseTsltnAsync(true).ConfigureAwait(true))
+            if (!await CloseTsltnAsync(true).ConfigureAwait(true))
             {
                 return;
             }
@@ -170,7 +170,8 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                if (!await Task.Run(() => { _doc = Document.Load(fileName, out bool sourceDocumentFound); return sourceDocumentFound; }).ConfigureAwait(false))
+                await Task.Run(() => { _doc = Document.Load(fileName); }).ConfigureAwait(false);
+                if (((Document?)_doc)!.Navigator is null)
                 {
                     Debug.Assert(_doc != null);
                     Debug.Assert(CurrentDocument != null);
@@ -191,16 +192,23 @@ namespace FolkerKinzel.Tsltn.Controllers
                     }
                     catch { }
 
-                    do
+                    if (!GetXmlInFileName(ref xmlFileName))
                     {
-                        if (!GetXmlInFileName(ref xmlFileName))
-                        {
-                            _ = await CloseTsltnAsync(false).ConfigureAwait(false);
-                            return;
-                        }
+                        _ = await CloseTsltnAsync(false).ConfigureAwait(false);
+                        return;
+                    }
 
+                    _doc.SourceDocumentFileName = xmlFileName;
+                    if (await SaveDocumentAsync().ConfigureAwait(false))
+                    {
+                        await LoadDocumentAsync(fileName).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        _doc = null;
+                    }
+                    return;
 
-                    } while (!_doc.ReloadSourceDocument(xmlFileName));
                 }
 
                 Debug.Assert(CurrentDocument != null);
@@ -238,7 +246,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public async Task NewDocumentAsync()
         {
-            if(!await CloseTsltnAsync(true).ConfigureAwait(false))
+            if (!await CloseTsltnAsync(true).ConfigureAwait(false))
             {
                 return;
             }
@@ -300,7 +308,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             //await _doc.WaitAllTasks().ConfigureAwait(false);
 
-            if(_doc is null || !await DoSaveTsltnAsync(FileName).ConfigureAwait(false))
+            if (_doc is null || !await DoSaveTsltnAsync(FileName).ConfigureAwait(false))
             {
                 return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
             }

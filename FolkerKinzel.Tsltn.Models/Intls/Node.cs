@@ -13,30 +13,29 @@ namespace FolkerKinzel.Tsltn.Models.Intls
         private readonly XmlNavigator _nav;
         private readonly Node _firstNode;
         private readonly XElement _xElement;
+        private readonly long _id;
 
 
-        internal Node(XElement el, ITranslation transl, XmlNavigator navigator, Node firstNode)
+        internal Node(XElement el, ITranslation transl, XmlNavigator navigator, Node? firstNode)
         {
             _nav = navigator;
-            _firstNode = firstNode;
+            _firstNode = firstNode ?? this;
             _xElement = el;
             _transl = transl;
 
             // Das Replacement des geschützten Leerzeichens soll beim Hashen
             // ignoriert werden:
-            ID = _nav.GetNodeID(el, out _innerXml, out _nodePath);
+            _id = _nav.GetNodeID(el, out _innerXml, out _nodePath);
 
-            //_innerXml = _innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim();
             _innerXml = XmlFragmentBeautifier.Beautify(_innerXml);
 
-            HasAncestor = !ReferencesSameXml(_firstNode);
+            HasAncestor = !Equals(_firstNode);
 
             HasDescendant = _nav.GetNextXElement(el) != null;
         }
 
 
 
-        private long ID { get; }
 
         public string NodePath => _nodePath;
 
@@ -46,23 +45,38 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public string? Translation
         {
-            get => _transl.TryGetTranslation(ID, out string? transl) ? transl : null;
+            get => _transl.TryGetTranslation(_id, out string? transl) ? transl : null;
 
             set
             {
                 if (!StringComparer.Ordinal.Equals(value, Translation))
                 {
-                    _transl.SetTranslation(ID, value);
+                    _transl.SetTranslation(_id, value);
                 }
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ReferencesSameXml(INode? other) => object.ReferenceEquals(_xElement, (other as Node)?._xElement);
 
         public bool HasAncestor { get; }
 
         public bool HasDescendant { get; }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Node node)
+            {
+                return Equals(node);
+            }
+
+            return false;
+        }
+
+        public bool Equals(Node? node)
+            => !(node is null) && object.ReferenceEquals(_xElement, node._xElement);
+
+
+        public override int GetHashCode() => _xElement.GetHashCode();
 
 
 
@@ -102,7 +116,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             }
 
 
-            if (!_transl.GetHasTranslation(_firstNode.ID))
+            if (!_transl.GetHasTranslation(_firstNode._id))
             {
                 return _firstNode;
             }
@@ -121,7 +135,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
                 unTrans = _nav.GetNextXElement(unTrans);
             }
 
-            return !_transl.GetHasTranslation(ID) ? this : null;
+            return !_transl.GetHasTranslation(_id) ? this : null;
         }
 
 

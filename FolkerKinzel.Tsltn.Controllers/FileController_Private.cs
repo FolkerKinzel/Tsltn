@@ -189,9 +189,9 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
             {
-                if (CurrentDocument != null)
+                if (_doc != null)
                 {
-                    CurrentDocument.SourceDocumentFileName = _watcher.WatchedFile;
+                    _doc.SourceDocumentFileName = _watcher.WatchedFile;
                 }
             }
 

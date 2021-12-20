@@ -8,6 +8,8 @@ namespace FolkerKinzel.Tsltn.Models
 {
     public interface IDocument : INotifyPropertyChanged
     {
+        bool Changed { get; }
+
         INode? FirstNode { get; }
         string? SourceDocumentFileName { get; }
         string? SourceLanguage { get; set; }
