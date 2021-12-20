@@ -24,7 +24,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
         {
             string tsltnPath = Path.Combine(TestContext.TestRunResultsDirectory, "test.tsltn");
 
-            var doc = Document.OpenTsltn(TestFiles.TestXml, out bool _);
+            var doc = Document.Load(TestFiles.TestXml, out bool _);
 
             doc.SourceLanguage = "de";
             doc.TargetLanguage = "en";
@@ -48,9 +48,9 @@ namespace FolkerKinzel.Tsltn.Models.Tests
            
             doc.Save(tsltnPath);
 
-            doc = Document.OpenTsltn(tsltnPath, out bool _);
+            doc = Document.Load(tsltnPath, out bool _);
 
-            XElement? section = doc.GetFirstNode();
+            XElement? section = doc.GetFirstXElement();
 
 
             //foreach (var nd in node.Document.Root.DescendantNodes())
@@ -67,7 +67,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                section = doc.GetNextNode(section);
+                section = doc.GetNextXElement(section);
 
                 if(section is null)
                 {
@@ -85,7 +85,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                     break;
                 }
 
-                section = doc.GetPreviousNode(section);
+                section = doc.GetPreviousXElement(section);
 
                 if (section is null)
                 {

@@ -4,11 +4,15 @@ using System.Text;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public interface IFileAccess : IDocument
+    public interface IFileAccess
     {
+        bool Changed { get; }
+
         void Save(string tsltnFileName);
 
-        bool ReloadSourceDocument(string fileName);
+        //bool ReloadSourceDocument(string fileName);
+
+        string? SourceDocumentFileName { get; set; }
 
         void Translate(
             string outFileName,

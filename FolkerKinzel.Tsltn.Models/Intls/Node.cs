@@ -9,54 +9,56 @@ namespace FolkerKinzel.Tsltn.Models.Intls
     {
         private readonly string _nodePath;
         private readonly string _innerXml;
-        private readonly IDocumentNodes _doc;
+        private readonly ITranslation _transl;
+        private readonly XmlNavigator _nav;
+        private readonly Node _firstNode;
+        private readonly XElement _xElement;
 
 
-        //private const string NonBreakingSpace = "&#160;";
-
-
-        internal Node(XElement el, IDocumentNodes doc)
+        internal Node(XElement el, ITranslation transl, XmlNavigator navigator, Node firstNode)
         {
-            _doc = doc;
-            XmlNode = el;
+            _nav = navigator;
+            _firstNode = firstNode;
+            _xElement = el;
+            _transl = transl;
 
             // Das Replacement des geschützten Leerzeichens soll beim Hashen
             // ignoriert werden:
-            ID = _doc.GetNodeID(el, out _innerXml, out _nodePath);
+            ID = _nav.GetNodeID(el, out _innerXml, out _nodePath);
 
             //_innerXml = _innerXml.Replace("\u00A0", NonBreakingSpace, StringComparison.Ordinal).Trim();
             _innerXml = XmlFragmentBeautifier.Beautify(_innerXml);
 
-            HasAncestor = !(_doc.FirstNode is null) && !ReferencesSameXml(_doc.FirstNode);
+            HasAncestor = !ReferencesSameXml(_firstNode);
 
-            HasDescendant = _doc.GetNextNode(el) != null;
+            HasDescendant = _nav.GetNextXElement(el) != null;
         }
 
 
-        internal XElement XmlNode { get; }
 
         private long ID { get; }
 
         public string NodePath => _nodePath;
+
         public string InnerXml => _innerXml;
 
 
 
         public string? Translation
         {
-            get => _doc.TryGetTranslation(ID, out string? transl) ? transl : null;
+            get => _transl.TryGetTranslation(ID, out string? transl) ? transl : null;
 
             set
             {
                 if (!StringComparer.Ordinal.Equals(value, Translation))
                 {
-                    _doc.SetTranslation(ID, value);
+                    _transl.SetTranslation(ID, value);
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ReferencesSameXml(INode? other) => object.ReferenceEquals(XmlNode, (other as Node)?.XmlNode);
+        public bool ReferencesSameXml(INode? other) => object.ReferenceEquals(_xElement, (other as Node)?._xElement);
 
         public bool HasAncestor { get; }
 
@@ -70,8 +72,8 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             {
                 return null;
             }
-            XElement? el = _doc.GetPreviousNode(XmlNode);
-            return el is null ? null : new Node(el, _doc);
+            XElement? el = _nav.GetPreviousXElement(_xElement);
+            return el is null ? null : new Node(el, _transl, _nav, _firstNode);
         }
 
         public INode? GetDescendant()
@@ -80,60 +82,72 @@ namespace FolkerKinzel.Tsltn.Models.Intls
             {
                 return null;
             }
-            XElement? el = _doc.GetNextNode(XmlNode);
-            return el is null ? null : new Node(el, _doc);
+            XElement? el = _nav.GetNextXElement(_xElement);
+            return el is null ? null : new Node(el, _transl, _nav, _firstNode);
         }
 
 
 
         public INode? GetNextUntranslated()
         {
-            XElement? unTrans = _doc.GetNextNode(XmlNode);
+            XElement? unTrans = _nav.GetNextXElement(_xElement);
             while (unTrans != null)
             {
-                if (!_doc.GetHasTranslation(_doc.GetNodeID(unTrans)))
+                if (!_transl.GetHasTranslation(_nav.GetNodeID(unTrans)))
                 {
-                    return new Node(unTrans, _doc);
+                    return new Node(unTrans, _transl, _nav, _firstNode);
                 }
 
-                unTrans = _doc.GetNextNode(unTrans);
+                unTrans = _nav.GetNextXElement(unTrans);
             }
 
-            var firstNode = (Node?)_doc.FirstNode;
 
-            if (firstNode != null)
+            if (!_transl.GetHasTranslation(_firstNode.ID))
             {
-                if (!_doc.GetHasTranslation(firstNode.ID))
+                return _firstNode;
+            }
+
+
+            unTrans = _nav.GetNextXElement(_firstNode._xElement);
+
+
+            while (unTrans != null && !object.ReferenceEquals(unTrans, this._xElement))
+            {
+                if (!_transl.GetHasTranslation(_nav.GetNodeID(unTrans)))
                 {
-                    return firstNode;
-                }
-            }
-            else
-            {
-                return null; // Kann nur sein, wenn ein anderer Thread derweil Document.CloseTsltn aufgerufen hat.
-            }
-
-
-            unTrans = _doc.GetNextNode(firstNode.XmlNode);
-
-
-            while (unTrans != null && !object.ReferenceEquals(unTrans, this.XmlNode))
-            {
-                if (!_doc.GetHasTranslation(_doc.GetNodeID(unTrans)))
-                {
-                    return new Node(unTrans, _doc);
+                    return new Node(unTrans, _transl, _nav, _firstNode);
                 }
 
-                unTrans = _doc.GetNextNode(unTrans);
+                unTrans = _nav.GetNextXElement(unTrans);
             }
 
-            return !_doc.GetHasTranslation(ID) ? this : null;
+            return !_transl.GetHasTranslation(ID) ? this : null;
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord)
-            => _doc.FindNode(XmlNode, nodePathFragment, ignoreCase, wholeWord);
+        {
+            if (Utility.ContainsPathFragment(_firstNode.NodePath, nodePathFragment, ignoreCase, wholeWord))
+            {
+                return _firstNode;
+            }
+
+            XElement? node = _nav.GetNextXElement(_firstNode._xElement);
+
+            while (node != null)
+            {
+                if (Utility.ContainsPathFragment(_nav.GetNodePath(node), nodePathFragment, ignoreCase, wholeWord))
+                {
+                    return new Node(node, _transl, _nav, _firstNode);
+                }
+
+                node = _nav.GetNextXElement(node);
+            }
+
+            return null;
+        }
+
 
     }
 }

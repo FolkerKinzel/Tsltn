@@ -6,7 +6,7 @@ using FolkerKinzel.Tsltn.Models.Intls;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public partial class Document : IDocument, IFileAccess, IDocumentNodes
+    public partial class Document : IDocument, IFileAccess, ITranslation
     {
         public bool Changed => _tsltn.Changed;
 
@@ -67,7 +67,6 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        public INode? FirstNode { get; private set; }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

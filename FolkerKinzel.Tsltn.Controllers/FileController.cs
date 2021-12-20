@@ -170,7 +170,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                if (!await Task.Run(() => { _doc = Document.OpenTsltn(fileName, out bool sourceDocumentFound); return sourceDocumentFound; }).ConfigureAwait(false))
+                if (!await Task.Run(() => { _doc = Document.Load(fileName, out bool sourceDocumentFound); return sourceDocumentFound; }).ConfigureAwait(false))
                 {
                     Debug.Assert(_doc != null);
                     Debug.Assert(CurrentDocument != null);
@@ -249,7 +249,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 try
                 {
-                    _ = await Task.Run(() => _doc = Document.NewTsltn(xmlFileName)).ConfigureAwait(false);
+                    _ = await Task.Run(() => _doc = Document.Create(xmlFileName)).ConfigureAwait(false);
                     Debug.Assert(CurrentDocument != null);
                     OnPropertyChanged(nameof(CurrentDocument));
 

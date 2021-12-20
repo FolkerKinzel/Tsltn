@@ -286,7 +286,7 @@ namespace Tsltn
 
                 if (true == wnd.ShowDialog(this))
                 {
-                    foreach (var cntr in wnd.Controls)
+                    foreach (UnusedTranslationUserControl cntr in wnd.Controls)
                     {
                         if (cntr.Remove)
                         {
