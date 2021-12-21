@@ -9,17 +9,18 @@ namespace FolkerKinzel.Tsltn.Models
     public interface IDocument : INotifyPropertyChanged
     {
         string FileName { get; }
-
         bool Changed { get; }
-
         INode? FirstNode { get; }
         string? SourceDocumentFileName { get; }
+
+        bool HasValidSourceDocument { get; }
+
+
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
 
         IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
 
-        void RemoveTranslation(long id);
-
+        bool HasError { get; }
     }
 }

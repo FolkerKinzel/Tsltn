@@ -66,7 +66,7 @@ csharp_prefer_braces = true:suggestion
 #Style - expression bodied member options
 
 #prefer block bodies for accessors
-csharp_style_expression_bodied_accessors = false:suggestion
+csharp_style_expression_bodied_accessors = when_on_single_line:suggestion
 #prefer expression-bodied members for methods
 csharp_style_expression_bodied_methods = true:suggestion
 #prefer expression-bodied members for properties

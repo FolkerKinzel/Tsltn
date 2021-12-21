@@ -81,10 +81,17 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private bool GetTsltnOutFileName(ref string fileName)
         {
-            if (FileName.Length == 0 && CurrentDocument?.SourceDocumentFileName != null)
+            IFileAccess? doc = CurrentDocument;
+
+            if (doc is null)
+            {
+                return false;
+            }
+
+            if (doc.FileName.Length == 0)
             {
                 OnRefreshData();
-                fileName = $"{Path.GetFileNameWithoutExtension(CurrentDocument.SourceDocumentFileName)}.{CurrentDocument.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
+                fileName = $"{Path.GetFileNameWithoutExtension(doc.SourceDocumentFileName)}.{doc.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
             }
 
             var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
@@ -95,7 +102,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
-                InitialDirectory = FileName.Length != 0 ? Path.GetDirectoryName(FileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                InitialDirectory = doc.FileName.Length != 0 ? Path.GetDirectoryName(doc.FileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 DefaultExt = TsltnFileExtension,
                 DereferenceLinks = true
             };
@@ -171,6 +178,8 @@ namespace FolkerKinzel.Tsltn.Controllers
                     return false;
                 }
             }
+
+            doc.FileName = fileName;
             
             OnRefreshData();
 
@@ -179,17 +188,17 @@ namespace FolkerKinzel.Tsltn.Controllers
             try
             {
                 await Task.Run(() => _doc.Save(fileName)).ConfigureAwait(false);
-                OnNewFileName(FileName);
+                //OnNewFileName(doc.FileName);
             }
             catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                OnPropertyChanged(nameof(FileName));
+                OnPropertyChanged(nameof(doc.FileName));
 
                 return false;
             }
 
-            OnPropertyChanged(nameof(FileName));
+            OnPropertyChanged(nameof(doc.FileName));
             return true;
         }
 

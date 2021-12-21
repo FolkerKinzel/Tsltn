@@ -32,7 +32,7 @@ namespace FolkerKinzel.Tsltn.Models.Intls
 
         public static XmlNavigator? Load(string? xmlFilePath)
         {
-            if (xmlFilePath is null || !File.Exists(xmlFilePath))
+            if (!File.Exists(xmlFilePath))
             {
                 return null;
             }

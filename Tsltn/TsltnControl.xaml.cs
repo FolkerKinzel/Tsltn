@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using FolkerKinzel.Tsltn.Controllers;
 using FolkerKinzel.Tsltn.Models;
 using Tsltn.Resources;
 
@@ -29,7 +30,6 @@ namespace Tsltn
         private readonly MainWindow _owner;
         private INode _node;
         private string _translation = "";
-        private readonly IDocument _doc;
         private bool _hasTranslation;
         private string? _sourceLanguage;
         private string? _targetLanguage;
@@ -54,15 +54,19 @@ namespace Tsltn
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Argumentausnahmen korrekt instanziieren", Justification = "<Ausstehend>")]
         public TsltnControl(MainWindow owner, IDocument doc)
         {
-            if (owner is null || doc?.FirstNode is null)
-            {
-                throw new ArgumentNullException();
-            }
+            //if (owner is null || !doc.HasValidSourceDocument)
+            //{
+            //    throw new ArgumentNullException();
+            //}
+
+            Debug.Assert(owner != null);
+            Debug.Assert(doc != null);
+            Debug.Assert(doc.HasValidSourceDocument);
 
             //this.DataContext = this;
 
             _owner = owner;
-            _doc = doc;
+            Document = doc;
             _node = doc.FirstNode!;
 
             if (_node.Translation != null)
@@ -75,7 +79,7 @@ namespace Tsltn
 
             NavCtrl.NavigationRequested += NavCtrl_NavigationRequested;
 
-            _owner.TranslationErrors += MainWindow_TranslationErrors;
+            _owner.TranslationError += MainWindow_TranslationErrors;
 
             DataObject.AddPastingHandler(_tbTranslation, TbTranslation_Paste);
 
@@ -84,6 +88,10 @@ namespace Tsltn
             _btnNextToTranslate.ToolTip = $"{Res.ShiftKey}+{Res.AltKey}+{Res.RightKey}";
             _btnFirstNode.ToolTip = $"{Res.AltKey}+{Res.Pos1Key}";
         }
+
+
+        public IDocument Document { get; }
+
 
 
         public bool HasTranslation
@@ -170,9 +178,9 @@ namespace Tsltn
         }
 
 
-        internal void RefreshSourceFileName() => OnPropertyChanged(nameof(SourceFileName));
+        //internal void RefreshSourceFileName() => OnPropertyChanged(nameof(SourceFileName));
 
-        public string? SourceFileName => _doc.SourceDocumentFileName;
+        public string? SourceFileName => Document.SourceDocumentFileName;
 
         public INode CurrentNode
         {
@@ -199,18 +207,18 @@ namespace Tsltn
 
             if (!Validation.GetHasError(_tbSourceLanguage))
             {
-                if (SourceLanguage != _doc.SourceLanguage)
+                if (SourceLanguage != Document.SourceLanguage)
                 {
-                    _doc.SourceLanguage = SourceLanguage;
+                    Document.SourceLanguage = SourceLanguage;
                 }
             }
 
 
             if (!Validation.GetHasError(_tbTargetLanguage))
             {
-                if (TargetLanguage != _doc.TargetLanguage)
+                if (TargetLanguage != Document.TargetLanguage)
                 {
-                    _doc.TargetLanguage = TargetLanguage;
+                    Document.TargetLanguage = TargetLanguage;
                 }
             }
         }
@@ -219,8 +227,8 @@ namespace Tsltn
 
         private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
         {
-            SourceLanguage = _doc.SourceLanguage;
-            TargetLanguage = _doc.TargetLanguage;
+            SourceLanguage = Document.SourceLanguage;
+            TargetLanguage = Document.TargetLanguage;
 
 
             // Möglichst nicht INNERHALB des Loaded-Eventhandlers auf den VisualTree
@@ -242,17 +250,17 @@ namespace Tsltn
 
             await Task.WhenAll(_tasks).ConfigureAwait(false);
 
-            _owner.TranslationErrors -= MainWindow_TranslationErrors;
+            _owner.TranslationError -= MainWindow_TranslationErrors;
             DataObject.RemovePastingHandler(_tbTranslation, TbTranslation_Paste);
 
             Dispose();
         }
 
-        private void MainWindow_TranslationErrors(object? sender, TranslationErrorsEventArgs e)
+        private void MainWindow_TranslationErrors(object? sender, DataErrorEventArgs e)
         {
             if (e.Errors.Any())
             {
-                this.Errors.Clear();
+                Errors.Clear();
 
                 foreach (DataError error in e.Errors)
                 {
@@ -311,7 +319,7 @@ namespace Tsltn
             {
                 if (tb.Name == nameof(_tbSourceLanguage))
                 {
-                    Errors.Remove(InvalidSourceLanguage);
+                    _ = Errors.Remove(InvalidSourceLanguage);
 
                     if (Validation.GetHasError(_tbSourceLanguage))
                     {
@@ -320,7 +328,7 @@ namespace Tsltn
                 }
                 else
                 {
-                    Errors.Remove(InvalidTargetLanguage);
+                    _ = Errors.Remove(InvalidTargetLanguage);
 
                     if (Validation.GetHasError(_tbTargetLanguage))
                     {
@@ -333,7 +341,7 @@ namespace Tsltn
 
         private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            INode? target = _doc.FirstNode?.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
+            INode? target = Document.FirstNode?.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
 
             if (!(target is null))
             {
@@ -360,7 +368,7 @@ namespace Tsltn
         private void TbTranslation_Paste(object sender, DataObjectPastingEventArgs e)
         {
             e.CancelCommand();
-            _sb.Clear().Append(Clipboard.GetText())
+            _ = _sb.Clear().Append(Clipboard.GetText())
                 .Replace("<c> null </c>", "<c>null</c>")
                 .Replace("<c> true </c>", "<c>true</c>")
                 .Replace("<c> false </c>", "<c>false</c>");
@@ -431,7 +439,7 @@ namespace Tsltn
 
         private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode.HasAncestor;
 
-        private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(_doc.FirstNode);
+        private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(Document.FirstNode);
 
         private async void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -460,7 +468,7 @@ namespace Tsltn
 
         private void BrowseAll_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var allWnd = new BrowseAllTranslationsWindow(_doc.GetAllTranslations());
+            var allWnd = new BrowseAllTranslationsWindow(Document.GetAllTranslations());
 
             if (true == allWnd.ShowDialog(_owner))
             {

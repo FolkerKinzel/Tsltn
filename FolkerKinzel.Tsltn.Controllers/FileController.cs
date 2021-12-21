@@ -112,7 +112,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<bool> SaveDocumentAsync() => DoSaveTsltnAsync(_doc?.FileName);
+        public Task<bool> SaveDocumentAsync() => DoSaveTsltnAsync(CurrentDocument?.FileName);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
@@ -250,48 +250,61 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SuspendSourceFileObservation() => _watcher.RaiseEvents = false;
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public void SuspendSourceFileObservation() => _watcher.RaiseEvents = false;
 
-        public void ResumeSourceFileObservation()
-        {
-            if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
-            {
-                FileWatcher_Reload(this, EventArgs.Empty);
-            }
-            _watcher.RaiseEvents = true;
-        }
+        //public void ResumeSourceFileObservation()
+        //{
+        //    if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
+        //    {
+        //        FileWatcher_Reload(this, EventArgs.Empty);
+        //    }
+        //    _watcher.RaiseEvents = true;
+        //}
 
         [SuppressMessage("Design", "CA1031:Keine allgemeinen Ausnahmetypen abfangen", Justification = "<Ausstehend>")]
-        public async Task<(IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations)> TranslateAsync()
+        public async Task TranslateAsync()
         {
-            //await _doc.WaitAllTasks().ConfigureAwait(false);
-
             IFileAccess? doc = CurrentDocument;
             if (doc is null || !await DoSaveTsltnAsync(doc.FileName).ConfigureAwait(false))
             {
-                return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
+                return;
             }
 
             if (GetXmlOutFileName(out string? fileName))
             {
+                (IList<DataError> Errors, IList<KeyValuePair<long, string>> UnusedTranslations) results;
                 try
                 {
-                    return await Task.Run(() =>
-                    {
-                        doc.Translate(fileName, out List<DataError> errors, out List<KeyValuePair<long, string>> unusedTranslations);
-                        return (Errors: errors, UnusedTranslations: unusedTranslations);
-                    }).ConfigureAwait(false);
+                    results = await Task.Run(() =>  doc.Translate(fileName)).ConfigureAwait(true);
                 }
                 catch (Exception e)
                 {
                     OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+                    return;
                 }//catch
+
+                if(results.Errors.Count != 0)
+                {
+                    TranslationError?.Invoke(this, new DataErrorEventArgs(results.Errors));
+                }
+
+                if(results.UnusedTranslations.Count != 0)
+                {
+                    var args = new UnusedTranslationEventArgs(results.UnusedTranslations);
+                    UnusedTranslations?.Invoke(this, args);
+
+                    foreach (long id in args.TranslationsToRemove)
+                    {
+                        doc.Translations.RemoveTranslation(id);
+                    }
+                }
+
+
+
             }//if
-
-            return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
-
         }
+
 
         public Task ChangeSourceDocumentAsync(string? newSourceDocument)
         {

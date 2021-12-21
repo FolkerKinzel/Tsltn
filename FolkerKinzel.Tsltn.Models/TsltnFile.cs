@@ -16,12 +16,12 @@ using System.ComponentModel;
 namespace FolkerKinzel.Tsltn.Models
 {
     [XmlRoot("Tsltn")]
-    public sealed class TsltnFile : IXmlSerializable, INotifyPropertyChanged
+    public sealed class TsltnFile : IXmlSerializable //, INotifyPropertyChanged
     {
         private const string FILE_VERSION = "1.0";
 
-        internal const string TRANSLATION_XML_NAME = "T";
-        internal const string ID = "ID";
+        private const string TRANSLATION_XML_NAME = "T";
+        private const string ID = "ID";
 
 
         private const string FILE_VERSION_XML_STRING = "Version";
@@ -37,8 +37,8 @@ namespace FolkerKinzel.Tsltn.Models
         private string? _targetLanguage;
         private bool _changed;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        //public event PropertyChangedEventHandler? PropertyChanged;
+        //private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace FolkerKinzel.Tsltn.Models
                 // Der relative Pfad wird beim Speichern wieder in einen solchen 
                 // umgewandelt. In der Anwendung wird nur der absolute Pfad benutzt.
 
-                _sourceDocumentRelativePath = _sourceDocumentAbsolutePath = value;
+                _sourceDocumentRelativePath = _sourceDocumentAbsolutePath = string.IsNullOrWhiteSpace(value) ? null : value;
                 //OnPropertyChanged();
                 Changed = true;
             }
@@ -69,7 +69,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 _sourceLanguage = value;
                 //OnPropertyChanged();
-                this.Changed = true;
+                Changed = true;
             }
         }
 
@@ -81,7 +81,7 @@ namespace FolkerKinzel.Tsltn.Models
             {
                 _targetLanguage = value;
                 //OnPropertyChanged();
-                this.Changed = true;
+                Changed = true;
             }
         }
 
@@ -96,25 +96,25 @@ namespace FolkerKinzel.Tsltn.Models
             private set
             {
                 _changed = value;
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
 
 
         internal void SetTranslation(long nodeID, string? transl)
         {
-            lock (this._translations)
+            lock (_translations)
             {
                 if (transl is null)
                 {
-                    if (this._translations.Remove(nodeID))
+                    if (_translations.Remove(nodeID))
                     {
                         Changed = true;
                     }
                 }
                 else
                 {
-                    this._translations[nodeID] = transl;
+                    _translations[nodeID] = transl;
                     Changed = true;
                 }
             }
@@ -124,7 +124,7 @@ namespace FolkerKinzel.Tsltn.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
         {
-            lock (this._translations)
+            lock (_translations)
             {
                 return _translations.TryGetValue(nodeID, out transl);
             }
@@ -133,7 +133,7 @@ namespace FolkerKinzel.Tsltn.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool HasTranslation(long nodeID)
         {
-            lock (this._translations) 
+            lock (_translations) 
             { 
                 return _translations.ContainsKey(nodeID); 
             }
@@ -142,17 +142,17 @@ namespace FolkerKinzel.Tsltn.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal IEnumerable<KeyValuePair<long, string>> GetAllTranslations()
         {
-            lock (this._translations)
+            lock (_translations)
             {
-                return this._translations.ToArray();
+                return _translations.ToArray();
             }
         }
 
         internal void Save(string? tsltnFileName)
         {
-            if (Path.IsPathRooted(this._sourceDocumentRelativePath))
+            if (Path.IsPathRooted(_sourceDocumentRelativePath))
             {
-                this._sourceDocumentRelativePath = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), this._sourceDocumentRelativePath);
+                _sourceDocumentRelativePath = Path.GetRelativePath(Path.GetDirectoryName(tsltnFileName), _sourceDocumentRelativePath);
             }
 
             var settings = new XmlWriterSettings
@@ -166,7 +166,7 @@ namespace FolkerKinzel.Tsltn.Models
             var serializer = new XmlSerializer(typeof(TsltnFile));
             serializer.Serialize(writer, this);
            
-            this.Changed = false;
+            Changed = false;
         }
 
         internal static TsltnFile Load(string tsltnFileName)
@@ -189,27 +189,24 @@ namespace FolkerKinzel.Tsltn.Models
 
         #region IXmlSerializable
 
-        public XmlSchema? GetSchema()
-        {
-            return null;
-        }
+        public XmlSchema? GetSchema() => null;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Argumente von öffentlichen Methoden validieren", Justification = "<Ausstehend>")]
         public void ReadXml(XmlReader reader)
         {
-            reader.MoveToContent();
+            _ = reader.MoveToContent();
 
             _sourceDocumentRelativePath = reader.GetAttribute(SOURCE_FILE);
 
-            if(_sourceDocumentRelativePath is null)
-            {
-                throw new XmlException("Source document filename is missing.");
-            }
+            //if(_sourceDocumentRelativePath is null)
+            //{
+            //    throw new XmlException("Source document filename is missing.");
+            //}
 
             _sourceLanguage = reader.GetAttribute(SOURCE_LANGUAGE);
             _targetLanguage = reader.GetAttribute(TARGET_LANGUAGE);
 
-            reader.Read();
+            _ = reader.Read();
 
             while (!reader.EOF && reader.ReadState == ReadState.Interactive)
             {
@@ -222,22 +219,22 @@ namespace FolkerKinzel.Tsltn.Models
                                 if (XNode.ReadFrom(reader) is XElement el)
                                 {
                                     long id = long.Parse(el.Attribute(ID).Value, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                                    this.SetTranslation(id, el.Value);
+                                    SetTranslation(id, el.Value);
                                 }
                             }
                             break;
                         default:
-                            reader.Read();
+                            _ = reader.Read();
                             break;
                     }
                 }
                 else
                 {
-                    reader.Read();
+                    _ = reader.Read();
                 }
             }//while
 
-            this.Changed = false;
+            Changed = false;
         }
 
 
@@ -260,7 +257,7 @@ namespace FolkerKinzel.Tsltn.Models
                 writer.WriteAttributeString(TARGET_LANGUAGE, targetLanguage);
             }
 
-            lock (this._translations)
+            lock (_translations)
             {
                 foreach (KeyValuePair<long, string> kvp in _translations)
                 {

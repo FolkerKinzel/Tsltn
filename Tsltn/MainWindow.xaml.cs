@@ -30,7 +30,7 @@ namespace Tsltn
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event EventHandler<TranslationErrorsEventArgs>? TranslationErrors;
+        public event EventHandler<DataErrorEventArgs>? TranslationError;
 
         private readonly IRecentFilesMenu _recentFilesMenu;
         private bool _isCommandEnabled = true;
@@ -78,12 +78,16 @@ namespace Tsltn
             Controller.RefreshData += FileController_RefreshData;
             Controller.ShowFileDialog += FileController_ShowFileDialog;
             Controller.BadFileName += FileController_BadFileName;
+            Controller.TranslationError += FileController_TranslationError;
+            Controller.UnusedTranslations += FileController_UnusedTranslations;
+
             _recentFilesMenu.Initialize(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
 
             _ = ProcessCommandLineArgs();
         }
 
+        
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -120,7 +124,7 @@ namespace Tsltn
             if (e.PropertyName == nameof(Controller.CurrentDocument))
             {
                 IDocument? doc = Controller.CurrentDocument;
-                if (doc != null)
+                if (doc != null && doc.HasValidSourceDocument)
                 {
                     var cntr = new TsltnControl(this, doc);
                     _ccContent.Content = cntr;
@@ -164,7 +168,7 @@ namespace Tsltn
         }
 
 
-        private void miQuit_Click(object sender, RoutedEventArgs e) => Close();
+        private void MiQuit_Click(object sender, RoutedEventArgs e) => Close();
 
 
         private void Info_Click(object sender, RoutedEventArgs e)
@@ -229,10 +233,7 @@ namespace Tsltn
             _ = Controller.LoadDocumentAsync(null);
         }
 
-        private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = IsCommandEnabled && Controller.CurrentDocument?.SourceDocumentFileName != null;
-        }
+        private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && Controller.CurrentDocument?.SourceDocumentFileName != null;
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -242,10 +243,7 @@ namespace Tsltn
             _ = Controller.CloseDocumentAsync();
         }
 
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = IsCommandEnabled && (Controller.CurrentDocument?.Changed ?? false);
-        }
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && (Controller.CurrentDocument?.Changed ?? false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private async void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
@@ -268,34 +266,32 @@ namespace Tsltn
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             IsCommandEnabled = false;
-            Controller.SuspendSourceFileObservation();
             e.Handled = true;
 
-            (IEnumerable<DataError> Errors, IEnumerable<KeyValuePair<long, string>> UnusedTranslations) = await Controller.TranslateAsync().ConfigureAwait(true);
+            await Controller.TranslateAsync().ConfigureAwait(true);
 
             IsCommandEnabled = true;
+        }
 
-            OnTranslationErrors(Errors);
+        private void FileController_TranslationError(object? sender, DataErrorEventArgs e) => TranslationError?.Invoke(this, e);
 
+        private void FileController_UnusedTranslations(object? sender, UnusedTranslationEventArgs e)
+        {
+            var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(Controller.CurrentDocument!.FileName), e.UnusedTranslations);
 
-            if (UnusedTranslations.Any())
+            if (true == wnd.ShowDialog(this))
             {
-                var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(Controller.CurrentDocument!.FileName), UnusedTranslations);
-
-                if (true == wnd.ShowDialog(this))
+                foreach (UnusedTranslationUserControl cntr in wnd.Controls)
                 {
-                    foreach (UnusedTranslationUserControl cntr in wnd.Controls)
+                    if (cntr.Remove)
                     {
-                        if (cntr.Remove)
-                        {
-                            Controller.CurrentDocument?.RemoveTranslation(cntr.Kvp.Key);
-                        }
+                        e.TranslationsToRemove.Add(cntr.Kvp.Key);
                     }
                 }
             }
-
-            Controller.ResumeSourceFileObservation();
         }
+
+        
 
         private async void ChangeSourceDocument_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
@@ -325,10 +321,10 @@ namespace Tsltn
             {
                 await Controller.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(true);
 
-                if (_ccContent.Content is TsltnControl control)
-                {
-                    control.RefreshSourceFileName();
-                }
+                //if (_ccContent.Content is TsltnControl control)
+                //{
+                //    control.RefreshSourceFileName();
+                //}
             }
         }
 
@@ -337,7 +333,7 @@ namespace Tsltn
 
         private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-        private void OnTranslationErrors(IEnumerable<DataError> errors) => TranslationErrors?.Invoke(this, new TranslationErrorsEventArgs(errors));
+        //private void OnTranslationErrors(IEnumerable<DataError> errors) => TranslationErrors?.Invoke(this, new TranslationErrorsEventArgs(errors));
 
 
 

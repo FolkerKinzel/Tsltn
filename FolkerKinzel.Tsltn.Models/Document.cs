@@ -17,14 +17,18 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public sealed class Document : IDocument, IFileAccess, ITranslation, IDisposable
+    public sealed class Document : IDocument, IFileAccess, IDisposable
     {
         private readonly TsltnFile _tsltn;
-        private readonly FileWatcher _fileWatcher = new FileWatcher();
+        private readonly FileWatcher? _fileWatcher;
 
         private string _fileName = "";
+        private Task? _reloadSourceDocumentTask;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        public event EventHandler<ErrorEventArgs>? FileWatcherFailed;
+        public event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
+        public event EventHandler<FileSystemEventArgs>? SourceDocumentChanged;
 
 
         /// <summary>
@@ -34,21 +38,67 @@ namespace FolkerKinzel.Tsltn.Models
         private Document(TsltnFile tsltnFile)
         {
             _tsltn = tsltnFile;
-            _tsltn.PropertyChanged += Tsltn_PropertyChanged;
+            //_tsltn.PropertyChanged += Tsltn_PropertyChanged;
+
+            Translations = new TranslationsController(_tsltn);
 
             Navigator = XmlNavigator.Load(tsltnFile.SourceDocumentFileName);
             FirstNode = GetFirstNode();
 
             if(HasValidSourceDocument)
             {
-                _fileWatcher.WatchedFile = SourceDocumentFileName;
+                _fileWatcher = new FileWatcher(SourceDocumentFileName);
+
+                _fileWatcher.SourceDocumentChanged += FileWatcher_SourceDocumentChanged;
+                _fileWatcher.SourceDocumentMoved += FileWatcher_SourceDocumentMoved;
+                _fileWatcher.SourceDocumentDeleted += FileWatcher_SourceDocumentDeleted;
+                _fileWatcher.FileWatcherError += FileWatcher_FileWatcherError;
             }
+        }
+
+        private void FileWatcher_FileWatcherError(object sender, ErrorEventArgs e)
+        {
+            if (!HasError)
+            {
+                HasError = true;
+                _fileWatcher?.Dispose();
+                FileWatcherFailed?.Invoke(this, e);
+            }
+        }
+
+        private void FileWatcher_SourceDocumentDeleted(object sender, FileSystemEventArgs e)
+        {
+            _fileWatcher?.Dispose();
+            SourceDocumentFileName = null;
+            SourceDocumentDeleted?.Invoke(this, e);
+        }
+
+        private void FileWatcher_SourceDocumentMoved(object sender, RenamedEventArgs e)
+        {
+            SourceDocumentFileName = e.FullPath;
+        }
+
+        private void FileWatcher_SourceDocumentChanged(object sender, FileSystemEventArgs e)
+        {
+            if(_reloadSourceDocumentTask?.Status == TaskStatus.Running)
+            {
+                return;
+            }
+
+            _reloadSourceDocumentTask = Task.Run(() => SourceDocumentChanged?.Invoke(this, e));
         }
 
         public bool HasSourceDocument => Navigator != null;
 
-
+        
         public bool HasValidSourceDocument => FirstNode != null;
+
+        public TranslationsController Translations { get; }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IEnumerable<KeyValuePair<long, string>> IDocument.GetAllTranslations() 
+            => Translations.GetAllTranslations();
+
 
         public XmlNavigator? Navigator { get; }
 
@@ -58,12 +108,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         public string FileName
         {
-            get
-            {
-
-
-                return _fileName;
-            }
+            get => _fileName;
 
             set
             {
@@ -74,25 +119,18 @@ namespace FolkerKinzel.Tsltn.Models
 
         public string? SourceDocumentFileName
         {
-            get
-            {
-                return _tsltn.SourceDocumentFileName;
-            }
+            get => _tsltn.SourceDocumentFileName;
 
             set
             {
                 _tsltn.SourceDocumentFileName = value;
-                _fileWatcher.WatchedFile = value;
                 OnPropertyChanged();
             }
         }
 
         public string? SourceLanguage
         {
-            get
-            {
-                return _tsltn?.SourceLanguage;
-            }
+            get => _tsltn?.SourceLanguage;
 
             set
             {
@@ -111,10 +149,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         public string? TargetLanguage
         {
-            get
-            {
-                return _tsltn?.TargetLanguage;
-            }
+            get => _tsltn?.TargetLanguage;
 
             set
             {
@@ -130,38 +165,9 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
+        public bool HasError { get; private set; }
 
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => _tsltn.GetAllTranslations();
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveTranslation(long id) => SetTranslation(id, null);
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetTranslation(long nodeID, string? transl) => _tsltn.SetTranslation(nodeID, transl);
-
-
-        public bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
-        {
-            if (_tsltn is null)
-            {
-                transl = null;
-                return false;
-            }
-            else
-            {
-                return _tsltn.TryGetTranslation(nodeID, out transl);
-            }
-        }
-
-
-        public bool GetHasTranslation(long id) => _tsltn.HasTranslation(id);
-
-
-        public void Dispose() => _fileWatcher.Dispose();
+        public void Dispose() => _fileWatcher?.Dispose();
 
 
         public static Document Create(string sourceDocumentFileName)
@@ -182,21 +188,6 @@ namespace FolkerKinzel.Tsltn.Models
         }
 
 
-        //public bool ReloadSourceDocument(string fileName)
-        //{
-        //    Debug.Assert(_tsltn != null);
-
-        //    if(LoadSourceDocument(fileName))
-        //    {
-        //        _tsltn.SourceDocumentFileName = fileName;
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
-
-
         public void Save(string tsltnFileName)
         {
             if (tsltnFileName is null)
@@ -210,30 +201,26 @@ namespace FolkerKinzel.Tsltn.Models
 
 
 
-        public void Translate(
-            string outFileName,
-            out List<DataError> errors,
-            out List<KeyValuePair<long, string>> unusedTranslations)
+        public (IList<DataError> Errors, IList<KeyValuePair<long, string>> UnusedTranslations) Translate(string outFileName)
         {
-            errors = new List<DataError>();
-
             if (Navigator is null || FirstNode is null)
             {
-                unusedTranslations = new List<KeyValuePair<long, string>>();
-                return;
+                return (Array.Empty<DataError>(), Array.Empty<KeyValuePair<long, string>>());
             }
+
 
             var nav = (XmlNavigator)Navigator.Clone();
             XElement? node = nav.GetFirstXElement();
 
             var used = new List<KeyValuePair<long, string>>();
+            var errors = new List<DataError>();
 
             while (node != null)
             {
                 try
                 {
                     long nodePathHash = nav.GetNodeID(node);
-                    KeyValuePair<long, string>? trans = TryGetTranslation(nodePathHash, out string? manualTransl)
+                    KeyValuePair<long, string>? trans = Translations.TryGetTranslation(nodePathHash, out string? manualTransl)
                                                             ? new KeyValuePair<long, string>(nodePathHash, manualTransl)
                                                             : (KeyValuePair<long, string>?)null;
 
@@ -245,14 +232,16 @@ namespace FolkerKinzel.Tsltn.Models
                 }
                 catch (XmlException e)
                 {
-                    errors.Add(new XmlDataError(new Node(node, this, nav, new Node(nav.GetFirstXElement()!, this, nav, null)), e.Message));
+                    errors.Add(new XmlDataError(new Node(node, Translations, nav, new Node(nav.GetFirstXElement()!, Translations, nav, null)), e.Message));
                 }
                 node = nav.GetNextXElement(node);
             }
 
             nav.SaveXml(outFileName);
 
-            unusedTranslations = GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
+            var unusedTranslations = Translations.GetAllTranslations().Except(used, new KeyValuePairComparer()).ToList();
+
+            return (errors, unusedTranslations);
 
             ///////////////////////////////////////
 
@@ -295,13 +284,6 @@ namespace FolkerKinzel.Tsltn.Models
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 
-        private void Tsltn_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(TsltnFile.Changed))
-            {
-                OnPropertyChanged(nameof(Changed));
-            }
-        }
 
         private Node? GetFirstNode()
         {
@@ -311,8 +293,9 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
             XElement? firstXElement = Navigator.GetFirstXElement();
-            return firstXElement is null ? null : new Node(firstXElement, this, Navigator, null);
+            return firstXElement is null ? null : new Node(firstXElement, Translations, Navigator, null);
         }
+
 
 
         #endregion

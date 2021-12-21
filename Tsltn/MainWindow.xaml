@@ -122,7 +122,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Click="miQuit_Click" Header="{x:Static r:Res.QuitMenuItem}" Name="miQuit">
+                <MenuItem Click="MiQuit_Click" Header="{x:Static r:Res.QuitMenuItem}" Name="miQuit">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="pics/ShutDown_16x.png"/>
                     </MenuItem.Icon>

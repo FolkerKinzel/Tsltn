@@ -15,8 +15,10 @@ namespace FolkerKinzel.Tsltn.Controllers
         public event EventHandler<MessageEventArgs>? Message;
         public event EventHandler? RefreshData;
         //public event EventHandler<HasContentChangedEventArgs>? HasContentChanged;
-        public event EventHandler<NewFileNameEventArgs>? NewFileName;
-        public event EventHandler<BadFileNameEventArgs>? BadFileName;
+        //public event EventHandler<NewFileNameEventArgs>? NewFileName;
+        //public event EventHandler<BadFileNameEventArgs>? BadFileName;
+        public event EventHandler<DataErrorEventArgs>? TranslationError;
+        public event EventHandler<UnusedTranslationEventArgs>? UnusedTranslations;
 
 
         private void OnPropertyChanged([CallerMemberName] string propName = "" ) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
