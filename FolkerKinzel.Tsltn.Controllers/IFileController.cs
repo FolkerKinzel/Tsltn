@@ -12,7 +12,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         //event EventHandler<HasContentChangedEventArgs>? HasContentChanged;
         event EventHandler<MessageEventArgs>? Message;
-        //event EventHandler<NewFileNameEventArgs>? NewFileName;
+        event EventHandler<NewFileNameEventArgs>? NewFileName;
         public event EventHandler<BadFileNameEventArgs>? BadFileName;
         event PropertyChangedEventHandler? PropertyChanged;
         event EventHandler? RefreshData;

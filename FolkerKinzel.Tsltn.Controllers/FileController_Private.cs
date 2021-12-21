@@ -155,9 +155,16 @@ namespace FolkerKinzel.Tsltn.Controllers
         {
             Debug.Assert(_doc != null);
 
+            IFileAccess? doc = CurrentDocument;
+
+            if(doc is null)
+            {
+                return true;
+            }
+
             if (fileName is null)
             {
-                fileName = FileName;
+                fileName = doc.FileName;
 
                 if (!GetTsltnOutFileName(ref fileName))
                 {

@@ -73,11 +73,11 @@ namespace Tsltn
         {
             //Controller.HasContentChanged += FileController_HasContentChanged;
             Controller.Message += FileController_Message;
-            //Controller.NewFileName += FileController_NewFileName;
+            Controller.NewFileName += FileController_NewFileName;
             Controller.PropertyChanged += FileController_PropertyChanged;
             Controller.RefreshData += FileController_RefreshData;
             Controller.ShowFileDialog += FileController_ShowFileDialog;
-            //Controller.BadFileName += FileController_BadFileName;
+            Controller.BadFileName += FileController_BadFileName;
             _recentFilesMenu.Initialize(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
 
@@ -102,9 +102,9 @@ namespace Tsltn
 
 
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
-        //    => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
+            => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
 
         private void FileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e) =>
             Dispatcher.Invoke(() => e.ShowDialog(this), DispatcherPriority.Send);
@@ -252,7 +252,7 @@ namespace Tsltn
         {
             e.Handled = true;
             IsCommandEnabled = false;
-            await Controller.SaveDocumentAsync().ConfigureAwait(false);
+            _ = await Controller.SaveDocumentAsync().ConfigureAwait(false);
             IsCommandEnabled = true;
         }
 
@@ -261,7 +261,7 @@ namespace Tsltn
         {
             e.Handled = true;
             IsCommandEnabled = false;
-            await Controller.SaveAsTsltnAsync().ConfigureAwait(false);
+            _ = await Controller.SaveAsTsltnAsync().ConfigureAwait(false);
             IsCommandEnabled = true;
         }
 

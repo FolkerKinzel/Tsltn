@@ -15,7 +15,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         public event EventHandler<MessageEventArgs>? Message;
         public event EventHandler? RefreshData;
         //public event EventHandler<HasContentChangedEventArgs>? HasContentChanged;
-        //public event EventHandler<NewFileNameEventArgs>? NewFileName;
+        public event EventHandler<NewFileNameEventArgs>? NewFileName;
         public event EventHandler<BadFileNameEventArgs>? BadFileName;
 
 
@@ -25,7 +25,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private void OnRefreshData() => RefreshData?.Invoke(this, EventArgs.Empty);
 
-        //private void OnNewFileName(string fileName) => this.NewFileName?.Invoke(this, new NewFileNameEventArgs(fileName));
+        private void OnNewFileName(string fileName) => this.NewFileName?.Invoke(this, new NewFileNameEventArgs(fileName));
 
         private void OnBadFileName(string fileName) => this.BadFileName?.Invoke(this, new BadFileNameEventArgs(fileName));
 
