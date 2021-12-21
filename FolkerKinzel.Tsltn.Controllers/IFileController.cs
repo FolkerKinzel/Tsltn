@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FolkerKinzel.Tsltn.Controllers
@@ -17,15 +18,17 @@ namespace FolkerKinzel.Tsltn.Controllers
         event PropertyChangedEventHandler? PropertyChanged;
         event EventHandler? RefreshData;
         event EventHandler<ShowFileDialogEventArgs>? ShowFileDialog;
-        event EventHandler<DataErrorEventArgs> TranslationError;
-        event EventHandler<UnusedTranslationEventArgs> UnusedTranslations;
+        event EventHandler<DataErrorEventArgs>? TranslationError;
+        event EventHandler<UnusedTranslationEventArgs>? UnusedTranslations;
+        event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
+
 
         IDocument? CurrentDocument { get; }
 
         Task<bool> CloseDocumentAsync();
         Task NewDocumentAsync();
         Task OpenTsltnFromCommandLineAsync(string commandLineArg);
-        Task LoadDocumentAsync(string? fileName);
+        Task<bool> LoadDocumentAsync(string? fileName);
         Task<bool> SaveDocumentAsync();
         Task<bool> SaveAsTsltnAsync();
         Task TranslateAsync();

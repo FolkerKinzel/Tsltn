@@ -126,6 +126,9 @@
   <data name="FileWasChanged" xml:space="preserve">
     <value>The file "{0}" was changed.{1}Do you want to save the changes?</value>
   </data>
+  <data name="FileWatcherFailed" xml:space="preserve">
+    <value>An error occurred while observing the XML source file.{0}Try to save your work and reload the current document.</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>

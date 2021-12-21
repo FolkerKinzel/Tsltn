@@ -21,7 +21,7 @@ namespace Tsltn
     /// </summary>
     public partial class SelectUnusedTranslationsWindow : Window //, INotifyPropertyChanged
     {
-        public SelectUnusedTranslationsWindow(string tsltnFileName, IEnumerable<KeyValuePair<long, string>> unusedTranslations)
+        public SelectUnusedTranslationsWindow(string? tsltnFileName, IEnumerable<KeyValuePair<long, string>> unusedTranslations)
         {
             if(unusedTranslations is null)
             {

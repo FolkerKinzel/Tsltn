@@ -73,13 +73,14 @@ namespace Tsltn
         {
             //Controller.HasContentChanged += FileController_HasContentChanged;
             Controller.Message += FileController_Message;
-            Controller.NewFileName += FileController_NewFileName;
+            //Controller.NewFileName += FileController_NewFileName;
             Controller.PropertyChanged += FileController_PropertyChanged;
             Controller.RefreshData += FileController_RefreshData;
             Controller.ShowFileDialog += FileController_ShowFileDialog;
-            Controller.BadFileName += FileController_BadFileName;
+            //Controller.BadFileName += FileController_BadFileName;
             Controller.TranslationError += FileController_TranslationError;
             Controller.UnusedTranslations += FileController_UnusedTranslations;
+            Controller.SourceDocumentDeleted += FileController_SourceDocumentDeleted;
 
             _recentFilesMenu.Initialize(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
@@ -87,7 +88,23 @@ namespace Tsltn
             _ = ProcessCommandLineArgs();
         }
 
-        
+        private void FileController_SourceDocumentDeleted(object? sender, FileSystemEventArgs e)
+        {
+            _ = Dispatcher.BeginInvoke(() =>
+              {
+                  MessageBox.Show(
+                      this,
+                      string.Format(CultureInfo.CurrentCulture, "The XML documentation file {0}\"{1}\"{0} has been deleted!", Environment.NewLine, e.FullPath),
+                      App.ProgramName,
+                      MessageBoxButton.OK,
+                      MessageBoxImage.Warning,
+                      MessageBoxResult.OK);
+                  ChangeSourceDocument_ExecutedAsync(this, null!);
+
+
+              }
+            , DispatcherPriority.Send);
+        }
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -106,9 +123,9 @@ namespace Tsltn
 
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
-            => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
+        //    => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
 
         private void FileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e) =>
             Dispatcher.Invoke(() => e.ShowDialog(this), DispatcherPriority.Send);
@@ -124,17 +141,22 @@ namespace Tsltn
             if (e.PropertyName == nameof(Controller.CurrentDocument))
             {
                 IDocument? doc = Controller.CurrentDocument;
-                if (doc != null && doc.HasValidSourceDocument)
+                if (doc != null)
                 {
-                    var cntr = new TsltnControl(this, doc);
-                    _ccContent.Content = cntr;
-                    _ = cntr._tbOriginal.Focus();
+                    doc.PropertyChanged += Doc_PropertyChanged;
 
-                    string fileName = doc.FileName;
-
-                    if(!string.IsNullOrEmpty(fileName))
+                    if (doc.HasValidSourceDocument)
                     {
-                        _tasks.Add(_recentFilesMenu.AddRecentFileAsync(doc.FileName));
+                        var cntr = new TsltnControl(this, doc);
+                        _ccContent.Content = cntr;
+                        _ = cntr._tbOriginal.Focus();
+
+                        string? fileName = doc.FileName;
+
+                        if (fileName != null)
+                        {
+                            _tasks.Add(_recentFilesMenu.AddRecentFileAsync(fileName));
+                        }
                     }
                 }
                 else
@@ -144,10 +166,23 @@ namespace Tsltn
             }
         }
 
+        private void Doc_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IDocument.FileName))
+            {
+                string? fileName = ((IDocument)sender).FileName;
+                if (fileName != null)
+                {
+                    _tasks.Add(_recentFilesMenu.AddRecentFileAsync(fileName));
+                }
+            }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FileController_NewFileName(object? sender, NewFileNameEventArgs e)
-            => _tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
+        }
+
+
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //private void FileController_NewFileName(object? sender, NewFileNameEventArgs e)
+        //    => _tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
 
 
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
@@ -227,10 +262,13 @@ namespace Tsltn
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        private async void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            _ = Controller.LoadDocumentAsync(null);
+            if(await Controller.LoadDocumentAsync(null))
+            {
+
+            }
         }
 
         private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && Controller.CurrentDocument?.SourceDocumentFileName != null;
@@ -291,7 +329,7 @@ namespace Tsltn
             }
         }
 
-        
+
 
         private async void ChangeSourceDocument_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
@@ -306,7 +344,7 @@ namespace Tsltn
                 DefaultExt = ".xml",
                 Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
                 DereferenceLinks = true,
-                InitialDirectory = Path.GetDirectoryName(sourceFilePath) ?? "",
+                InitialDirectory = Path.GetDirectoryName(sourceFilePath) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 Multiselect = false,
                 ValidateNames = true,
                 Title = Res.NewSourceFile
@@ -317,14 +355,9 @@ namespace Tsltn
             };
 
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog(this) == true)
             {
-                await Controller.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(true);
-
-                //if (_ccContent.Content is TsltnControl control)
-                //{
-                //    control.RefreshSourceFileName();
-                //}
+                await Controller.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(false);
             }
         }
 
@@ -332,8 +365,6 @@ namespace Tsltn
 
 
         private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
-        //private void OnTranslationErrors(IEnumerable<DataError> errors) => TranslationErrors?.Invoke(this, new TranslationErrorsEventArgs(errors));
 
 
 

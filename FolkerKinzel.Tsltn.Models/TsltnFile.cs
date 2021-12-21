@@ -148,7 +148,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        internal void Save(string? tsltnFileName)
+        internal void Save(string tsltnFileName)
         {
             if (Path.IsPathRooted(_sourceDocumentRelativePath))
             {

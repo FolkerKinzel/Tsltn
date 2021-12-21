@@ -22,7 +22,7 @@ namespace FolkerKinzel.Tsltn.Models
         private readonly TsltnFile _tsltn;
         private readonly FileWatcher? _fileWatcher;
 
-        private string _fileName = "";
+        private string? _fileName;
         private Task? _reloadSourceDocumentTask;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -106,13 +106,13 @@ namespace FolkerKinzel.Tsltn.Models
 
         public bool Changed => _tsltn.Changed;
 
-        public string FileName
+        public string? FileName
         {
             get => _fileName;
 
             set
             {
-                _fileName = value;
+                _fileName = string.IsNullOrWhiteSpace(value) ? null : value;
                 OnPropertyChanged();
             }
         }
@@ -196,7 +196,7 @@ namespace FolkerKinzel.Tsltn.Models
             }
 
             _tsltn.Save(tsltnFileName);
-            //this.TsltnFileName = tsltnFileName;
+            FileName = tsltnFileName;
         }
 
 

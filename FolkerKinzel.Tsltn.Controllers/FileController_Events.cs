@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -19,6 +20,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         //public event EventHandler<BadFileNameEventArgs>? BadFileName;
         public event EventHandler<DataErrorEventArgs>? TranslationError;
         public event EventHandler<UnusedTranslationEventArgs>? UnusedTranslations;
+        public event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
 
 
         private void OnPropertyChanged([CallerMemberName] string propName = "" ) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
@@ -27,9 +29,9 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private void OnRefreshData() => RefreshData?.Invoke(this, EventArgs.Empty);
 
-        private void OnNewFileName(string fileName) => this.NewFileName?.Invoke(this, new NewFileNameEventArgs(fileName));
+        //private void OnNewFileName(string fileName) => this.NewFileName?.Invoke(this, new NewFileNameEventArgs(fileName));
 
-        private void OnBadFileName(string fileName) => this.BadFileName?.Invoke(this, new BadFileNameEventArgs(fileName));
+        //private void OnBadFileName(string fileName) => this.BadFileName?.Invoke(this, new BadFileNameEventArgs(fileName));
 
 
         //private void OnHasContentChanged(bool hasContent) => this.HasContentChanged?.Invoke(this, new HasContentChangedEventArgs(hasContent));

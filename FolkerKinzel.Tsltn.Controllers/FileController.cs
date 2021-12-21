@@ -47,11 +47,44 @@ namespace FolkerKinzel.Tsltn.Controllers
             set
             {
                 _doc = value;
+
+                if(_doc != null)
+                {
+                    _doc.SourceDocumentChanged += Document_SourceDocumentChanged;
+                    _doc.SourceDocumentDeleted += Document_SourceDocumentDeleted;
+                    _doc.FileWatcherFailed += Document_FileWatcherFailed;
+                }
+
                 OnPropertyChanged();
             }
         }
 
-         IDocument? IFileController.CurrentDocument => _doc;
+        private void Document_FileWatcherFailed(object? sender, ErrorEventArgs e)
+        {
+            var args = new MessageEventArgs(
+                string.Format(CultureInfo.InvariantCulture, Res.FileWatcherFailed, Environment.NewLine),
+                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+            OnMessage(args);
+        }
+
+        private void Document_SourceDocumentDeleted(object? sender, FileSystemEventArgs e) 
+            => SourceDocumentDeleted?.Invoke(sender, e);
+
+
+        private async void Document_SourceDocumentChanged(object? sender, FileSystemEventArgs e)
+        {
+            var args = new MessageEventArgs(
+                string.Format(CultureInfo.InvariantCulture, Res.SourceDocumentChanged, Environment.NewLine),
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+            OnMessage(args);
+
+            if (args.Result == MessageBoxResult.Yes)
+            {
+                await ReloadDocumentAsync().ConfigureAwait(false);
+            }
+        }
+
+        IDocument? IFileController.CurrentDocument => _doc;
 
 
         
@@ -133,24 +166,24 @@ namespace FolkerKinzel.Tsltn.Controllers
             return LoadDocumentAsync(commandLineArg);
         }
 
-        public async Task LoadDocumentAsync(string? fileName)
+        public async Task<bool> LoadDocumentAsync(string? fileName)
         {
             if (StringComparer.OrdinalIgnoreCase.Equals(fileName, CurrentDocument?.FileName))
             {
                 OnMessage(new MessageEventArgs(Res.FileAlreadyOpen, MessageBoxButton.OK, MessageBoxImage.Asterisk, MessageBoxResult.OK));
-                return;
+                return true;
             }
 
             if (!await CloseDocumentAsync().ConfigureAwait(true))
             {
-                return;
+                return true;
             }
 
             if (fileName is null)
             {
                 if (!GetTsltnInFileName(out fileName))
                 {
-                    return;
+                    return true;
                 }
             }
 
@@ -177,19 +210,19 @@ namespace FolkerKinzel.Tsltn.Controllers
                     if (!GetXmlInFileName(ref xmlFileName))
                     {
                         _ = await CloseDocumentAsync().ConfigureAwait(false);
-                        return;
+                        return true;
                     }
 
                     _doc.SourceDocumentFileName = xmlFileName;
                     if (await SaveDocumentAsync().ConfigureAwait(false))
                     {
-                        await LoadDocumentAsync(fileName).ConfigureAwait(false);
+                        _ = await LoadDocumentAsync(fileName).ConfigureAwait(false);
                     }
                     else
                     {
                         _ = await CloseDocumentAsync().ConfigureAwait(false);
                     }
-                    return;
+                    return true;
                 }
 
                 Debug.Assert(CurrentDocument != null);
@@ -205,12 +238,14 @@ namespace FolkerKinzel.Tsltn.Controllers
                         MessageBoxImage.Information,
                         MessageBoxResult.OK));
                 }
+
+                return true;
             }
             catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
                 _ = await CloseTsltnAsync(false).ConfigureAwait(true);
-                OnBadFileName(fileName);
+                return false;
             }
         }
 
@@ -312,7 +347,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 _doc.SourceDocumentFileName = newSourceDocument;
 
-                return ReloadTsltnAsync();
+                return ReloadDocumentAsync();
             }
 
             return Task.CompletedTask;

@@ -35,7 +35,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 Title = Res.OpenSourceFile
             };
 
-            this.OnFileDialog(args);
+            OnFileDialog(args);
 
             if (args.Result == true)
             {
@@ -79,7 +79,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             }
         }
 
-        private bool GetTsltnOutFileName(ref string fileName)
+        private bool GetTsltnOutFileName([NotNullWhen(true)]ref string? fileName)
         {
             IFileAccess? doc = CurrentDocument;
 
@@ -88,10 +88,16 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return false;
             }
 
-            if (doc.FileName.Length == 0)
+            if (fileName is null)
             {
                 OnRefreshData();
                 fileName = $"{Path.GetFileNameWithoutExtension(doc.SourceDocumentFileName)}.{doc.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
+            }
+
+            string? directory = Path.GetDirectoryName(fileName);
+            if (string.IsNullOrEmpty(directory))
+            {
+                directory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             }
 
             var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
@@ -102,7 +108,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 CheckPathExists = true,
                 CreatePrompt = false,
                 Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
-                InitialDirectory = doc.FileName.Length != 0 ? Path.GetDirectoryName(doc.FileName) ?? "" : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                InitialDirectory = directory,
                 DefaultExt = TsltnFileExtension,
                 DereferenceLinks = true
             };
@@ -117,7 +123,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             else
             {
                 // Da bei der Rückgabe von false nichts gespeichert wird, kann der Rückgabewert leer sein.
-                fileName = "";
+                // fileName = null;
                 return false;
             }
         }
@@ -178,54 +184,46 @@ namespace FolkerKinzel.Tsltn.Controllers
                     return false;
                 }
             }
-
-            doc.FileName = fileName;
             
             OnRefreshData();
-
-            //await _doc.WaitAllTasks().ConfigureAwait(false);
 
             try
             {
                 await Task.Run(() => _doc.Save(fileName)).ConfigureAwait(false);
-                //OnNewFileName(doc.FileName);
             }
             catch (Exception e)
             {
                 OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                OnPropertyChanged(nameof(doc.FileName));
-
                 return false;
             }
 
-            OnPropertyChanged(nameof(doc.FileName));
             return true;
         }
 
-        private async void FileWatcher_Reload(object? sender, EventArgs e)
-        {
-            if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
-            {
-                if (_doc != null)
-                {
-                    _doc.SourceDocumentFileName = _watcher.WatchedFile;
-                }
-            }
+        //private async void FileWatcher_Reload(object? sender, EventArgs e)
+        //{
+        //    if (_watcher.WatchedFile != CurrentDocument?.SourceDocumentFileName)
+        //    {
+        //        if (_doc != null)
+        //        {
+        //            _doc.SourceDocumentFileName = _watcher.WatchedFile;
+        //        }
+        //    }
 
-            var args = new MessageEventArgs(
-                string.Format(CultureInfo.InvariantCulture, Res.SourceDocumentChanged, Environment.NewLine),
-                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-            OnMessage(args);
+        //    var args = new MessageEventArgs(
+        //        string.Format(CultureInfo.InvariantCulture, Res.SourceDocumentChanged, Environment.NewLine),
+        //        MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+        //    OnMessage(args);
 
-            if (args.Result == MessageBoxResult.Yes)
-            {
-                await ReloadTsltnAsync().ConfigureAwait(false);
-            }
-        }
+        //    if (args.Result == MessageBoxResult.Yes)
+        //    {
+        //        await ReloadTsltnAsync().ConfigureAwait(false);
+        //    }
+        //}
 
 
 
-        private async Task ReloadTsltnAsync()
+        private async Task ReloadDocumentAsync()
         {
             IFileAccess? doc = CurrentDocument;
             if(doc is null)
@@ -235,12 +233,12 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             OnRefreshData();
 
-            if ((doc.FileName.Length != 0 && !doc.Changed) || await SaveDocumentAsync().ConfigureAwait(false))
+            if (!doc.Changed || await SaveDocumentAsync().ConfigureAwait(false))
             {
 
                 string? fileName = doc.FileName;
 
-                _ = await CloseTsltnAsync(false).ConfigureAwait(false);
+                _ = await CloseDocumentAsync().ConfigureAwait(false);
                 await LoadDocumentAsync(fileName).ConfigureAwait(false);
             }
             else

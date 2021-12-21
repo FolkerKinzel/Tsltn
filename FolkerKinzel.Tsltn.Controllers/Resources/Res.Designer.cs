@@ -19,7 +19,7 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Res {
@@ -84,6 +84,15 @@ namespace FolkerKinzel.Tsltn.Controllers.Resources {
         internal static string FileWasChanged {
             get {
                 return ResourceManager.GetString("FileWasChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An error occurred while observing the XML source file.{0}Try to save your work and reload the current document. ähnelt.
+        /// </summary>
+        internal static string FileWatcherFailed {
+            get {
+                return ResourceManager.GetString("FileWatcherFailed", resourceCulture);
             }
         }
         
