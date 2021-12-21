@@ -31,7 +31,7 @@ namespace Tsltn
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            MainWindow = new MainWindow(FileController.GetInstance(FileWatcher.Instance),
+            MainWindow = new MainWindow(FileController.Instance,
                 new RecentFilesMenu(
                     Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)!
                 ));

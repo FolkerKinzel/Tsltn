@@ -1,5 +1,6 @@
 ﻿using FolkerKinzel.Tsltn.Controllers.Enums;
 using FolkerKinzel.Tsltn.Controllers.Resources;
+using FolkerKinzel.Tsltn.Models;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -210,18 +211,18 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         private async Task ReloadTsltnAsync()
         {
-            if(CurrentDocument is null)
+            IFileAccess? doc = CurrentDocument;
+            if(doc is null)
             {
                 return;
             }
 
             OnRefreshData();
 
-            if ((FileName.Length != 0 && !CurrentDocument.Changed) || await SaveDocumentAsync().ConfigureAwait(false))
+            if ((doc.FileName.Length != 0 && !doc.Changed) || await SaveDocumentAsync().ConfigureAwait(false))
             {
-                OnHasContentChanged(false);
 
-                string? fileName = FileName;
+                string? fileName = doc.FileName;
 
                 _ = await CloseTsltnAsync(false).ConfigureAwait(false);
                 await LoadDocumentAsync(fileName).ConfigureAwait(false);

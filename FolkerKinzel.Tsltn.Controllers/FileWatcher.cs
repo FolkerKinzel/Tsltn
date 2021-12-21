@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace FolkerKinzel.Tsltn.Controllers
+namespace FolkerKinzel.Tsltn.Models
 {
     public sealed class FileWatcher : IDisposable, IFileWatcher
     {
@@ -17,25 +17,25 @@ namespace FolkerKinzel.Tsltn.Controllers
             //NotifyFilters.DirectoryName |
             NotifyFilters.LastWrite |
             NotifyFilters.LastAccess,
+
+
         };
 
         private string? _watchedFile;
 
-        public event EventHandler<EventArgs>? Reload;
+        public event EventHandler<EventArgs>? SourceDocumentChanged;
 
-
-        private FileWatcher()
+        public FileWatcher()
         {
             _watcher.Changed += Watcher_Changed;
             _watcher.Renamed += Watcher_Renamed;
             //_watcher.Created += Watcher_Changed;
-            //_watcher.Deleted += Watcher_Changed;
+            _watcher.Deleted += Watcher_Changed;
 
             
 
         }
 
-        public static FileWatcher Instance { get; } = new FileWatcher();
 
         public bool RaiseEvents
         {
@@ -116,7 +116,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return Task.Run(() =>
                 {
                     RaiseEvents = false;
-                    Reload?.Invoke(this, EventArgs.Empty);
+                    SourceDocumentChanged?.Invoke(this, EventArgs.Empty);
                     RaiseEvents = true;
                 });
             }

@@ -17,50 +17,155 @@ using System.Xml.Schema;
 
 namespace FolkerKinzel.Tsltn.Models
 {
-    public partial class Document : IDocument, IFileAccess, ITranslation
+    public sealed class Document : IDocument, IFileAccess, ITranslation, IDisposable
     {
         private readonly TsltnFile _tsltn;
+        private readonly FileWatcher _fileWatcher = new FileWatcher();
+
+        private string _fileName = "";
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string propName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
         /// <summary>
         /// ctor
         /// </summary>
         /// <param name="tsltnFile">The <see cref="TsltnFile"/> to work with.</param>
-        /// <remarks>
-        /// Let this ctor be internal to make the class testable.
-        /// </remarks>
-        internal Document(TsltnFile tsltnFile)
+        private Document(TsltnFile tsltnFile)
         {
             _tsltn = tsltnFile;
             _tsltn.PropertyChanged += Tsltn_PropertyChanged;
 
             Navigator = XmlNavigator.Load(tsltnFile.SourceDocumentFileName);
             FirstNode = GetFirstNode();
+
+            if(HasValidSourceDocument)
+            {
+                _fileWatcher.WatchedFile = SourceDocumentFileName;
+            }
         }
+
+        public bool HasSourceDocument => Navigator != null;
+
+
+        public bool HasValidSourceDocument => FirstNode != null;
 
         public XmlNavigator? Navigator { get; }
 
         public INode? FirstNode { get; }
 
+        public bool Changed => _tsltn.Changed;
 
-        private void Tsltn_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public string FileName
         {
-            if (e.PropertyName == nameof(TsltnFile.Changed))
+            get
             {
-                OnPropertyChanged(nameof(Changed));
+
+
+                return _fileName;
+            }
+
+            set
+            {
+                _fileName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? SourceDocumentFileName
+        {
+            get
+            {
+                return _tsltn.SourceDocumentFileName;
+            }
+
+            set
+            {
+                _tsltn.SourceDocumentFileName = value;
+                _fileWatcher.WatchedFile = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? SourceLanguage
+        {
+            get
+            {
+                return _tsltn?.SourceLanguage;
+            }
+
+            set
+            {
+                if (_tsltn != null)
+                {
+                    value = string.IsNullOrWhiteSpace(value) ? null : value;
+                    if (!StringComparer.Ordinal.Equals(_tsltn.SourceLanguage, value))
+                    {
+                        _tsltn.SourceLanguage = value;
+                        OnPropertyChanged();
+                    }
+                }
+            }
+        }
+
+
+        public string? TargetLanguage
+        {
+            get
+            {
+                return _tsltn?.TargetLanguage;
+            }
+
+            set
+            {
+                if (_tsltn != null)
+                {
+                    value = string.IsNullOrWhiteSpace(value) ? null : value;
+                    if (!StringComparer.Ordinal.Equals(_tsltn.TargetLanguage, value))
+                    {
+                        _tsltn.TargetLanguage = value;
+                        OnPropertyChanged();
+                    }
+                }
             }
         }
 
 
 
-        #region Methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<KeyValuePair<long, string>> GetAllTranslations() => _tsltn.GetAllTranslations();
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveTranslation(long id) => SetTranslation(id, null);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetTranslation(long nodeID, string? transl) => _tsltn.SetTranslation(nodeID, transl);
+
+
+        public bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl)
+        {
+            if (_tsltn is null)
+            {
+                transl = null;
+                return false;
+            }
+            else
+            {
+                return _tsltn.TryGetTranslation(nodeID, out transl);
+            }
+        }
+
+
+        public bool GetHasTranslation(long id) => _tsltn.HasTranslation(id);
+
+
+        public void Dispose() => _fileWatcher.Dispose();
+
 
         public static Document Create(string sourceDocumentFileName)
             => new Document(new TsltnFile() { SourceDocumentFileName = sourceDocumentFileName });
-
 
 
         public static Document Load(string tsltnFileName)
@@ -70,7 +175,10 @@ namespace FolkerKinzel.Tsltn.Models
                 throw new ArgumentNullException(nameof(tsltnFileName));
             }
 
-            return new Document(TsltnFile.Load(tsltnFileName));
+            return new Document(TsltnFile.Load(tsltnFileName))
+            {
+                FileName = tsltnFileName
+            };
         }
 
 
@@ -179,10 +287,21 @@ namespace FolkerKinzel.Tsltn.Models
             }
         }
 
-        #endregion
 
 
         #region private
+
+        private void OnPropertyChanged([CallerMemberName] string propName = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+
+        private void Tsltn_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(TsltnFile.Changed))
+            {
+                OnPropertyChanged(nameof(Changed));
+            }
+        }
 
         private Node? GetFirstNode()
         {
@@ -194,6 +313,7 @@ namespace FolkerKinzel.Tsltn.Models
             XElement? firstXElement = Navigator.GetFirstXElement();
             return firstXElement is null ? null : new Node(firstXElement, this, Navigator, null);
         }
+
 
         #endregion
 

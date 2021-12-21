@@ -71,13 +71,13 @@ namespace Tsltn
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Controller.HasContentChanged += FileController_HasContentChanged;
+            //Controller.HasContentChanged += FileController_HasContentChanged;
             Controller.Message += FileController_Message;
-            Controller.NewFileName += FileController_NewFileName;
-            //Controller.PropertyChanged += _fileController_PropertyChanged;
+            //Controller.NewFileName += FileController_NewFileName;
+            Controller.PropertyChanged += FileController_PropertyChanged;
             Controller.RefreshData += FileController_RefreshData;
             Controller.ShowFileDialog += FileController_ShowFileDialog;
-            Controller.BadFileName += FileController_BadFileName;
+            //Controller.BadFileName += FileController_BadFileName;
             _recentFilesMenu.Initialize(miRecentFiles);
             _recentFilesMenu.RecentFileSelected += RecentFilesMenu_RecentFileSelected;
 
@@ -102,9 +102,9 @@ namespace Tsltn
 
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
-            => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //private void FileController_BadFileName(object? sender, BadFileNameEventArgs e)
+        //    => _tasks.Add(_recentFilesMenu.RemoveRecentFileAsync(e.FileName));
 
         private void FileController_ShowFileDialog(object? sender, ShowFileDialogEventArgs e) =>
             Dispatcher.Invoke(() => e.ShowDialog(this), DispatcherPriority.Send);
@@ -115,37 +115,35 @@ namespace Tsltn
 
 
 
-        //private void _fileController_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        //{
-        //    if (e.PropertyName == nameof(Controller.FileName))
-        //    {
-        //        OnPropertyChanged(nameof(FileName));
-        //    }
-        //}
+        private void FileController_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Controller.CurrentDocument))
+            {
+                IDocument? doc = Controller.CurrentDocument;
+                if (doc != null)
+                {
+                    var cntr = new TsltnControl(this, doc);
+                    _ccContent.Content = cntr;
+                    _ = cntr._tbOriginal.Focus();
+
+                    string fileName = doc.FileName;
+
+                    if(!string.IsNullOrEmpty(fileName))
+                    {
+                        _tasks.Add(_recentFilesMenu.AddRecentFileAsync(doc.FileName));
+                    }
+                }
+                else
+                {
+                    _ccContent.Content = null;
+                }
+            }
+        }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void FileController_NewFileName(object? sender, NewFileNameEventArgs e)
             => _tasks.Add(_recentFilesMenu.AddRecentFileAsync(e.FileName));
-
-
-        private void FileController_HasContentChanged(object? sender, HasContentChangedEventArgs e)
-            => Dispatcher.BeginInvoke(() => ChangeContent(e.HasContent));
-
-        private void ChangeContent(bool showContent)
-        {
-            if (showContent)
-            {
-                Debug.Assert(Controller.CurrentDocument != null);
-                var cntr = new TsltnControl(this, Controller.CurrentDocument);
-                _ccContent.Content = cntr;
-                _ = cntr._tbOriginal.Focus();
-            }
-            else
-            {
-                _ccContent.Content = null;
-            }
-        }
 
 
         [SuppressMessage("Globalization", "CA1303:Literale nicht als lokalisierte Parameter übergeben", Justification = "<Ausstehend>")]
@@ -282,7 +280,7 @@ namespace Tsltn
 
             if (UnusedTranslations.Any())
             {
-                var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(Controller.FileName), UnusedTranslations);
+                var wnd = new SelectUnusedTranslationsWindow(System.IO.Path.GetFileName(Controller.CurrentDocument!.FileName), UnusedTranslations);
 
                 if (true == wnd.ShowDialog(this))
                 {

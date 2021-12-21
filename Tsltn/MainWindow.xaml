@@ -303,7 +303,7 @@
 
         <StatusBar Grid.Row="2" FontSize="16" FontWeight="Bold">
             <StatusBarItem Background="CornflowerBlue" Foreground="White">
-                <TextBlock Text="{Binding Controller.FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
+                <TextBlock Text="{Binding Controller.CurrentDocument.FileName}" TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
             </StatusBarItem>
         </StatusBar>
 
