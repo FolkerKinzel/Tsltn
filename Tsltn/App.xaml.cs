@@ -19,6 +19,8 @@ namespace Tsltn
     {
         public const string ProgramName = "Tsltn";
 
+        public const string TsltnFileExtension = ".tsltn";
+
         public const string OnlineHelpUrl = "https://github.com/FolkerKinzel/Tsltn";
 
         protected override void OnStartup(StartupEventArgs e)

@@ -23,7 +23,7 @@ namespace FolkerKinzel.Tsltn.Models
         private readonly FileWatcher? _fileWatcher;
 
         private string? _fileName;
-        private Task? _reloadSourceDocumentTask;
+        //private Task? _reloadSourceDocumentTask;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<ErrorEventArgs>? FileWatcherFailed;
@@ -80,12 +80,13 @@ namespace FolkerKinzel.Tsltn.Models
 
         private void FileWatcher_SourceDocumentChanged(object sender, FileSystemEventArgs e)
         {
-            if(_reloadSourceDocumentTask?.Status == TaskStatus.Running)
-            {
-                return;
-            }
+            //if(_reloadSourceDocumentTask?.Status == TaskStatus.Running)
+            //{
+            //    return;
+            //}
 
-            _reloadSourceDocumentTask = Task.Run(() => SourceDocumentChanged?.Invoke(this, e));
+            //_reloadSourceDocumentTask = Task.Run(() => SourceDocumentChanged?.Invoke(this, e));
+            SourceDocumentChanged?.Invoke(this, e);
         }
 
         public bool HasSourceDocument => Navigator != null;
@@ -170,8 +171,8 @@ namespace FolkerKinzel.Tsltn.Models
         public void Dispose() => _fileWatcher?.Dispose();
 
 
-        public static Document Create(string sourceDocumentFileName)
-            => new Document(new TsltnFile() { SourceDocumentFileName = sourceDocumentFileName });
+        public static Document Create(string xmlFileName)
+            => new Document(new TsltnFile() { SourceDocumentFileName = xmlFileName });
 
 
         public static Document Load(string tsltnFileName)

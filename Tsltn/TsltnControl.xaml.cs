@@ -36,10 +36,6 @@ namespace Tsltn
         private INode? _nextUntranslatedNode;
         private readonly ConcurrentBag<Task> _tasks = new ConcurrentBag<Task>();
 
-        private readonly StringBuilder _sb = new StringBuilder(1024);
-        private readonly object _lockObject = new object();
-
-
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -368,7 +364,10 @@ namespace Tsltn
         private void TbTranslation_Paste(object sender, DataObjectPastingEventArgs e)
         {
             e.CancelCommand();
-            _ = _sb.Clear().Append(Clipboard.GetText())
+
+            string clipbText = Clipboard.GetText();
+            var builder = new StringBuilder(clipbText.Length + clipbText.Length / 2);
+            _ = builder.Append(clipbText)
                 .Replace("<c> null </c>", "<c>null</c>")
                 .Replace("<c> true </c>", "<c>true</c>")
                 .Replace("<c> false </c>", "<c>false</c>");
@@ -377,16 +376,14 @@ namespace Tsltn
             int markupCounter = 0;
             char previous = 'a';
 
-
-
-            for (int i = _sb.Length - 1; i >= 0; i--)
+            for (int i = builder.Length - 1; i >= 0; i--)
             {
                 if (markupCounter < 0)
                 {
                     break;
                 }
 
-                char current = _sb[i];
+                char current = builder[i];
 
                 switch (current)
                 {
@@ -401,12 +398,12 @@ namespace Tsltn
                         {
                             if (char.IsWhiteSpace(current) && char.IsPunctuation(previous)) // das '=' - Zeichen ist nicht Punctuation
                             {
-                                _ = _sb.Remove(i, 1);
+                                _ = builder.Remove(i, 1);
                                 continue;
                             }
                             else if (char.IsPunctuation(current) && char.IsWhiteSpace(previous))
                             {
-                                _ = _sb.Remove(i + 1, 1);
+                                _ = builder.Remove(i + 1, 1);
                             }
                         }
                         break;
@@ -417,15 +414,15 @@ namespace Tsltn
 
             if (_tbTranslation.IsSelectionActive)
             {
-                string replacement = _sb.ToString();
-                _sb.Clear().Append(_tbTranslation.Text);
+                string replacement = builder.ToString();
+                _ = builder.Clear().Append(_tbTranslation.Text);
 
                 int selectionStart = _tbTranslation.SelectionStart;
-                _sb.Remove(selectionStart, _tbTranslation.SelectionLength);
-                _sb.Insert(_tbTranslation.SelectionStart, replacement);
+                _ = builder.Remove(selectionStart, _tbTranslation.SelectionLength);
+                _ = builder.Insert(_tbTranslation.SelectionStart, replacement);
 
 
-                Translation = _sb.ToString();
+                Translation = builder.ToString();
 
                 _tbTranslation.Select(selectionStart + replacement.Length, 0);
             }
@@ -596,18 +593,14 @@ namespace Tsltn
 
             try
             {
-                lock (_lockObject)
-                {
-                    _ = _sb.Clear().Append("<R>").Append(translation).Append("</R>");
-                    _ = XElement.Parse(_sb.ToString(), LoadOptions.None);
-                }
+                _ = XElement.Parse($"<R>{translation}</R>", LoadOptions.None);
             }
             catch (XmlException e)
             {
                 exceptionMessage = e.Message;
                 return false;
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }

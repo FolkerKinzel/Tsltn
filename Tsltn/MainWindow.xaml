@@ -30,7 +30,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="Help" Executed="Help_Executed" />
         <CommandBinding Command="Open" Executed="Open_ExecutedAsync"/>
-        <CommandBinding Command="Close" Executed="Close_ExecutedAsync"  CanExecute="Close_CanExecute"/>
+        <CommandBinding Command="Close" Executed="Close_Executed"  CanExecute="Close_CanExecute"/>
         <CommandBinding Command="Save" Executed="Save_ExecutedAsync" CanExecute="Save_CanExecute"/>
         <CommandBinding Command="SaveAs" Executed="SaveAs_ExecutedAsync"  CanExecute="Close_CanExecute"/>
         <CommandBinding Command="New" Executed="New_ExecutedAsync"/>

@@ -104,57 +104,59 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public async Task<bool> CloseDocumentAsync() => await CloseTsltnAsync(true).ConfigureAwait(false);
+        public void CloseCurrentDocument() => CurrentDocument = null;
+            
+            //=> await CloseTsltnAsync(true).ConfigureAwait(false);
 
 
-        private async Task<bool> CloseTsltnAsync(bool handleChanges)
-        {
-            IFileAccess? doc = CurrentDocument;
-            if (doc is null)
-            {
-                return true;
-            }
+        //private async Task<bool> CloseTsltnAsync(bool handleChanges)
+        //{
+        //    IFileAccess? doc = CurrentDocument;
+        //    if (doc is null)
+        //    {
+        //        return true;
+        //    }
 
-            if (handleChanges)
-            {
-                OnRefreshData();
+        //    if (handleChanges)
+        //    {
+        //        OnRefreshData();
 
-                if (doc.Changed)
-                {
-                    var args = new MessageEventArgs(
-                        string.Format(CultureInfo.CurrentCulture, Res.FileWasChanged, System.IO.Path.GetFileName(doc.FileName), Environment.NewLine),
-                        MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+        //        if (doc.Changed)
+        //        {
+        //            var args = new MessageEventArgs(
+        //                string.Format(CultureInfo.CurrentCulture, Res.FileWasChanged, System.IO.Path.GetFileName(doc.FileName), Environment.NewLine),
+        //                MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
 
-                    OnMessage(args);
+        //            OnMessage(args);
 
-                    switch (args.Result)
-                    {
-                        case MessageBoxResult.Yes:
-                            {
-                                if (!await SaveDocumentAsync().ConfigureAwait(true))
-                                {
-                                    return false;
-                                }
-                            }
-                            break;
-                        case MessageBoxResult.No:
-                            break;
-                        default:
-                            return false;
-                    }
-                }
-            }
+        //            switch (args.Result)
+        //            {
+        //                case MessageBoxResult.Yes:
+        //                    {
+        //                        if (!await SaveDocumentAsync().ConfigureAwait(true))
+        //                        {
+        //                            return false;
+        //                        }
+        //                    }
+        //                    break;
+        //                case MessageBoxResult.No:
+        //                    break;
+        //                default:
+        //                    return false;
+        //            }
+        //        }
+        //    }
 
-            CurrentDocument = null;
-            return true;
-        }
+        //    CurrentDocument = null;
+        //    return true;
+        //}
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<bool> SaveDocumentAsync() => DoSaveTsltnAsync(CurrentDocument?.FileName);
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public Task<bool> SaveDocumentAsync() => DoSaveTsltnAsync(CurrentDocument?.FileName);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public Task<bool> SaveAsTsltnAsync() => DoSaveTsltnAsync(null);
 
         public Task OpenTsltnFromCommandLineAsync(string commandLineArg)
         {
@@ -180,7 +182,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return true;
             }
 
-            if (!await CloseDocumentAsync().ConfigureAwait(false))
+            if (!await CloseCurrentDocument().ConfigureAwait(false))
             {
                 return true;
             }
@@ -215,7 +217,7 @@ namespace FolkerKinzel.Tsltn.Controllers
 
                     if (!GetXmlInFileName(ref xmlFileName))
                     {
-                        _ = await CloseDocumentAsync().ConfigureAwait(false);
+                        _ = await CloseCurrentDocument().ConfigureAwait(false);
                         return true;
                     }
 
@@ -226,7 +228,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                     }
                     else
                     {
-                        _ = await CloseDocumentAsync().ConfigureAwait(false);
+                        _ = await CloseCurrentDocument().ConfigureAwait(false);
                     }
                     return true;
                 }
@@ -256,40 +258,41 @@ namespace FolkerKinzel.Tsltn.Controllers
         }
 
 
-        public async Task NewDocumentAsync()
-        {
-            if (!await CloseDocumentAsync().ConfigureAwait(false))
-            {
-                return;
-            }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void NewDocument(string xmlFileName) => CurrentDocument = Document.Create(xmlFileName);
+        //{
+            //if (!await CloseCurrentDocument().ConfigureAwait(false))
+            //{
+            //    return;
+            //}
 
-            string? xmlFileName = null;
+            //string? xmlFileName = null;
 
-            if (GetXmlInFileName(ref xmlFileName))
-            {
-                try
-                {
-                    _ = await Task.Run(() => CurrentDocument = Document.Create(xmlFileName)).ConfigureAwait(false);
-                    Debug.Assert(CurrentDocument != null);
+            //if (GetXmlInFileName(ref xmlFileName))
+            //{
+            //    try
+            //    {
+                    //_ = await Task.Run(() => ).ConfigureAwait(false);
+                    //Debug.Assert(CurrentDocument != null);
 
-                    if (!CurrentDocument.HasValidSourceDocument)
-                    {
-                        OnMessage(new MessageEventArgs(
-                            string.Format(CultureInfo.CurrentCulture, Res.EmptyOrInvalidFile, Environment.NewLine, xmlFileName, Res.XmlDocumentationFile),
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Exclamation,
-                            MessageBoxResult.OK));
+                    //if (!CurrentDocument.HasValidSourceDocument)
+                    //{
+                    //    OnMessage(new MessageEventArgs(
+                    //        string.Format(CultureInfo.CurrentCulture, Res.EmptyOrInvalidFile, Environment.NewLine, xmlFileName, Res.XmlDocumentationFile),
+                    //        MessageBoxButton.OK,
+                    //        MessageBoxImage.Exclamation,
+                    //        MessageBoxResult.OK));
 
-                        _ = await CloseTsltnAsync(false).ConfigureAwait(false);
-                    }
-                }
-                catch (Exception e)
-                {
-                    OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                }
-            }
+                    //    _ = await CloseTsltnAsync(false).ConfigureAwait(false);
+                    //}
+                //}
+                //catch (Exception e)
+                //{
+                //    OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+                //}
+            //}
 
-        }
+        //}
 
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         //public void SuspendSourceFileObservation() => _watcher.RaiseEvents = false;

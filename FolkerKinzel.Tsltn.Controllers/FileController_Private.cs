@@ -79,54 +79,54 @@ namespace FolkerKinzel.Tsltn.Controllers
             }
         }
 
-        private bool GetTsltnOutFileName([NotNullWhen(true)]ref string? fileName)
-        {
-            IFileAccess? doc = CurrentDocument;
+        //private bool GetTsltnOutFileName([NotNullWhen(true)]ref string? fileName)
+        //{
+        //    IFileAccess? doc = CurrentDocument;
 
-            if (doc is null)
-            {
-                return false;
-            }
+        //    if (doc is null)
+        //    {
+        //        return false;
+        //    }
 
-            if (fileName is null)
-            {
-                OnRefreshData();
-                fileName = $"{Path.GetFileNameWithoutExtension(doc.SourceDocumentFileName)}.{doc.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
-            }
+        //    if (fileName is null)
+        //    {
+        //        OnRefreshData();
+        //        fileName = $"{Path.GetFileNameWithoutExtension(doc.SourceDocumentFileName)}.{doc.TargetLanguage ?? Res.Language}{TsltnFileExtension}";
+        //    }
 
-            string? directory = Path.GetDirectoryName(fileName);
-            if (string.IsNullOrEmpty(directory))
-            {
-                directory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            }
+        //    string? directory = Path.GetDirectoryName(fileName);
+        //    if (string.IsNullOrEmpty(directory))
+        //    {
+        //        directory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        //    }
 
-            var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
-            {
-                FileName = Path.GetFileName(fileName),
-                AddExtension = true,
-                CheckFileExists = false,
-                CheckPathExists = true,
-                CreatePrompt = false,
-                Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
-                InitialDirectory = directory,
-                DefaultExt = TsltnFileExtension,
-                DereferenceLinks = true
-            };
+        //    var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
+        //    {
+        //        FileName = Path.GetFileName(fileName),
+        //        AddExtension = true,
+        //        CheckFileExists = false,
+        //        CheckPathExists = true,
+        //        CreatePrompt = false,
+        //        Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
+        //        InitialDirectory = directory,
+        //        DefaultExt = TsltnFileExtension,
+        //        DereferenceLinks = true
+        //    };
 
-            OnFileDialog(args);
+        //    OnFileDialog(args);
 
-            if (args.Result == true)
-            {
-                fileName = args.FileName;
-                return true;
-            }
-            else
-            {
-                // Da bei der Rückgabe von false nichts gespeichert wird, kann der Rückgabewert leer sein.
-                // fileName = null;
-                return false;
-            }
-        }
+        //    if (args.Result == true)
+        //    {
+        //        fileName = args.FileName;
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        // Da bei der Rückgabe von false nichts gespeichert wird, kann der Rückgabewert leer sein.
+        //        // fileName = null;
+        //        return false;
+        //    }
+        //}
 
 
         private bool GetXmlOutFileName([NotNullWhen(true)] out string? fileName)
@@ -164,41 +164,41 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
 
-        private async Task<bool> DoSaveTsltnAsync(string? fileName)
-        {
-            Debug.Assert(_doc != null);
+        //private async Task<bool> DoSaveTsltnAsync(string? fileName)
+        //{
+        //    Debug.Assert(_doc != null);
 
-            IFileAccess? doc = CurrentDocument;
+        //    IFileAccess? doc = CurrentDocument;
 
-            if(doc is null)
-            {
-                return true;
-            }
+        //    if(doc is null)
+        //    {
+        //        return true;
+        //    }
 
-            if (fileName is null)
-            {
-                fileName = doc.FileName;
+        //    if (fileName is null)
+        //    {
+        //        fileName = doc.FileName;
 
-                if (!GetTsltnOutFileName(ref fileName))
-                {
-                    return false;
-                }
-            }
+        //        if (!GetTsltnOutFileName(ref fileName))
+        //        {
+        //            return false;
+        //        }
+        //    }
             
-            OnRefreshData();
+        //    OnRefreshData();
 
-            try
-            {
-                await Task.Run(() => _doc.Save(fileName)).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                return false;
-            }
+        //    try
+        //    {
+        //        await Task.Run(() => _doc.Save(fileName)).ConfigureAwait(false);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
         //private async void FileWatcher_Reload(object? sender, EventArgs e)
         //{
@@ -237,7 +237,7 @@ namespace FolkerKinzel.Tsltn.Controllers
             {
                 string? fileName = doc.FileName;
 
-                _ = await CloseDocumentAsync().ConfigureAwait(false);
+                _ = await CloseCurrentDocument().ConfigureAwait(false);
                 _ = await LoadDocumentAsync(fileName).ConfigureAwait(false);
             }
             else

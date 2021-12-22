@@ -187,6 +187,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The document could not be created:{0}{1} ähnelt.
+        /// </summary>
+        public static string CreationFailed {
+            get {
+                return ResourceManager.GetString("CreationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cut ähnelt.
         /// </summary>
         public static string CutMenuItem {
@@ -304,11 +313,29 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Language ähnelt.
+        /// </summary>
+        public static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Left ähnelt.
         /// </summary>
         public static string LeftKey {
             get {
                 return ResourceManager.GetString("LeftKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Open the XML file to translate. ähnelt.
+        /// </summary>
+        public static string LoadXmlFile {
+            get {
+                return ResourceManager.GetString("LoadXmlFile", resourceCulture);
             }
         }
         
@@ -579,6 +606,15 @@ namespace Tsltn.Resources {
         public static string Translation {
             get {
                 return ResourceManager.GetString("Translation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TSLTN file ähnelt.
+        /// </summary>
+        public static string TsltnFile {
+            get {
+                return ResourceManager.GetString("TsltnFile", resourceCulture);
             }
         }
         

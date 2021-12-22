@@ -25,5 +25,7 @@ namespace FolkerKinzel.Tsltn.Models
         IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
 
         bool HasError { get; }
+
+        void Save(string tsltnFileName);
     }
 }

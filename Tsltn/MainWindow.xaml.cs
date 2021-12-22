@@ -12,10 +12,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using FolkerKinzel.RecentFiles.WPF;
 using FolkerKinzel.Tsltn.Controllers;
+using FolkerKinzel.Tsltn.Controllers.Enums;
 using FolkerKinzel.Tsltn.Models;
 using Microsoft.Win32;
 using Tsltn.Resources;
@@ -43,7 +45,7 @@ namespace Tsltn
 
             _recentFilesMenu = recentFilesMenu;
 
-            _miGitHub.Header = string.Format(CultureInfo.CurrentCulture, Res.OnlineHelpMenuHeader, App.ProgramName);
+            _miGitHub.Header = string.Format(CultureInfo.InvariantCulture, Res.OnlineHelpMenuHeader, App.ProgramName);
         }
 
 
@@ -54,15 +56,15 @@ namespace Tsltn
         }
 
 
-        public bool IsCommandEnabled
-        {
-            get => _isCommandEnabled;
-            private set
-            {
-                _isCommandEnabled = value;
-                OnPropertyChanged();
-            }
-        }
+        //public bool IsCommandEnabled
+        //{
+        //    get => _isCommandEnabled;
+        //    private set
+        //    {
+        //        _isCommandEnabled = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
 
         public IFileController Controller { get; }
 
@@ -108,7 +110,7 @@ namespace Tsltn
 
         private async void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (!await Controller.CloseDocumentAsync().ConfigureAwait(true))
+            if (!await Controller.CloseCurrentDocument().ConfigureAwait(true))
             {
                 e.Cancel = true;
             }
@@ -140,46 +142,54 @@ namespace Tsltn
         {
             if (e.PropertyName == nameof(Controller.CurrentDocument))
             {
-                IDocument? doc = Controller.CurrentDocument;
-                if (doc is null)
-                {
-                    _ccContent.Content = null;
-                    return;
-                }
-
-                if (doc.HasValidSourceDocument)
-                {
-                    doc.PropertyChanged += Doc_PropertyChanged;
-
-                    var cntr = new TsltnControl(this, doc);
-                    _ccContent.Content = cntr;
-                    _ = cntr._tbOriginal.Focus();
-
-                    string? fileName = doc.FileName;
-
-                    if (fileName != null)
-                    {
-                        _tasks.Add(_recentFilesMenu.AddRecentFileAsync(fileName));
-                    }
-                }
-                else
-                {
-                    _ccContent.Content = null;
-
-                    string errorMessage = doc.HasSourceDocument
-                                            ? string.Format(
-                                              CultureInfo.CurrentCulture,
-                                              Res.EmptyOrInvalidFile,
-                                              Environment.NewLine, System.IO.Path.GetFileName(doc.SourceDocumentFileName), Res.XmlDocumentationFile)
-                                            : string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, doc.SourceDocumentFileName);
-
-                    _ = MessageBox.Show(this, errorMessage, App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
-
-                    ChangeSourceDocument_ExecutedAsync(this, null!);
-                }
-
-                
+                _ = Dispatcher.BeginInvoke(() => ShowCurrentDocument());
             }
+        }
+
+        private void ShowCurrentDocument()
+        {
+            IDocument? doc = Controller.CurrentDocument;
+            if (doc is null)
+            {
+                _ccContent.Content = null;
+                return;
+            }
+
+            if (doc.HasValidSourceDocument)
+            {
+                doc.PropertyChanged += Doc_PropertyChanged;
+
+                var cntr = new TsltnControl(this, doc);
+                _ccContent.Content = cntr;
+                _ = cntr._tbOriginal.Focus();
+
+                string? fileName = doc.FileName;
+
+                if (fileName != null)
+                {
+                    _tasks.Add(_recentFilesMenu.AddRecentFileAsync(fileName));
+                }
+            }
+            else
+            {
+                _ccContent.Content = null;
+
+                string errorMessage = doc.HasSourceDocument
+                                        ? string.Format(
+                                          CultureInfo.CurrentCulture,
+                                          Res.EmptyOrInvalidFile,
+                                          Environment.NewLine, System.IO.Path.GetFileName(doc.SourceDocumentFileName), Res.XmlDocumentationFile)
+                                        : string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, doc.SourceDocumentFileName);
+
+                ShowErrorMessage(errorMessage);
+                ChangeSourceDocument_ExecutedAsync(this, null!);
+            }
+        }
+
+        private void ShowErrorMessage(string errorMessage)
+        {
+            _ = MessageBox.Show(this, errorMessage, App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+
         }
 
         private void Doc_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -246,8 +256,8 @@ namespace Tsltn
             {
                 try
                 {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
+                    // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                    _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
                 }
                 catch
                 { }
@@ -263,6 +273,10 @@ namespace Tsltn
 
         #region Commands
 
+        private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = Controller.CurrentDocument != null;
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = Controller.CurrentDocument?.Changed ?? false;
+
+
         private void Help_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -271,57 +285,211 @@ namespace Tsltn
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        private async void New_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
-            e.Handled = true;
-            _ = Controller.NewDocumentAsync();
+            if (Controller.CurrentDocument != null)
+            {
+                if (!await SaveDocumentAsync(false))
+                {
+                    return;
+                }
+            }
+
+            string? xmlFileName = null;
+            if(!GetXmlInFileName(ref xmlFileName))
+            {
+                return;
+            }
+
+            try
+            {
+                await Task.Run(() => Controller.NewDocument(xmlFileName)).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, Res.CreationFailed, Environment.NewLine, ex.Message);
+                _ = Dispatcher.BeginInvoke(() => ShowErrorMessage(errorMessage), DispatcherPriority.Send);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        private async void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
-            e.Handled = true;
+            if (Controller.CurrentDocument != null)
+            {
+                if (!await SaveDocumentAsync(false))
+                {
+                    return;
+                }
+            }
             _ = Controller.LoadDocumentAsync(null);
         }
 
-        private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && Controller.CurrentDocument != null;
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        private async void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            e.Handled = true;
-            _tasks.Add(Controller.CloseDocumentAsync();
+            if (Controller.CurrentDocument is null)
+            {
+                return;
+            }
+
+            if (!await SaveDocumentAsync(false))
+            {
+                return;
+            }
+
+            Controller.CloseCurrentDocument();
         }
 
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && (Controller.CurrentDocument?.Changed ?? false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
-        {
-            e.Handled = true;
-            IsCommandEnabled = false;
-            _ = await Controller.SaveDocumentAsync().ConfigureAwait(false);
-            IsCommandEnabled = true;
-        }
+        private void Save_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = SaveDocumentAsync(false);
+        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        private void SaveAs_ExecutedAsync(object sender, ExecutedRoutedEventArgs e) => _ = SaveDocumentAsync(true);
+
+        private async Task<bool> SaveDocumentAsync(bool showFileDialog)
         {
-            e.Handled = true;
-            IsCommandEnabled = false;
-            _ = await Controller.SaveAsTsltnAsync().ConfigureAwait(false);
-            IsCommandEnabled = true;
+            IDocument? doc = Controller.CurrentDocument;
+            if (doc is null)
+            {
+                return true;
+            }
+
+            RefreshData();
+
+            if(!doc.Changed)
+            {
+                return true;
+            }
+
+            string? fileName = doc.FileName;
+
+            if (fileName is null)
+            {
+                showFileDialog = true;
+                fileName = $"{Path.GetFileNameWithoutExtension(doc.SourceDocumentFileName)}.{doc.TargetLanguage ?? Res.Language}{App.TsltnFileExtension}";
+            }
+
+            if (showFileDialog)
+            {
+                if (!GetTsltnOutFileName())
+                {
+                    return false;
+                }
+            }
+
+            var task = Task.Run(() => Controller.CurrentDocument?.Save(fileName));
+            _tasks.Add(task);
+
+            try
+            {
+                await task.ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, "The file {0}{1}could not be saved:{1}{2}",
+                                                    fileName, Environment.NewLine, ex.Message);
+                _ = Dispatcher.BeginInvoke(() => ShowErrorMessage(errorMessage), DispatcherPriority.Send);
+                return false;
+            }
+
+            return true;
+
+            //////////////////////////////////////
+
+            bool GetTsltnOutFileName()
+            {
+                string? directory = Path.GetDirectoryName(fileName);
+                if (string.IsNullOrEmpty(directory))
+                {
+                    directory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                }
+
+                var dlg = new SaveFileDialog()
+                {
+                    FileName = Path.GetFileName(fileName),
+                    AddExtension = true,
+                    CheckFileExists = false,
+                    CheckPathExists = true,
+                    CreatePrompt = false,
+                    Filter = $"{Res.TsltnFile} (*{App.TsltnFileExtension})|*{App.TsltnFileExtension}",
+                    InitialDirectory = directory,
+                    DefaultExt = App.TsltnFileExtension,
+                    DereferenceLinks = true
+                };
+
+                if(dlg.ShowDialog(this) == true)
+                {
+                    fileName = dlg.FileName;
+                    return true;
+                }
+
+                return false;
+            }
         }
+
+        private bool GetXmlInFileName([NotNullWhen(true)]ref string? fileName)
+        {
+            var dlg = new OpenFileDialog()
+            {
+                FileName = fileName ?? "",
+                AddExtension = true,
+                CheckFileExists = true,
+                CheckPathExists = true,
+
+                DefaultExt = ".xml",
+                Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
+                DereferenceLinks = true,
+                InitialDirectory = System.IO.Path.GetDirectoryName(fileName) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                Multiselect = false,
+                ValidateNames = true,
+                Title = Res.LoadXmlFile
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                fileName = dlg.FileName;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool GetTsltnInFileName([NotNullWhen(true)] ref string? fileName)
+        {
+            var dlg = new OpenFileDialog()
+            {
+                //FileName = fileName,
+                AddExtension = true,
+                CheckFileExists = true,
+                CheckPathExists = true,
+
+                DefaultExt = App.TsltnFileExtension,
+                Filter = $"{Res.TsltnFile} (*{App.TsltnFileExtension})|*{App.TsltnFileExtension}",
+                DereferenceLinks = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                Multiselect = false,
+                ValidateNames = true
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                fileName = dlg.FileName;
+                return true;
+            }
+
+            return false;
+        }
+
 
         private async void Translate_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
-            IsCommandEnabled = false;
-            e.Handled = true;
 
             await Controller.TranslateAsync().ConfigureAwait(true);
-
-            IsCommandEnabled = true;
         }
 
         private void FileController_TranslationError(object? sender, DataErrorEventArgs e) => TranslationError?.Invoke(this, e);
@@ -370,9 +538,7 @@ namespace Tsltn
 
             if (dlg.ShowDialog(this) == true)
             {
-                IsCommandEnabled = false;
                 await Controller.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(false);
-                IsCommandEnabled = true;
             }
         }
 
@@ -399,9 +565,7 @@ namespace Tsltn
 
             if (args.Length > 1)
             {
-                IsCommandEnabled = false;
                 await Controller.OpenTsltnFromCommandLineAsync(args[1]).ConfigureAwait(true);
-                IsCommandEnabled = true;
             }
         }
 

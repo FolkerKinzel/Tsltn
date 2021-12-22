@@ -159,6 +159,9 @@
   <data name="CopyText" xml:space="preserve">
     <value>Copy Text</value>
   </data>
+  <data name="CreationFailed" xml:space="preserve">
+    <value>The document could not be created:{0}{1}</value>
+  </data>
   <data name="CutMenuItem" xml:space="preserve">
     <value>Cut</value>
   </data>
@@ -196,8 +199,14 @@
   <data name="InvalidTargetLanguage" xml:space="preserve">
     <value>Target Language is not a valid IETF language tag.</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
   <data name="LeftKey" xml:space="preserve">
     <value>Left</value>
+  </data>
+  <data name="LoadXmlFile" xml:space="preserve">
+    <value>Open the XML file to translate.</value>
   </data>
   <data name="NewMenuItem" xml:space="preserve">
     <value>New</value>
@@ -288,6 +297,9 @@
   </data>
   <data name="Translation" xml:space="preserve">
     <value>Translation</value>
+  </data>
+  <data name="TsltnFile" xml:space="preserve">
+    <value>TSLTN file</value>
   </data>
   <data name="UndoMenuItem" xml:space="preserve">
     <value>Undo</value>
