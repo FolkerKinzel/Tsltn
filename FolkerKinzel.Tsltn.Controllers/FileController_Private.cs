@@ -238,7 +238,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 string? fileName = doc.FileName;
 
                 _ = await CloseCurrentDocument().ConfigureAwait(false);
-                _ = await LoadDocumentAsync(fileName).ConfigureAwait(false);
+                _ = await OpenTsltnDocument(fileName).ConfigureAwait(false);
             }
             else
             {

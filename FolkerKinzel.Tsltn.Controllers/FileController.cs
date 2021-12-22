@@ -171,91 +171,92 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return Task.CompletedTask;
             }
 
-            return LoadDocumentAsync(commandLineArg);
+            return OpenTsltnDocument(commandLineArg);
         }
 
-        public async Task<bool> LoadDocumentAsync(string? fileName)
-        {
-            if (StringComparer.OrdinalIgnoreCase.Equals(fileName, CurrentDocument?.FileName))
-            {
-                OnMessage(new MessageEventArgs(Res.FileAlreadyOpen, MessageBoxButton.OK, MessageBoxImage.Asterisk, MessageBoxResult.OK));
-                return true;
-            }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void OpenTsltnDocument(string tsltnFileName) => CurrentDocument = Document.Load(tsltnFileName);
+        //{
+        //    if (StringComparer.OrdinalIgnoreCase.Equals(tsltnFileName, CurrentDocument?.FileName))
+        //    {
+        //        OnMessage(new MessageEventArgs(Res.FileAlreadyOpen, MessageBoxButton.OK, MessageBoxImage.Asterisk, MessageBoxResult.OK));
+        //        return true;
+        //    }
 
-            if (!await CloseCurrentDocument().ConfigureAwait(false))
-            {
-                return true;
-            }
+        //    if (!await CloseCurrentDocument().ConfigureAwait(false))
+        //    {
+        //        return true;
+        //    }
 
-            if (fileName is null)
-            {
-                if (!GetTsltnInFileName(out fileName))
-                {
-                    return true;
-                }
-            }
+        //    if (tsltnFileName is null)
+        //    {
+        //        if (!GetTsltnInFileName(out tsltnFileName))
+        //        {
+        //            return true;
+        //        }
+        //    }
 
-            try
-            {
-                CurrentDocument = await Task.Run(() => CurrentDocument = Document.Load(fileName)).ConfigureAwait(false);
-                Debug.Assert(_doc != null);
-                Debug.Assert(CurrentDocument != null);
-                if (!CurrentDocument.HasSourceDocument)
-                {
-                    //OnMessage(new MessageEventArgs(
-                    //        string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, _doc.SourceDocumentFileName),
-                    //        MessageBoxButton.OK,
-                    //        MessageBoxImage.Exclamation,
-                    //        MessageBoxResult.OK));
+        //    try
+        //    {
+        //        CurrentDocument = await Task.Run(() => CurrentDocument = Document.Load(tsltnFileName)).ConfigureAwait(false);
+        //        Debug.Assert(_doc != null);
+        //        Debug.Assert(CurrentDocument != null);
+        //        if (!CurrentDocument.HasSourceDocument)
+        //        {
+        //            //OnMessage(new MessageEventArgs(
+        //            //        string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, _doc.SourceDocumentFileName),
+        //            //        MessageBoxButton.OK,
+        //            //        MessageBoxImage.Exclamation,
+        //            //        MessageBoxResult.OK));
 
-                    string? xmlFileName = null;
-                    try
-                    {
-                        xmlFileName = System.IO.Path.GetFileName(CurrentDocument.SourceDocumentFileName);
-                    }
-                    catch { }
+        //            string? xmlFileName = null;
+        //            try
+        //            {
+        //                xmlFileName = System.IO.Path.GetFileName(CurrentDocument.SourceDocumentFileName);
+        //            }
+        //            catch { }
 
-                    if (!GetXmlInFileName(ref xmlFileName))
-                    {
-                        _ = await CloseCurrentDocument().ConfigureAwait(false);
-                        return true;
-                    }
+        //            if (!GetXmlInFileName(ref xmlFileName))
+        //            {
+        //                _ = await CloseCurrentDocument().ConfigureAwait(false);
+        //                return true;
+        //            }
 
-                    _doc.SourceDocumentFileName = xmlFileName;
-                    if (await SaveDocumentAsync().ConfigureAwait(false))
-                    {
-                        _ = await LoadDocumentAsync(fileName).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _ = await CloseCurrentDocument().ConfigureAwait(false);
-                    }
-                    return true;
-                }
+        //            _doc.SourceDocumentFileName = xmlFileName;
+        //            if (await SaveDocumentAsync().ConfigureAwait(false))
+        //            {
+        //                _ = await LoadDocumentAsync(tsltnFileName).ConfigureAwait(false);
+        //            }
+        //            else
+        //            {
+        //                _ = await CloseCurrentDocument().ConfigureAwait(false);
+        //            }
+        //            return true;
+        //        }
 
-                Debug.Assert(CurrentDocument != null);
+        //        Debug.Assert(CurrentDocument != null);
 
-                if (!CurrentDocument.HasValidSourceDocument)
-                {
-                    OnMessage(new MessageEventArgs(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            Res.EmptyOrInvalidFile,
-                            Environment.NewLine, System.IO.Path.GetFileName(CurrentDocument.SourceDocumentFileName), Res.XmlDocumentationFile),
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information,
-                        MessageBoxResult.OK));
-                }
+        //        if (!CurrentDocument.HasValidSourceDocument)
+        //        {
+        //            OnMessage(new MessageEventArgs(
+        //                string.Format(
+        //                    CultureInfo.CurrentCulture,
+        //                    Res.EmptyOrInvalidFile,
+        //                    Environment.NewLine, System.IO.Path.GetFileName(CurrentDocument.SourceDocumentFileName), Res.XmlDocumentationFile),
+        //                MessageBoxButton.OK,
+        //                MessageBoxImage.Information,
+        //                MessageBoxResult.OK));
+        //        }
 
-                return true;
-            }
-            catch (Exception e)
-            {
-                OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
-                _ = await CloseTsltnAsync(false).ConfigureAwait(true);
-                return false;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        OnMessage(new MessageEventArgs(e.Message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK));
+        //        _ = await CloseTsltnAsync(false).ConfigureAwait(true);
+        //        return false;
+        //    }
+        //}
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

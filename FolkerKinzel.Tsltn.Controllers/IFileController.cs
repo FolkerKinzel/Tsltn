@@ -28,7 +28,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         void CloseCurrentDocument();
         void NewDocument(string xmlFileName);
         Task OpenTsltnFromCommandLineAsync(string commandLineArg);
-        Task<bool> LoadDocumentAsync(string? tsltnFileName);
+        void OpenTsltnDocument(string tsltnFileName);
         //Task<bool> SaveDocumentAsync();
         //Task<bool> SaveAsTsltnAsync();
         Task TranslateAsync();

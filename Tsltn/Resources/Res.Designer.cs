@@ -232,6 +232,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file is already open. ähnelt.
+        /// </summary>
+        public static string FileAlreadyOpen {
+            get {
+                return ResourceManager.GetString("FileAlreadyOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
         /// </summary>
         public static string FileMenuHeader {
@@ -399,6 +408,15 @@ namespace Tsltn.Resources {
         public static string OnlineHelpMenuHeader {
             get {
                 return ResourceManager.GetString("OnlineHelpMenuHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Failed to open the file{0}{1}{0}Failure: {2} ähnelt.
+        /// </summary>
+        public static string OpenFileFailed {
+            get {
+                return ResourceManager.GetString("OpenFileFailed", resourceCulture);
             }
         }
         

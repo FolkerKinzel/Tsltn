@@ -49,7 +49,7 @@ namespace FolkerKinzel.Tsltn.Models
 
         internal string? SourceDocumentFileName
         {
-            get { return _sourceDocumentAbsolutePath; }
+            get => _sourceDocumentAbsolutePath;
             set
             {
                 // Der relative Pfad wird beim Speichern wieder in einen solchen 

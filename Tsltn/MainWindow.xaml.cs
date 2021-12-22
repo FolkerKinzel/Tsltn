@@ -220,7 +220,7 @@ namespace Tsltn
         {
             if (System.IO.File.Exists(e.FileName))
             {
-                _ = Controller.LoadDocumentAsync(e.FileName);
+                _ = Controller.OpenTsltnDocument(e.FileName);
             }
             else
             {
@@ -296,19 +296,17 @@ namespace Tsltn
             }
 
             string? xmlFileName = null;
-            if(!GetXmlInFileName(ref xmlFileName))
+            if (GetXmlInFileName(ref xmlFileName))
             {
-                return;
-            }
-
-            try
-            {
-                await Task.Run(() => Controller.NewDocument(xmlFileName)).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = string.Format(CultureInfo.InvariantCulture, Res.CreationFailed, Environment.NewLine, ex.Message);
-                _ = Dispatcher.BeginInvoke(() => ShowErrorMessage(errorMessage), DispatcherPriority.Send);
+                try
+                {
+                    await Task.Run(() => Controller.NewDocument(xmlFileName)).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = string.Format(CultureInfo.InvariantCulture, Res.CreationFailed, Environment.NewLine, ex.Message);
+                    _ = Dispatcher.BeginInvoke(() => ShowErrorMessage(errorMessage), DispatcherPriority.Send);
+                }
             }
         }
 
@@ -317,12 +315,32 @@ namespace Tsltn
         {
             if (Controller.CurrentDocument != null)
             {
-                if (!await SaveDocumentAsync(false))
+                if (!await SaveDocumentAsync(false).ConfigureAwait(true))
                 {
                     return;
                 }
             }
-            _ = Controller.LoadDocumentAsync(null);
+
+            if(GetTsltnInFileName(out string tsltnFileName))
+            {
+                if (StringComparer.OrdinalIgnoreCase.Equals(tsltnFileName, Controller.CurrentDocument?.FileName))
+                {
+                    _ = MessageBox.Show(this, Res.FileAlreadyOpen, App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Asterisk, MessageBoxResult.OK);
+                    return;
+                }
+
+                try
+                {
+                    await Task.Run(() => Controller.OpenTsltnDocument(tsltnFileName)).ConfigureAwait(false);
+
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = string.Format(CultureInfo.InvariantCulture, Res.OpenFileFailed, Environment.NewLine, tsltnFileName, ex.Message);
+                    _ = Dispatcher.BeginInvoke(() => ShowErrorMessage(errorMessage), DispatcherPriority.Send);
+                }
+
+            }
         }
 
 
@@ -459,7 +477,7 @@ namespace Tsltn
             return false;
         }
 
-        private bool GetTsltnInFileName([NotNullWhen(true)] ref string? fileName)
+        private bool GetTsltnInFileName(out string fileName)
         {
             var dlg = new OpenFileDialog()
             {
@@ -482,6 +500,7 @@ namespace Tsltn
                 return true;
             }
 
+            fileName = "";
             return false;
         }
 
