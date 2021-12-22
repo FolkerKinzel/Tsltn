@@ -13,6 +13,9 @@ namespace FolkerKinzel.Tsltn.Models
         INode? FirstNode { get; }
         string? SourceDocumentFileName { get; }
 
+        public bool HasSourceDocument { get; }
+
+
         bool HasValidSourceDocument { get; }
 
 

@@ -13,11 +13,6 @@ namespace FolkerKinzel.Tsltn.Models
 
         void Save(string tsltnFileName);
 
-        new string? FileName { get; set; }
-        
-        bool HasSourceDocument { get; }
-        
-
         new string? SourceDocumentFileName { get; set; }
 
         TranslationsController Translations { get; }

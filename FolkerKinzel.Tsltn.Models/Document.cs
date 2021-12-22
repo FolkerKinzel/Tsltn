@@ -110,7 +110,7 @@ namespace FolkerKinzel.Tsltn.Models
         {
             get => _fileName;
 
-            set
+            private set
             {
                 _fileName = string.IsNullOrWhiteSpace(value) ? null : value;
                 OnPropertyChanged();

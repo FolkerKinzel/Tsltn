@@ -46,6 +46,12 @@ namespace FolkerKinzel.Tsltn.Controllers
             get => _doc;
             set
             {
+                if(ReferenceEquals(_doc, value))
+                {
+                    return;
+                }
+
+                _doc?.Dispose();
                 _doc = value;
 
                 if(_doc != null)
@@ -96,6 +102,8 @@ namespace FolkerKinzel.Tsltn.Controllers
 
         public void Dispose() => _doc?.Dispose();
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<bool> CloseDocumentAsync() => await CloseTsltnAsync(true).ConfigureAwait(false);
 
 
@@ -137,9 +145,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 }
             }
 
-            doc.Dispose();
             CurrentDocument = null;
-
             return true;
         }
 
@@ -174,7 +180,7 @@ namespace FolkerKinzel.Tsltn.Controllers
                 return true;
             }
 
-            if (!await CloseDocumentAsync().ConfigureAwait(true))
+            if (!await CloseDocumentAsync().ConfigureAwait(false))
             {
                 return true;
             }
@@ -189,16 +195,16 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             try
             {
-                await Task.Run(() => { CurrentDocument = Document.Load(fileName); }).ConfigureAwait(false);
+                CurrentDocument = await Task.Run(() => CurrentDocument = Document.Load(fileName)).ConfigureAwait(false);
                 Debug.Assert(_doc != null);
                 Debug.Assert(CurrentDocument != null);
                 if (!CurrentDocument.HasSourceDocument)
                 {
-                    OnMessage(new MessageEventArgs(
-                            string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, _doc.SourceDocumentFileName),
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Exclamation,
-                            MessageBoxResult.OK));
+                    //OnMessage(new MessageEventArgs(
+                    //        string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, _doc.SourceDocumentFileName),
+                    //        MessageBoxButton.OK,
+                    //        MessageBoxImage.Exclamation,
+                    //        MessageBoxResult.OK));
 
                     string? xmlFileName = null;
                     try

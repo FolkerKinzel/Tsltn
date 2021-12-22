@@ -165,6 +165,9 @@
   <data name="EditMenuHeader" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="EmptyOrInvalidFile" xml:space="preserve">
+    <value>The file{0}"{1}"{0}is empty or not a{0}{2}!</value>
+  </data>
   <data name="ExtrasMenuHeader" xml:space="preserve">
     <value>Extras</value>
   </data>
@@ -261,6 +264,9 @@
   </data>
   <data name="ShiftKey" xml:space="preserve">
     <value>Shift</value>
+  </data>
+  <data name="SourceDocumentNotFound" xml:space="preserve">
+    <value>The source document{0}"{1}"{0}was not found!</value>
   </data>
   <data name="SourceFile" xml:space="preserve">
     <value>Source file:</value>

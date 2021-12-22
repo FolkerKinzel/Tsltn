@@ -235,11 +235,10 @@ namespace FolkerKinzel.Tsltn.Controllers
 
             if (!doc.Changed || await SaveDocumentAsync().ConfigureAwait(false))
             {
-
                 string? fileName = doc.FileName;
 
                 _ = await CloseDocumentAsync().ConfigureAwait(false);
-                await LoadDocumentAsync(fileName).ConfigureAwait(false);
+                _ = await LoadDocumentAsync(fileName).ConfigureAwait(false);
             }
             else
             {

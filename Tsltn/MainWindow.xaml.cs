@@ -141,28 +141,44 @@ namespace Tsltn
             if (e.PropertyName == nameof(Controller.CurrentDocument))
             {
                 IDocument? doc = Controller.CurrentDocument;
-                if (doc != null)
+                if (doc is null)
+                {
+                    _ccContent.Content = null;
+                    return;
+                }
+
+                if (doc.HasValidSourceDocument)
                 {
                     doc.PropertyChanged += Doc_PropertyChanged;
 
-                    if (doc.HasValidSourceDocument)
+                    var cntr = new TsltnControl(this, doc);
+                    _ccContent.Content = cntr;
+                    _ = cntr._tbOriginal.Focus();
+
+                    string? fileName = doc.FileName;
+
+                    if (fileName != null)
                     {
-                        var cntr = new TsltnControl(this, doc);
-                        _ccContent.Content = cntr;
-                        _ = cntr._tbOriginal.Focus();
-
-                        string? fileName = doc.FileName;
-
-                        if (fileName != null)
-                        {
-                            _tasks.Add(_recentFilesMenu.AddRecentFileAsync(fileName));
-                        }
+                        _tasks.Add(_recentFilesMenu.AddRecentFileAsync(fileName));
                     }
                 }
                 else
                 {
                     _ccContent.Content = null;
+
+                    string errorMessage = doc.HasSourceDocument
+                                            ? string.Format(
+                                              CultureInfo.CurrentCulture,
+                                              Res.EmptyOrInvalidFile,
+                                              Environment.NewLine, System.IO.Path.GetFileName(doc.SourceDocumentFileName), Res.XmlDocumentationFile)
+                                            : string.Format(CultureInfo.CurrentCulture, Res.SourceDocumentNotFound, Environment.NewLine, doc.SourceDocumentFileName);
+
+                    _ = MessageBox.Show(this, errorMessage, App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+
+                    ChangeSourceDocument_ExecutedAsync(this, null!);
                 }
+
+                
             }
         }
 
@@ -230,8 +246,8 @@ namespace Tsltn
             {
                 try
                 {
-                    // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                    _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {App.OnlineHelpUrl.Replace("&", "^&", StringComparison.Ordinal)}") { CreateNoWindow = true });
                 }
                 catch
                 { }
@@ -262,23 +278,20 @@ namespace Tsltn
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
+        private void Open_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            if(await Controller.LoadDocumentAsync(null))
-            {
-
-            }
+            _ = Controller.LoadDocumentAsync(null);
         }
 
-        private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && Controller.CurrentDocument?.SourceDocumentFileName != null;
+        private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && Controller.CurrentDocument != null;
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Close_ExecutedAsync(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            _ = Controller.CloseDocumentAsync();
+            _tasks.Add(Controller.CloseDocumentAsync();
         }
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = IsCommandEnabled && (Controller.CurrentDocument?.Changed ?? false);
@@ -357,7 +370,9 @@ namespace Tsltn
 
             if (dlg.ShowDialog(this) == true)
             {
+                IsCommandEnabled = false;
                 await Controller.ChangeSourceDocumentAsync(dlg.FileName).ConfigureAwait(false);
+                IsCommandEnabled = true;
             }
         }
 
