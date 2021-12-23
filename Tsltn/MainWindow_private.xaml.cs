@@ -11,7 +11,6 @@ using Tsltn.Resources;
 
 namespace Tsltn
 {
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

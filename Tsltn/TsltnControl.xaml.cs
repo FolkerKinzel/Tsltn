@@ -12,7 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -50,11 +52,6 @@ namespace Tsltn
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Argumentausnahmen korrekt instanziieren", Justification = "<Ausstehend>")]
         public TsltnControl(MainWindow owner, IDocument doc)
         {
-            //if (owner is null || !doc.HasValidSourceDocument)
-            //{
-            //    throw new ArgumentNullException();
-            //}
-
             Debug.Assert(owner != null);
             Debug.Assert(doc != null);
 
@@ -133,11 +130,20 @@ namespace Tsltn
             {
                 Errors.Remove(MissingSourceLanguage);
 
+                //throw new ArgumentException();
+                //BindingExpression bindingExpression = BindingOperations.GetBindingExpression(_tbSourceLanguage, TextBox.TextProperty);
+                //Validation.ClearInvalid(bindingExpression);
+
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     _sourceLanguage = null;
                     OnPropertyChanged();
-                    this.Errors.Insert(0, MissingSourceLanguage);
+                    Errors.Insert(0, MissingSourceLanguage);
+
+                    //throw new InvalidOperationException();
+
+                    //ValidationError validationError = new ValidationError(new ExceptionValidationRule(), bindingExpression);
+                    //Validation.MarkInvalid(bindingExpression, validationError);
                 }
                 else
                 {
