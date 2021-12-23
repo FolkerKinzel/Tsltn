@@ -12,20 +12,19 @@ namespace FolkerKinzel.Tsltn.Models
         bool Changed { get; }
         INode? FirstNode { get; }
         string? SourceDocumentFileName { get; }
-
-        public bool HasSourceDocument { get; }
-
-
+        bool HasSourceDocument { get; }
         bool HasValidSourceDocument { get; }
-
-
+        bool HasError { get; }
         string? SourceLanguage { get; set; }
         string? TargetLanguage { get; set; }
-
+        void ChangeSourceDocument(string xmlFileName);
         IEnumerable<KeyValuePair<long, string>> GetAllTranslations();
-
-        bool HasError { get; }
-
         void Save(string tsltnFileName);
+        (IList<DataError> Errors, IList<KeyValuePair<long, string>> UnusedTranslations) Translate(string outFileName);
+
+        void RemoveTranslation(long id);
+        //TranslationsController Translations { get; }
+
+
     }
 }

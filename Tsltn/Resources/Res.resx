@@ -271,6 +271,9 @@
   <data name="SaveMenuItem" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="SaveTranslationAs" xml:space="preserve">
+    <value>Save Translation As</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
   </data>
@@ -317,7 +320,7 @@
     <value>At least one Element has no translation.</value>
   </data>
   <data name="UnusedTranslations" xml:space="preserve">
-    <value>Unused translations</value>
+    <value>Unused Translations</value>
   </data>
   <data name="UnusedTranslationsExplanation" xml:space="preserve">
     <value>The file "{0}" contains unused translations. Check the boxes next to them, to remove the selected ones.</value>

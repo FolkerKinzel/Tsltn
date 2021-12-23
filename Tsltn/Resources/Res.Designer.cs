@@ -529,6 +529,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save Translation As ähnelt.
+        /// </summary>
+        public static string SaveTranslationAs {
+            get {
+                return ResourceManager.GetString("SaveTranslationAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Search ähnelt.
         /// </summary>
         public static string Search {
@@ -664,7 +673,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Unused translations ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unused Translations ähnelt.
         /// </summary>
         public static string UnusedTranslations {
             get {

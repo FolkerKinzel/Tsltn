@@ -17,67 +17,67 @@ namespace FolkerKinzel.Tsltn.Controllers
 {
     public sealed partial class FileController : INotifyPropertyChanged, IFileController
     {
-        private bool GetXmlInFileName([NotNullWhen(true)] ref string? fileName)
-        {
-            var args = new ShowFileDialogEventArgs(DlgType.OpenFileDialog)
-            {
-                FileName = fileName ?? "",
-                AddExtension = true,
-                CheckFileExists = true,
-                CheckPathExists = true,
+        //private bool GetXmlInFileName([NotNullWhen(true)] ref string? fileName)
+        //{
+        //    var args = new ShowFileDialogEventArgs(DlgType.OpenFileDialog)
+        //    {
+        //        FileName = fileName ?? "",
+        //        AddExtension = true,
+        //        CheckFileExists = true,
+        //        CheckPathExists = true,
 
-                DefaultExt = ".xml",
-                Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
-                DereferenceLinks = true,
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                Multiselect = false,
-                ValidateNames = true,
-                Title = Res.OpenSourceFile
-            };
+        //        DefaultExt = ".xml",
+        //        Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
+        //        DereferenceLinks = true,
+        //        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        //        Multiselect = false,
+        //        ValidateNames = true,
+        //        Title = Res.OpenSourceFile
+        //    };
 
-            OnFileDialog(args);
+        //    OnFileDialog(args);
 
-            if (args.Result == true)
-            {
-                fileName = args.FileName;
-                return true;
-            }
+        //    if (args.Result == true)
+        //    {
+        //        fileName = args.FileName;
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
 
 
-        private bool GetTsltnInFileName([NotNullWhen(true)] out string? fileName)
-        {
-            var args = new ShowFileDialogEventArgs(DlgType.OpenFileDialog)
-            {
-                //FileName = fileName,
-                AddExtension = true,
-                CheckFileExists = true,
-                CheckPathExists = true,
+        //private bool GetTsltnInFileName([NotNullWhen(true)] out string? fileName)
+        //{
+        //    var args = new ShowFileDialogEventArgs(DlgType.OpenFileDialog)
+        //    {
+        //        //FileName = fileName,
+        //        AddExtension = true,
+        //        CheckFileExists = true,
+        //        CheckPathExists = true,
 
-                DefaultExt = TsltnFileExtension,
-                Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
-                DereferenceLinks = true,
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                Multiselect = false,
-                ValidateNames = true
-            };
+        //        DefaultExt = TsltnFileExtension,
+        //        Filter = $"{Res.TsltnFile} (*{TsltnFileExtension})|*{TsltnFileExtension}",
+        //        DereferenceLinks = true,
+        //        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        //        Multiselect = false,
+        //        ValidateNames = true
+        //    };
 
-            OnFileDialog(args);
+        //    OnFileDialog(args);
 
-            if (args.Result == true)
-            {
-                fileName = args.FileName;
-                return true;
-            }
-            else
-            {
-                fileName = null;
-                return false;
-            }
-        }
+        //    if (args.Result == true)
+        //    {
+        //        fileName = args.FileName;
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        fileName = null;
+        //        return false;
+        //    }
+        //}
 
         //private bool GetTsltnOutFileName([NotNullWhen(true)]ref string? fileName)
         //{
@@ -129,37 +129,37 @@ namespace FolkerKinzel.Tsltn.Controllers
         //}
 
 
-        private bool GetXmlOutFileName([NotNullWhen(true)] out string? fileName)
-        {
-            fileName = CurrentDocument?.SourceDocumentFileName;
+        //private bool GetXmlOutFileName([NotNullWhen(true)] out string? fileName)
+        //{
+        //    fileName = CurrentDocument?.SourceDocumentFileName;
 
-            var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
-            {
-                Title = Res.SaveTranslationAs,
-                FileName = Path.GetFileName(fileName) ?? "",
-                AddExtension = true,
-                CheckFileExists = false,
-                CheckPathExists = true,
-                CreatePrompt = false,
-                Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
-                InitialDirectory = System.IO.Path.GetDirectoryName(fileName) ?? "",
-                DefaultExt = ".xml",
-                DereferenceLinks = true
-            };
+        //    var args = new ShowFileDialogEventArgs(DlgType.SaveFileDialog)
+        //    {
+        //        Title = Res.SaveTranslationAs,
+        //        FileName = Path.GetFileName(fileName) ?? "",
+        //        AddExtension = true,
+        //        CheckFileExists = false,
+        //        CheckPathExists = true,
+        //        CreatePrompt = false,
+        //        Filter = $"{Res.XmlDocumentationFile} (*.xml)|*.xml",
+        //        InitialDirectory = System.IO.Path.GetDirectoryName(fileName) ?? "",
+        //        DefaultExt = ".xml",
+        //        DereferenceLinks = true
+        //    };
 
-            OnFileDialog(args);
+        //    OnFileDialog(args);
 
-            if (args.Result == true)
-            {
-                fileName = args.FileName;
-                return true;
-            }
-            else
-            {
-                fileName = null;
-                return false;
-            }
-        }
+        //    if (args.Result == true)
+        //    {
+        //        fileName = args.FileName;
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        fileName = null;
+        //        return false;
+        //    }
+        //}
 
 
 
@@ -223,32 +223,32 @@ namespace FolkerKinzel.Tsltn.Controllers
 
 
 
-        private async Task ReloadDocumentAsync()
-        {
-            IFileAccess? doc = CurrentDocument;
-            if(doc is null)
-            {
-                return;
-            }
+        //private async Task ReloadDocumentAsync()
+        //{
+        //    IFileAccess? doc = CurrentDocument;
+        //    if(doc is null)
+        //    {
+        //        return;
+        //    }
 
-            OnRefreshData();
+        //    OnRefreshData();
 
-            if (!doc.Changed || await SaveDocumentAsync().ConfigureAwait(false))
-            {
-                string? fileName = doc.FileName;
+        //    if (!doc.Changed || await SaveDocumentAsync().ConfigureAwait(false))
+        //    {
+        //        string? fileName = doc.FileName;
 
-                _ = await CloseCurrentDocument().ConfigureAwait(false);
-                _ = await OpenTsltnDocument(fileName).ConfigureAwait(false);
-            }
-            else
-            {
-                var args = new MessageEventArgs(
-                    Res.NotReloaded,
-                    MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+        //        _ = await CloseCurrentDocument().ConfigureAwait(false);
+        //        _ = await OpenTsltnDocument(fileName).ConfigureAwait(false);
+        //    }
+        //    else
+        //    {
+        //        var args = new MessageEventArgs(
+        //            Res.NotReloaded,
+        //            MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
 
-                OnMessage(args);
-            }
-        }
+        //        OnMessage(args);
+        //    }
+        //}
 
 
     }

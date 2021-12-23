@@ -13,8 +13,14 @@
     <AssemblyVersion>1.3.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="BadFileNameEventArgs.cs" />
+    <Compile Remove="FileController_Private.cs" />
     <Compile Remove="FileWatcher.cs" />
     <Compile Remove="HasContentChangedEventArgs.cs" />
+    <Compile Remove="MessageEventArgs.cs" />
+    <Compile Remove="NewFileNameEventArgs.cs" />
+    <Compile Remove="ShowFileDialogEventArgs.cs" />
+    <Compile Remove="UnusedTranslationEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />

@@ -73,21 +73,13 @@ namespace FolkerKinzel.Tsltn.Models
             SourceDocumentDeleted?.Invoke(this, e);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void FileWatcher_SourceDocumentMoved(object sender, RenamedEventArgs e)
-        {
-            SourceDocumentFileName = e.FullPath;
-        }
+            => SourceDocumentFileName = e.FullPath;
 
-        private void FileWatcher_SourceDocumentChanged(object sender, FileSystemEventArgs e)
-        {
-            //if(_reloadSourceDocumentTask?.Status == TaskStatus.Running)
-            //{
-            //    return;
-            //}
-
-            //_reloadSourceDocumentTask = Task.Run(() => SourceDocumentChanged?.Invoke(this, e));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void FileWatcher_SourceDocumentChanged(object sender, FileSystemEventArgs e) =>
             SourceDocumentChanged?.Invoke(this, e);
-        }
 
         public bool HasSourceDocument => Navigator != null;
 
@@ -122,12 +114,16 @@ namespace FolkerKinzel.Tsltn.Models
         {
             get => _tsltn.SourceDocumentFileName;
 
-            set
+            private set
             {
                 _tsltn.SourceDocumentFileName = value;
                 OnPropertyChanged();
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ChangeSourceDocument(string xmlFileName) =>
+            SourceDocumentFileName = xmlFileName;
 
         public string? SourceLanguage
         {
@@ -188,6 +184,8 @@ namespace FolkerKinzel.Tsltn.Models
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveTranslation(long id) => Translations.RemoveTranslation(id);
 
         public void Save(string tsltnFileName)
         {

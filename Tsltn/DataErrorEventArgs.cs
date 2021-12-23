@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FolkerKinzel.Tsltn.Controllers
+namespace Tsltn
 {
     public class DataErrorEventArgs : EventArgs
     {
