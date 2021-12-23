@@ -88,7 +88,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Browse all ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Browse All ähnelt.
         /// </summary>
         public static string BrowseAll {
             get {
@@ -115,7 +115,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Case-sensitive search ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Case-Sensitive Search ähnelt.
         /// </summary>
         public static string CaseSensitiveSearch {
             get {
@@ -129,15 +129,6 @@ namespace Tsltn.Resources {
         public static string ChangeSourceFileMenuItem {
             get {
                 return ResourceManager.GetString("ChangeSourceFileMenuItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Clear ähnelt.
-        /// </summary>
-        public static string Clear {
-            get {
-                return ResourceManager.GetString("Clear", resourceCulture);
             }
         }
         
@@ -250,6 +241,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An error occurred while observing the XML source file.{0}Try to save your work and reload the current TSLTN document. ähnelt.
+        /// </summary>
+        public static string FileWatcherFailed {
+            get {
+                return ResourceManager.GetString("FileWatcherFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Go to: ähnelt.
         /// </summary>
         public static string GoTo {
@@ -358,15 +358,6 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die New Source File ähnelt.
-        /// </summary>
-        public static string NewSourceFile {
-            get {
-                return ResourceManager.GetString("NewSourceFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Next &gt; ähnelt.
         /// </summary>
         public static string Next {
@@ -385,7 +376,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Node path: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Node Path: ähnelt.
         /// </summary>
         public static string NodePath {
             get {
@@ -565,6 +556,15 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The source document was changed outside of the editor.{0}Do you want to reload it? ähnelt.
+        /// </summary>
+        public static string SourceDocumentChanged {
+            get {
+                return ResourceManager.GetString("SourceDocumentChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The source document{0}&quot;{1}&quot;{0}was not found! ähnelt.
         /// </summary>
         public static string SourceDocumentNotFound {
@@ -574,7 +574,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Source file: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Source File: ähnelt.
         /// </summary>
         public static string SourceFile {
             get {
@@ -583,7 +583,16 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Source language: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The XML documentation file {0}&quot;{1}&quot;{0} has been deleted! ähnelt.
+        /// </summary>
+        public static string SourceFileDeleted {
+            get {
+                return ResourceManager.GetString("SourceFileDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Source Language: ähnelt.
         /// </summary>
         public static string SourceLanguage {
             get {
@@ -601,7 +610,7 @@ namespace Tsltn.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Target language: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Target Language: ähnelt.
         /// </summary>
         public static string TargetLanguage {
             get {

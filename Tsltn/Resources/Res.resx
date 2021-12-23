@@ -127,7 +127,7 @@
     <value>Alt</value>
   </data>
   <data name="BrowseAll" xml:space="preserve">
-    <value>Browse all</value>
+    <value>Browse All</value>
   </data>
   <data name="BrowseTranslationsTip" xml:space="preserve">
     <value>Use STRG+Up or STRG+Down to browse the translations!</value>
@@ -136,13 +136,10 @@
     <value>Cancel</value>
   </data>
   <data name="CaseSensitiveSearch" xml:space="preserve">
-    <value>Case-sensitive search</value>
+    <value>Case-Sensitive Search</value>
   </data>
   <data name="ChangeSourceFileMenuItem" xml:space="preserve">
     <value>Change Source File</value>
-  </data>
-  <data name="Clear" xml:space="preserve">
-    <value>Clear</value>
   </data>
   <data name="CloseMenuItem" xml:space="preserve">
     <value>Close</value>
@@ -180,6 +177,9 @@
   <data name="FileMenuHeader" xml:space="preserve">
     <value>File</value>
   </data>
+  <data name="FileWatcherFailed" xml:space="preserve">
+    <value>An error occurred while observing the XML source file.{0}Try to save your work and reload the current TSLTN document.</value>
+  </data>
   <data name="GoTo" xml:space="preserve">
     <value>Go to:</value>
   </data>
@@ -214,9 +214,6 @@
   <data name="NewMenuItem" xml:space="preserve">
     <value>New</value>
   </data>
-  <data name="NewSourceFile" xml:space="preserve">
-    <value>New Source File</value>
-  </data>
   <data name="Next" xml:space="preserve">
     <value>Next &gt;</value>
   </data>
@@ -224,7 +221,7 @@
     <value>Next To Translate &gt;</value>
   </data>
   <data name="NodePath" xml:space="preserve">
-    <value>Node path:</value>
+    <value>Node Path:</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -283,20 +280,26 @@
   <data name="ShiftKey" xml:space="preserve">
     <value>Shift</value>
   </data>
+  <data name="SourceDocumentChanged" xml:space="preserve">
+    <value>The source document was changed outside of the editor.{0}Do you want to reload it?</value>
+  </data>
   <data name="SourceDocumentNotFound" xml:space="preserve">
     <value>The source document{0}"{1}"{0}was not found!</value>
   </data>
   <data name="SourceFile" xml:space="preserve">
-    <value>Source file:</value>
+    <value>Source File:</value>
+  </data>
+  <data name="SourceFileDeleted" xml:space="preserve">
+    <value>The XML documentation file {0}"{1}"{0} has been deleted!</value>
   </data>
   <data name="SourceLanguage" xml:space="preserve">
-    <value>Source language:</value>
+    <value>Source Language:</value>
   </data>
   <data name="SourceLanguageNotSpecified" xml:space="preserve">
     <value>The source language is not specified. (Use IETF language tag.)</value>
   </data>
   <data name="TargetLanguage" xml:space="preserve">
-    <value>Target language:</value>
+    <value>Target Language:</value>
   </data>
   <data name="TargetLanguageNotSpecified" xml:space="preserve">
     <value>The target language is not specified. (Use IETF language tag.)</value>

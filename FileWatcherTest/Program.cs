@@ -1,4 +1,4 @@
-﻿using FolkerKinzel.Tsltn.Controllers;
+﻿using FolkerKinzel.Tsltn.Models.Intls;
 using System;
 using System.IO;
 using System.Threading;
@@ -37,8 +37,7 @@ namespace FileWatcherTest
             string otherFilePath = Path.Combine(testDirectoryPath, OTHER_FILE_NAME);
 
 
-            using FileWatcher fileWatcher = FileWatcher.Instance;
-            fileWatcher.WatchedFile = testFilePath;
+            using FileWatcher fileWatcher = new FileWatcher(testFilePath);
 
             Console.WriteLine("Create File");
             File.WriteAllText(testFilePath, "");

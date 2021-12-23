@@ -1,5 +1,4 @@
-﻿using FolkerKinzel.Tsltn.Controllers.Resources;
-using FolkerKinzel.Tsltn.Models;
+﻿using FolkerKinzel.Tsltn.Models;
 using Microsoft.Win32;
 using System;
 using System.Collections.Concurrent;
@@ -13,7 +12,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace FolkerKinzel.Tsltn.Controllers
 {
@@ -56,41 +54,31 @@ namespace FolkerKinzel.Tsltn.Controllers
 
                 if(_doc != null)
                 {
-                    _doc.SourceDocumentChanged += Document_SourceDocumentChanged;
-                    _doc.SourceDocumentDeleted += Document_SourceDocumentDeleted;
-                    _doc.FileWatcherFailed += Document_FileWatcherFailed;
+                    //_doc.SourceDocumentChanged += Doc_SourceDocumentChanged;
+                    //_doc.SourceDocumentDeleted += Document_SourceDocumentDeleted;
+                    //_doc.FileWatcherFailed += Document_FileWatcherFailed;
                 }
 
                 OnPropertyChanged();
             }
         }
 
-        private void Document_FileWatcherFailed(object? sender, ErrorEventArgs e)
-        {
-            var args = new MessageEventArgs(
-                string.Format(CultureInfo.InvariantCulture, Res.FileWatcherFailed, Environment.NewLine),
-                MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-            OnMessage(args);
-        }
-
-        private void Document_SourceDocumentDeleted(object? sender, FileSystemEventArgs e) 
-            => SourceDocumentDeleted?.Invoke(sender, e);
-
-
-        private async void Document_SourceDocumentChanged(object? sender, FileSystemEventArgs e)
-        {
-            var args = new MessageEventArgs(
-                string.Format(CultureInfo.InvariantCulture, Res.SourceDocumentChanged, Environment.NewLine),
-                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-            OnMessage(args);
-
-            if (args.Result == MessageBoxResult.Yes)
-            {
-                await ReloadDocumentAsync().ConfigureAwait(false);
-            }
-        }
-
         IDocument? IFileController.CurrentDocument => _doc;
+
+        //private void Document_FileWatcherFailed(object? sender, ErrorEventArgs e)
+        //{
+        //    var args = new MessageEventArgs(
+        //        string.Format(CultureInfo.InvariantCulture, Res.FileWatcherFailed, Environment.NewLine),
+        //        MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+        //    OnMessage(args);
+        //}
+
+        //private void Document_SourceDocumentDeleted(object? sender, FileSystemEventArgs e) 
+        //    => SourceDocumentDeleted?.Invoke(sender, e);
+
+
+        
+
 
 
         

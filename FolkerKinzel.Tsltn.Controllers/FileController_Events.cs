@@ -15,7 +15,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         //public event EventHandler<MessageEventArgs>? Message;
         //public event EventHandler<DataErrorEventArgs>? TranslationError;
         //public event EventHandler<UnusedTranslationEventArgs>? UnusedTranslations;
-        public event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
+        //public event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
 
 
         private void OnPropertyChanged([CallerMemberName] string propName = "" ) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

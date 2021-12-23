@@ -28,7 +28,7 @@ namespace Tsltn
     public sealed partial class TsltnControl : UserControl, INotifyPropertyChanged, IDisposable
     {
         private readonly MainWindow _owner;
-        private INode _node;
+        private INode? _node;
         private string _translation = "";
         private bool _hasTranslation;
         private string? _sourceLanguage;
@@ -57,15 +57,17 @@ namespace Tsltn
 
             Debug.Assert(owner != null);
             Debug.Assert(doc != null);
-            Debug.Assert(doc.HasValidSourceDocument);
 
-            //this.DataContext = this;
+            if(!doc.HasValidSourceDocument)
+            {
+                IsEnabled = false;
+            }
 
             _owner = owner;
             Document = doc;
-            _node = doc.FirstNode!;
+            _node = doc.FirstNode;
 
-            if (_node.Translation != null)
+            if (_node?.Translation != null)
             {
                 _translation = _node.Translation;
                 _hasTranslation = true;
@@ -178,7 +180,7 @@ namespace Tsltn
 
         public string? SourceFileName => Document.SourceDocumentFileName;
 
-        public INode CurrentNode
+        public INode? CurrentNode
         {
             get => _node;
 
@@ -198,8 +200,12 @@ namespace Tsltn
 
         internal void UpdateSource()
         {
-            _node.Translation = HasTranslation ? Translation.Trim() : null;
+            if (CurrentNode is null)
+            {
+                return;
+            }
 
+            CurrentNode.Translation = HasTranslation ? Translation.Trim() : null;
 
             if (!Validation.GetHasError(_tbSourceLanguage))
             {
@@ -208,7 +214,6 @@ namespace Tsltn
                     Document.SourceLanguage = SourceLanguage;
                 }
             }
-
 
             if (!Validation.GetHasError(_tbTargetLanguage))
             {
@@ -434,26 +439,38 @@ namespace Tsltn
 
         #region Commands
 
-        private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode.HasAncestor;
+        private void PreviousPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode?.HasAncestor ?? false;
 
         private void BrowseHome_Executed(object sender, ExecutedRoutedEventArgs e) => Navigate(Document.FirstNode);
 
         private async void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            INode? ancestor = await Task.Run(() => _node.GetAncestor()).ConfigureAwait(true);
+            if (CurrentNode is null)
+            {
+                return;
+            }
+            INode? ancestor = await Task.Run(() => CurrentNode.GetAncestor()).ConfigureAwait(true);
             Navigate(ancestor);
         }
 
-        private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode.HasDescendant;
+        private void NextPage_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CurrentNode?.HasDescendant ?? false;
 
         private async void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (CurrentNode is null)
+            {
+                return;
+            }
             INode? descendant = await Task.Run(() => CurrentNode.GetDescendant()).ConfigureAwait(true);
             Navigate(descendant);
         }
 
         private void CopyXml_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (CurrentNode is null)
+            {
+                return;
+            }
             Clipboard.Clear();
             Clipboard.SetText(CurrentNode.InnerXml);
             //e.Handled = true;
@@ -493,6 +510,10 @@ namespace Tsltn
 
         private async void NextToTranslate_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (CurrentNode is null)
+            {
+                return;
+            }
             if (HasTranslation)
             {
                 Navigate(_nextUntranslatedNode);
@@ -516,6 +537,10 @@ namespace Tsltn
 
         private async Task CheckUntranslatedNodesAsync()
         {
+            if (CurrentNode is null)
+            { 
+                return;
+            }
             UpdateSource();
             _nextUntranslatedNode = HasTranslation ? await Task.Run(CurrentNode.GetNextUntranslated).ConfigureAwait(true) : CurrentNode;
 
@@ -549,18 +574,13 @@ namespace Tsltn
                         break;
                     }
 
-                    if (!_owner.IsCommandEnabled)
-                    {
-                        continue;
-                    }
-
+                    if (CurrentNode is null) { return; }
 
                     if (!HasTranslation)
                     {
                         Dispatcher.Invoke(() => RemoveXmlErrorMessages(), DispatcherPriority.SystemIdle, CancellationToken.None);
                         continue;
                     }
-
 
                     if (!IsValidXml(Translation, out string? exceptionMessage))
                     {
@@ -610,6 +630,10 @@ namespace Tsltn
 
         private void RemoveXmlErrorMessages()
         {
+            if(CurrentNode is null)
+            {
+                return;
+            }
             DataError[] thisErrors = Errors.Where(x => x is XmlDataError && CurrentNode.Equals(x.Node)).ToArray();
 
             foreach (DataError error in thisErrors)

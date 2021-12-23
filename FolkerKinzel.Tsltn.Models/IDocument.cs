@@ -1,13 +1,21 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FolkerKinzel.Tsltn.Models
 {
     public interface IDocument : INotifyPropertyChanged
     {
+        event EventHandler<ErrorEventArgs>? FileWatcherFailed;
+        event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
+        event EventHandler<FileSystemEventArgs>? SourceDocumentChanged;
+
+
+
         string? FileName { get; }
         bool Changed { get; }
         INode? FirstNode { get; }

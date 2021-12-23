@@ -25,6 +25,7 @@ namespace Tsltn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             ApplicationCommands.SaveAs.InputGestures.Add(
                 new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.ShiftKey}+S"));
 

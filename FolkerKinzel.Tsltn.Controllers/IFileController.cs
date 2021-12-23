@@ -15,7 +15,7 @@ namespace FolkerKinzel.Tsltn.Controllers
         event PropertyChangedEventHandler? PropertyChanged;
         //event EventHandler<DataErrorEventArgs>? TranslationError;
         //event EventHandler<UnusedTranslationEventArgs>? UnusedTranslations;
-        event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
+        //event EventHandler<FileSystemEventArgs>? SourceDocumentDeleted;
 
 
         IDocument? CurrentDocument { get; }
