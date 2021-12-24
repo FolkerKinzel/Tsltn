@@ -327,7 +327,7 @@ public sealed partial class TsltnControl : UserControl, INotifyPropertyChanged, 
 
     private void NavCtrl_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
     {
-        INode? target = Document.FirstNode?.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
+        INode? target = CurrentNode?.FindNode(e.PathFragment, !e.CaseSensitive, e.WholeWord);
 
         if (target is not null)
         {
