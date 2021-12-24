@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace FolkerKinzel.Tsltn.Models;
 
-namespace FolkerKinzel.Tsltn.Models
+public enum ErrorLevel
 {
-    public enum ErrorLevel
-    {
-        Error,
+    Error,
 
-        Warning,
+    Warning,
 
-        Information
-
-
-    }
+    Information
 }

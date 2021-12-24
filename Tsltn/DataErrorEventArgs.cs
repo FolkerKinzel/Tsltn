@@ -1,15 +1,10 @@
 ﻿using FolkerKinzel.Tsltn.Models;
-using System;
-using System.Collections.Generic;
 
-namespace Tsltn
+namespace Tsltn;
+
+public class DataErrorEventArgs : EventArgs
 {
-    public class DataErrorEventArgs : EventArgs
-    {
-        public DataErrorEventArgs(IEnumerable<DataError> errors)
-        {
-            this.Errors = errors;
-        }
-        public IEnumerable<DataError> Errors { get; }
-    }
+    public DataErrorEventArgs(IEnumerable<DataError> errors) => Errors = errors;
+
+    public IEnumerable<DataError> Errors { get; }
 }

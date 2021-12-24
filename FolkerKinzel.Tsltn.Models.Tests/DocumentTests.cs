@@ -73,7 +73,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                 {
                     continue;
                 }
-                doc.Navigator!.GetNodeID(section, out _, out s);
+                _ = doc.Navigator!.GetNodeID(section, out _, out s);
              
                 Assert.IsNotNull(s);
             }
@@ -91,7 +91,7 @@ namespace FolkerKinzel.Tsltn.Models.Tests
                 {
                     continue;
                 }
-                doc.Navigator!.GetNodeID(section, out _, out s);
+                _ = doc.Navigator!.GetNodeID(section, out _, out s);
 
                 Assert.IsNotNull(s);
 

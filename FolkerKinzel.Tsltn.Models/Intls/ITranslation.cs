@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace FolkerKinzel.Tsltn.Models.Intls
+namespace FolkerKinzel.Tsltn.Models.Intls;
+
+internal interface ITranslation
 {
-    internal interface ITranslation
-    {
-        bool GetHasTranslation(long id);
+    bool GetHasTranslation(long id);
 
-        void SetTranslation(long nodeID, string? transl);
+    void SetTranslation(long nodeID, string? transl);
 
-        bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl);
+    bool TryGetTranslation(long nodeID, [NotNullWhen(true)] out string? transl);
 
-    }
 }

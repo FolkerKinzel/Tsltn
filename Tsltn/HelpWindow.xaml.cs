@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+﻿using System.Windows;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Tsltn.Resources;
 
 namespace Tsltn
@@ -22,14 +12,11 @@ namespace Tsltn
     {
         public HelpWindow()
         {
-            this.Title = $"{App.ProgramName} - {Res.HelpWindowTitle}";
+            Title = $"{App.ProgramName} - {Res.HelpWindowTitle}";
             InitializeComponent();
-            this._fdsvContent.Document = (FlowDocument)XamlReader.Parse(Res.Help);
+            _fdsvContent.Document = (FlowDocument)XamlReader.Parse(Res.Help);
         }
 
-        private void OK_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        private void OK_Click(object sender, RoutedEventArgs e) => Close();
     }
 }

@@ -1,22 +1,16 @@
-﻿using System.Xml.Linq;
+﻿namespace FolkerKinzel.Tsltn.Models;
 
-namespace FolkerKinzel.Tsltn.Models
+public interface INode
 {
-    public interface INode
-    {
-        //long ID { get; }
-        bool HasAncestor { get; }
-        bool HasDescendant { get; }
-       
-        string InnerXml { get; }
-        string NodePath { get; }
-        string? Translation { get; set; }
+    bool HasAncestor { get; }
+    bool HasDescendant { get; }
 
-        INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord);
-        INode? GetAncestor();
-        INode? GetDescendant();
-        INode? GetNextUntranslated();
+    string InnerXml { get; }
+    string NodePath { get; }
+    string? Translation { get; set; }
 
-        //bool ReferencesSameXml(INode other);
-    }
+    INode? FindNode(string nodePathFragment, bool ignoreCase, bool wholeWord);
+    INode? GetAncestor();
+    INode? GetDescendant();
+    INode? GetNextUntranslated();
 }

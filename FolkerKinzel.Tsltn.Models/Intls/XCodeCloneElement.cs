@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
-namespace FolkerKinzel.Tsltn.Models.Intls
+namespace FolkerKinzel.Tsltn.Models.Intls;
+
+internal class XCodeCloneElement : XElement
 {
-    internal class XCodeCloneElement : XElement
+    private static readonly XElement _emptyCodeBlock = new(Sandcastle.CODE);
+
+    internal XCodeCloneElement(XElement source) : base(source)
     {
-        private static readonly XElement _emptyCodeBlock = new XElement(Sandcastle.CODE);
+        Source = source;
 
-
-        internal XCodeCloneElement(XElement source) : base(source)
+        foreach (XElement codeNode in Elements(Sandcastle.CODE).ToArray())
         {
-            this.Source = source;
-
-            foreach (var codeNode in Elements(Sandcastle.CODE).ToArray())
-            {
-                codeNode.ReplaceWith(_emptyCodeBlock);
-            }
+            codeNode.ReplaceWith(_emptyCodeBlock);
         }
-
-        internal XElement Source { get; }
     }
+
+    internal XElement Source { get; }
 }

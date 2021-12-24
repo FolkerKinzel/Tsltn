@@ -1,24 +1,17 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Xml.Linq;
 
-namespace FolkerKinzel.Tsltn.Models.Intls
+namespace FolkerKinzel.Tsltn.Models.Intls;
+
+internal static class XElementExtensions
 {
-    internal static class XElementExtensions
+    public static string InnerXml(this XElement node)
     {
-        public static string InnerXml(this XElement node)
-        {
-            //if(node is null)
-            //{
-            //    throw new ArgumentNullException(nameof(node));
-            //}
+        Debug.Assert(node != null);
 
-            Debug.Assert(node != null);
+        System.Xml.XmlReader reader = node.CreateReader();
+        _ = reader.MoveToContent();
 
-            System.Xml.XmlReader reader = node.CreateReader();
-            reader.MoveToContent();
-
-            return reader.ReadInnerXml();
-        }
+        return reader.ReadInnerXml();
     }
 }

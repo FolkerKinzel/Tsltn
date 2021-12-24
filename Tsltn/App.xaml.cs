@@ -1,54 +1,47 @@
-﻿using FolkerKinzel.Tsltn.Controllers;
-using FolkerKinzel.Tsltn.Models;
-using FolkerKinzel.RecentFiles.WPF;
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using FolkerKinzel.RecentFiles.WPF;
+using FolkerKinzel.Tsltn.Controllers;
 using Tsltn.Resources;
-using System.Text.RegularExpressions;
 
-namespace Tsltn
+namespace Tsltn;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public sealed partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public sealed partial class App : Application
+    public const string ProgramName = "Tsltn";
+    public const string TsltnFileExtension = ".tsltn";
+    public const string OnlineHelpUrl = "https://github.com/FolkerKinzel/Tsltn";
+
+    protected override void OnStartup(StartupEventArgs e)
     {
-        public const string ProgramName = "Tsltn";
+        Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        _ = ApplicationCommands.SaveAs.InputGestures.Add(
+            new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.ShiftKey}+S"));
 
-        public const string TsltnFileExtension = ".tsltn";
-
-        public const string OnlineHelpUrl = "https://github.com/FolkerKinzel/Tsltn";
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            ApplicationCommands.SaveAs.InputGestures.Add(
-                new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, $"{Res.Cntrl}+{Res.ShiftKey}+S"));
-
-            base.OnStartup(e);
-        }
-
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            MainWindow = new MainWindow(FileController.Instance,
-                new RecentFilesMenu(
-                    Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)!
-                ));
-            
-            MainWindow.Show();
-        }
-
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show($"{Res.UnexpectedError}{Environment.NewLine}{Environment.NewLine}{e.Exception.Message}",
-                App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-
-            e.Handled = true;
-        }
-
+        base.OnStartup(e);
     }
+
+    private void Application_Startup(object sender, StartupEventArgs e)
+    {
+        MainWindow = new MainWindow(FileController.Instance,
+            new RecentFilesMenu(
+                Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)!
+            ));
+
+        MainWindow.Show();
+    }
+
+    private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+        _ = MessageBox.Show($"{Res.UnexpectedError}{Environment.NewLine}{Environment.NewLine}{e.Exception.Message}",
+            App.ProgramName, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+
+        e.Handled = true;
+    }
+
 }

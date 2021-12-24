@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Runtime.CompilerServices;
 
-namespace FolkerKinzel.Tsltn.Models.Intls
+namespace FolkerKinzel.Tsltn.Models.Intls;
+
+internal class KeyValuePairComparer : IEqualityComparer<KeyValuePair<long, string>>
 {
-    internal class KeyValuePairComparer : IEqualityComparer<KeyValuePair<long, string>>
-    {
-        public bool Equals(KeyValuePair<long, string> x, KeyValuePair<long, string> y)
-        {
-            return x.Key.Equals(y.Key);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(KeyValuePair<long, string> x, KeyValuePair<long, string> y) 
+        => x.Key.Equals(y.Key);
 
-        public int GetHashCode(KeyValuePair<long, string> obj)
-        {
-            return obj.Key.GetHashCode();
-        }
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int GetHashCode(KeyValuePair<long, string> obj)
+        => obj.Key.GetHashCode();
 }

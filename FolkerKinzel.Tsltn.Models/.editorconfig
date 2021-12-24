@@ -132,3 +132,9 @@ dotnet_diagnostic.CA1031.severity = silent
 
 # CA1002: Generische Listen nicht verfügbar machen
 dotnet_diagnostic.CA1002.severity = silent
+
+# IDE0046: In bedingten Ausdruck konvertieren
+dotnet_diagnostic.IDE0046.severity = silent
+
+# IDE0021: Blocktextkörper für Konstruktoren verwenden
+csharp_style_expression_bodied_constructors = false

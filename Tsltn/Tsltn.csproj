@@ -1,131 +1,133 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <NeutralLanguage>en</NeutralLanguage>
-    <Copyright>Copyright © 2020 Folker Kinzel</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <LangVersion>9.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <AssemblyVersion>2.5.0.0</AssemblyVersion>
-    <FileVersion>2.5.0.6</FileVersion>
-    <ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
-    <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
-    
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Binaries\**" />
-    <Compile Remove="deps\**" />
-    <Compile Remove="Installer\**" />
-    <EmbeddedResource Remove="Binaries\**" />
-    <EmbeddedResource Remove="deps\**" />
-    <EmbeddedResource Remove="Installer\**" />
-    <None Remove="Binaries\**" />
-    <None Remove="deps\**" />
-    <None Remove="Installer\**" />
-    <Page Remove="Binaries\**" />
-    <Page Remove="deps\**" />
-    <Page Remove="Installer\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="IRecentFilesMenu.cs" />
-    <Compile Remove="RecentFilesMenu.cs" />
-    <Compile Remove="TranslationErrorsEventArgs.cs" />
-    <Compile Remove="TsltnPage.xaml.cs" />
-    <Compile Remove="UntranslatedNodeEventArgs.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="HistoryTable_16x.png" />
-    <None Remove="pics\ChangeSourceDocument_16x.png" />
-    <None Remove="pics\ChangeSourceDocument_grey_16x.png" />
-    <None Remove="pics\CloseDocument_16x.png" />
-    <None Remove="pics\Copy_16x.png" />
-    <None Remove="pics\Cut_16x.png" />
-    <None Remove="pics\Help_16x.png" />
-    <None Remove="pics\InformationSymbol_16x.png" />
-    <None Remove="pics\NewFile_16x.png" />
-    <None Remove="pics\Open_16x.png" />
-    <None Remove="pics\Paste_16x.png" />
-    <None Remove="pics\Redo_16x.png" />
-    <None Remove="pics\Redo_grey_16x.png" />
-    <None Remove="pics\SaveAs_16x.png" />
-    <None Remove="pics\SaveAs_grey_16x.png" />
-    <None Remove="pics\Save_16x.png" />
-    <None Remove="pics\Save_grey_16x.png" />
-    <None Remove="pics\ShutDown_16x.png" />
-    <None Remove="pics\StatusCriticalError_16x.png" />
-    <None Remove="pics\StatusInformation_16x.png" />
-    <None Remove="pics\StatusWarning_16x.png" />
-    <None Remove="pics\TranslateDocument_16x.png" />
-    <None Remove="pics\Undo_16x.png" />
-    <None Remove="pics\Undo_grey_16x.png" />
-    <None Remove="pics\Web_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Remove="Resources\Help.xaml" />
-    <Page Remove="TsltnPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Help.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FolkerKinzel.RecentFiles.WPF" Version="1.4.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FolkerKinzel.Tsltn.Controllers\FolkerKinzel.Tsltn.Controllers.csproj" />
-    <ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="SearchUserControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Resources\Res.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Res.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Res.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Res.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="pics\ChangeSourceDocument_16x.png" />
-    <Resource Include="pics\ChangeSourceDocument_grey_16x.png" />
-    <Resource Include="pics\Copy_16x.png" />
-    <Resource Include="pics\Cut_16x.png" />
-    <Resource Include="pics\Help_16x.png" />
-    <Resource Include="pics\HistoryTable_16x.png" />
-    <Resource Include="pics\CloseDocument_16x.png" />
-    <Resource Include="pics\InformationSymbol_16x.png" />
-    <Resource Include="pics\NewFile_16x.png" />
-    <Resource Include="pics\Open_16x.png" />
-    <Resource Include="pics\Paste_16x.png" />
-    <Resource Include="pics\Redo_16x.png" />
-    <Resource Include="pics\Redo_grey_16x.png" />
-    <Resource Include="pics\SaveAs_16x.png" />
-    <Resource Include="pics\SaveAs_grey_16x.png" />
-    <Resource Include="pics\Save_16x.png" />
-    <Resource Include="pics\Save_grey_16x.png" />
-    <Resource Include="pics\ShutDown_16x.png" />
-    <Resource Include="pics\StatusCriticalError_16x.png" />
-    <Resource Include="pics\StatusInformation_16x.png" />
-    <Resource Include="pics\StatusWarning_16x.png" />
-    <Resource Include="pics\TranslateDocument_16x.png" />
-    <Resource Include="pics\Undo_16x.png" />
-    <Resource Include="pics\Undo_grey_16x.png" />
-    <Resource Include="pics\Web_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="SearchUserControl.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName) --revision" />
-  </Target>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<NeutralLanguage>en</NeutralLanguage>
+		<Copyright>Copyright © 2020 Folker Kinzel</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+		<AssemblyVersion>2.5.0.0</AssemblyVersion>
+		<FileVersion>2.5.0.6</FileVersion>
+		<ApplicationIcon>pics\Tsltn.ico</ApplicationIcon>
+		<PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
+
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Binaries\**" />
+		<Compile Remove="deps\**" />
+		<Compile Remove="Installer\**" />
+		<EmbeddedResource Remove="Binaries\**" />
+		<EmbeddedResource Remove="deps\**" />
+		<EmbeddedResource Remove="Installer\**" />
+		<None Remove="Binaries\**" />
+		<None Remove="deps\**" />
+		<None Remove="Installer\**" />
+		<Page Remove="Binaries\**" />
+		<Page Remove="deps\**" />
+		<Page Remove="Installer\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="IRecentFilesMenu.cs" />
+		<Compile Remove="RecentFilesMenu.cs" />
+		<Compile Remove="TranslationErrorsEventArgs.cs" />
+		<Compile Remove="TsltnPage.xaml.cs" />
+		<Compile Remove="UntranslatedNodeEventArgs.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="HistoryTable_16x.png" />
+		<None Remove="pics\ChangeSourceDocument_16x.png" />
+		<None Remove="pics\ChangeSourceDocument_grey_16x.png" />
+		<None Remove="pics\CloseDocument_16x.png" />
+		<None Remove="pics\Copy_16x.png" />
+		<None Remove="pics\Cut_16x.png" />
+		<None Remove="pics\Help_16x.png" />
+		<None Remove="pics\InformationSymbol_16x.png" />
+		<None Remove="pics\NewFile_16x.png" />
+		<None Remove="pics\Open_16x.png" />
+		<None Remove="pics\Paste_16x.png" />
+		<None Remove="pics\Redo_16x.png" />
+		<None Remove="pics\Redo_grey_16x.png" />
+		<None Remove="pics\SaveAs_16x.png" />
+		<None Remove="pics\SaveAs_grey_16x.png" />
+		<None Remove="pics\Save_16x.png" />
+		<None Remove="pics\Save_grey_16x.png" />
+		<None Remove="pics\ShutDown_16x.png" />
+		<None Remove="pics\StatusCriticalError_16x.png" />
+		<None Remove="pics\StatusInformation_16x.png" />
+		<None Remove="pics\StatusWarning_16x.png" />
+		<None Remove="pics\TranslateDocument_16x.png" />
+		<None Remove="pics\Undo_16x.png" />
+		<None Remove="pics\Undo_grey_16x.png" />
+		<None Remove="pics\Web_16x.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Page Remove="Resources\Help.xaml" />
+		<Page Remove="TsltnPage.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\Help.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="FolkerKinzel.RecentFiles.WPF" Version="1.4.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\FolkerKinzel.Tsltn.Controllers\FolkerKinzel.Tsltn.Controllers.csproj" />
+		<ProjectReference Include="..\FolkerKinzel.Tsltn.Models\FolkerKinzel.Tsltn.Models.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="SearchUserControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Resources\Res.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Res.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Res.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Res.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="pics\ChangeSourceDocument_16x.png" />
+		<Resource Include="pics\ChangeSourceDocument_grey_16x.png" />
+		<Resource Include="pics\Copy_16x.png" />
+		<Resource Include="pics\Cut_16x.png" />
+		<Resource Include="pics\Help_16x.png" />
+		<Resource Include="pics\HistoryTable_16x.png" />
+		<Resource Include="pics\CloseDocument_16x.png" />
+		<Resource Include="pics\InformationSymbol_16x.png" />
+		<Resource Include="pics\NewFile_16x.png" />
+		<Resource Include="pics\Open_16x.png" />
+		<Resource Include="pics\Paste_16x.png" />
+		<Resource Include="pics\Redo_16x.png" />
+		<Resource Include="pics\Redo_grey_16x.png" />
+		<Resource Include="pics\SaveAs_16x.png" />
+		<Resource Include="pics\SaveAs_grey_16x.png" />
+		<Resource Include="pics\Save_16x.png" />
+		<Resource Include="pics\Save_grey_16x.png" />
+		<Resource Include="pics\ShutDown_16x.png" />
+		<Resource Include="pics\StatusCriticalError_16x.png" />
+		<Resource Include="pics\StatusInformation_16x.png" />
+		<Resource Include="pics\StatusWarning_16x.png" />
+		<Resource Include="pics\TranslateDocument_16x.png" />
+		<Resource Include="pics\Undo_16x.png" />
+		<Resource Include="pics\Undo_grey_16x.png" />
+		<Resource Include="pics\Web_16x.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Page Update="SearchUserControl.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="if $(ConfigurationName) == Release if '$(TargetFramework)' == 'netcoreapp3.1' dotnet $(SolutionDir)IncVersion\IncVersion.dll $(ProjectDir)$(ProjectFileName) --revision" />
+	</Target>
 </Project>
