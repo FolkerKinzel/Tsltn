@@ -16,7 +16,7 @@
              FontSize="16"
              TextOptions.TextFormattingMode="Ideal"
              Loaded="TsltnControl_Loaded" 
-             Unloaded="TsltnControl_Unloaded" >
+             Unloaded="TsltnControl_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -232,16 +232,15 @@ namespace Tsltn
 
         #region EventHandler
 
+
         private void TsltnControl_Loaded(object sender, RoutedEventArgs e)
         {
-            SourceLanguage = Document.SourceLanguage;
-            TargetLanguage = Document.TargetLanguage;
-
-
             // Möglichst nicht INNERHALB des Loaded-Eventhandlers auf den VisualTree
             // zugreifen: Das führt zu schwer identifizierbaren Fehlern:
             _ = Dispatcher.BeginInvoke(new Action(async () =>
             {
+                SourceLanguage = Document.SourceLanguage;
+                TargetLanguage = Document.TargetLanguage;
                 await CheckUntranslatedNodesAsync().ConfigureAwait(true);
                 CommandManager.InvalidateRequerySuggested();
                 _ = Task.Run(() => CheckXmlError(_cancellationTokenSource.Token));
@@ -356,8 +355,6 @@ namespace Tsltn
                 NavCtrl.SetComboBoxItem(e.PathFragment);
             }
         }
-
-
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -671,8 +668,10 @@ namespace Tsltn
 
 
 
+
+
         #endregion
 
-
+        
     }
 }
