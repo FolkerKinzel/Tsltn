@@ -4,6 +4,7 @@
 ### 2.6
 - [x] Dependency update.
 - [x] Bugfix in XmlFragmentBeautifier.
+- [x] Bugfix in XmlUtility.
 - [x] Extras -> Change Source File: Initial directory should be the current source file 
 directory.
 - [x] Extras -> Change Source File: Initial file name should be the current file name without path.
