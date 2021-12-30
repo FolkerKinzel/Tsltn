@@ -3,7 +3,7 @@
 
 Tool to translate the Visual Studio XML documentation file into different languages (for the localization of Visual Studio IntelliSense and project reference).
 
-[Download Tsltn for Windows x64 (Windows 7 - 10)](https://github.com/FolkerKinzel/Tsltn/releases/tag/2.5)
+[Download Tsltn for Windows x64 (Windows 7 - 11)](https://github.com/FolkerKinzel/Tsltn/releases/tag/2.5)
 
 ![Screenshot](screenshot.png)
 
