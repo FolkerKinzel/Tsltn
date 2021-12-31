@@ -13,6 +13,8 @@ directory.
 should be displayed.
 - [x] After searching an entry and jumping to begin afterwards, moving forward gives not the 
 second node of the file but the previous search result.
+- [x] Fix the issue that XPath expressions could be damaged within copy-paste operations by 
+additional white space.
 
 
 ### 2.7

@@ -356,7 +356,26 @@ public sealed partial class TsltnControl : UserControl, INotifyPropertyChanged, 
             .Replace("<c> null </c>", "<c>null</c>")
             .Replace("<c> true </c>", "<c>true</c>")
             .Replace("<c> false </c>", "<c>false</c>");
+        CleanMarkupFromAddedWhiteSpace(builder);
 
+        if (_tbTranslation.IsSelectionActive)
+        {
+            string replacement = builder.ToString();
+            _ = builder.Clear().Append(_tbTranslation.Text);
+
+            int selectionStart = _tbTranslation.SelectionStart;
+            _ = builder.Remove(selectionStart, _tbTranslation.SelectionLength);
+            _ = builder.Insert(_tbTranslation.SelectionStart, replacement);
+
+
+            Translation = builder.ToString();
+
+            _tbTranslation.Select(selectionStart + replacement.Length, 0);
+        }
+    }
+
+    private static void CleanMarkupFromAddedWhiteSpace(StringBuilder builder)
+    {
         int markupCounter = 0;
         char previous = 'a';
 
@@ -380,12 +399,12 @@ public sealed partial class TsltnControl : UserControl, INotifyPropertyChanged, 
                 default:
                     if (markupCounter > 0) // inside Markup
                     {
-                        if (char.IsWhiteSpace(current) && char.IsPunctuation(previous)) // das '=' - Zeichen ist nicht Punctuation
+                        if (char.IsWhiteSpace(current) && IsPunctuation(previous))
                         {
                             _ = builder.Remove(i, 1);
                             continue;
                         }
-                        else if (char.IsPunctuation(current) && char.IsWhiteSpace(previous))
+                        else if (IsPunctuation(current) && char.IsWhiteSpace(previous))
                         {
                             _ = builder.Remove(i + 1, 1);
                         }
@@ -394,22 +413,9 @@ public sealed partial class TsltnControl : UserControl, INotifyPropertyChanged, 
             }
 
             previous = current;
-        }
+        }//for
 
-        if (_tbTranslation.IsSelectionActive)
-        {
-            string replacement = builder.ToString();
-            _ = builder.Clear().Append(_tbTranslation.Text);
-
-            int selectionStart = _tbTranslation.SelectionStart;
-            _ = builder.Remove(selectionStart, _tbTranslation.SelectionLength);
-            _ = builder.Insert(_tbTranslation.SelectionStart, replacement);
-
-
-            Translation = builder.ToString();
-
-            _tbTranslation.Select(selectionStart + replacement.Length, 0);
-        }
+        static bool IsPunctuation(char c) => char.IsPunctuation(c) || c == '=' || c == '`';
     }
 
 

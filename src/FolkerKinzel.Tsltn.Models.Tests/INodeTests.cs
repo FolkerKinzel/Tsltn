@@ -7,6 +7,14 @@ public class INodeTests
     [NotNull]
     public TestContext? TestContext { get; set; }
 
+    //[TestMethod]
+    //public void IsPunctuationTest()
+    //{
+    //    //Assert.IsTrue(char.IsPunctuation('`'));
+    //    //Assert.IsTrue(char.IsPunctuation('='));
+    //    Assert.IsTrue(char.IsPunctuation('.'));
+    //}
+
 
     [TestMethod]
     public void NodeNavigationTests()
