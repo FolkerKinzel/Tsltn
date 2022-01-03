@@ -1,9 +1,10 @@
 # Tsltn
 ![version](https://img.shields.io/badge/version-2.5-blue)
 
-Tool to translate the Visual Studio XML documentation file into different languages (for the localization of Visual Studio IntelliSense and project reference).
+Tool to translate the Visual Studio XML documentation file into different languages (for the localization of Visual 
+Studio IntelliSense and project reference). Runs on Windows x64 (Windows 7 - 11).
 
-[Download Tsltn for Windows x64 (Windows 7 - 11)](https://github.com/FolkerKinzel/Tsltn/releases/tag/2.5)
+[Get the current release](https://github.com/FolkerKinzel/Tsltn/releases/tag/v2.6)
 
 ![Screenshot](screenshot.png)
 
@@ -18,6 +19,10 @@ the original file together with a special hash, that connects the translations s
 sections of the original file.
 
 Tsltn is completely free of charge, even for commercial purposes.
+
+.
+
+- [Version History](https://github.com/FolkerKinzel/Tsltn/releases)
 
 
 
