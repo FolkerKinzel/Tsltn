@@ -22,7 +22,7 @@ Tsltn is completely free of charge, even for commercial purposes.
 
 .
 
-- [Version History](https://github.com/FolkerKinzel/Tsltn/releases)
+[Version History](https://github.com/FolkerKinzel/Tsltn/releases)
 
 
 
