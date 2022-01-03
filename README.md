@@ -2,7 +2,7 @@
 ![version](https://img.shields.io/badge/version-2.6-blue)
 
 Tool to translate the Visual Studio XML documentation file into different languages (for the localization of Visual 
-Studio IntelliSense and project reference). Runs on Windows x64 (Windows 7 - 11).
+Studio IntelliSense and project references). Runs on Windows x64 (Windows 7 - 11).
 
 [Get the current release](https://github.com/FolkerKinzel/Tsltn/releases/tag/v2.6)
 
