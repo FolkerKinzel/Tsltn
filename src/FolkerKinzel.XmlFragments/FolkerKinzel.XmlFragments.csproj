@@ -4,7 +4,7 @@
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <FileVersion>1.2.0.5</FileVersion>
+    <FileVersion>1.2.0.11</FileVersion>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Copyright>Copyright © 2021 Folker Kinzel</Copyright>

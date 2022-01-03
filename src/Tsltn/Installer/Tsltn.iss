@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppSetupName 'TsltnSetup'
-#define MyAppVersion "2.5.0.0"
+#define MyAppVersion "2.6.0.0"
 
 #define MyAppName "Tsltn"
 #define MyAppPublisher "Folker Kinzel"
@@ -11,7 +11,7 @@
 #define MyAppNameExt ".tsltn"
 #define MyDeveloperDeploymentDirectory "{userpf}\Folker_Kinzel"
 
-#define MyAppProjectDirectory "C:\Users\fkinz\source\repos\Tsltn\Tsltn"
+#define MyAppProjectDirectory "C:\Users\fkinz\source\repos\Tsltn\src\Tsltn"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
