@@ -3,7 +3,8 @@
 using CommandLine;
 using Reversers;
 using Serilog;
-using System.Runtime.CompilerServices;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 const string LogFileName = "Reverser.log";
 
@@ -15,9 +16,9 @@ static void Run(CommandLineArguments arguments)
 {
     try
     {
-        arguments.LogFilePath = InitLogger(arguments.LogFilePath);
+        arguments.LogFilePath = InitLogger(arguments);
     }
-    catch (Exception e) 
+    catch (Exception e)
     {
         Console.Error.WriteLine(e);
         return;
@@ -37,29 +38,29 @@ static void Run(CommandLineArguments arguments)
     //}
 }
 
-static string? InitLogger(string? logFilePath)
-{
-    if(logFilePath == null)
-    {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateLogger();
-        return null;
-    }
-    else
-    { 
-        return InitFileLogger(logFilePath);
-    }
-}
+//static string? InitLogger(CommandLineArguments arguments)
+//{
+//    if (arguments.LogFilePath is null)
+//    {
+//        Log.Logger = new LoggerConfiguration()
+//            .WriteTo.Console()
+//            .CreateLogger();
+//        return null;
+//    }
+//    else
+//    {
+//        return InitFileLogger(arguments);
+//    }
+//}
 
-static string InitFileLogger(string logFilePath)
+static string InitLogger(CommandLineArguments arguments)
 {
-    logFilePath = Path.GetFullPath(logFilePath);
+    string logFilePath = Path.GetFullPath(arguments.LogFilePath);
 
     logFilePath = Path.Combine(Path.GetDirectoryName(logFilePath) ?? logFilePath, LogFileName);
 
     Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
+            .WriteTo.Console(theme: SystemConsoleTheme.Colored, restrictedToMinimumLevel: (LogEventLevel)arguments.LogLevel )
             .WriteTo.File(logFilePath, fileSizeLimitBytes: null, retainedFileCountLimit: null)
             .CreateLogger();
 

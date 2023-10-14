@@ -10,6 +10,7 @@ namespace Reversers;
 
 public class CommandLineArguments
 {
+
     //[Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
     //public bool Verbose { get; set; }
 
@@ -23,19 +24,19 @@ public class CommandLineArguments
     [NotNull]
     public string? InputPath { get; set; }
 
+    [Option("log", Required = true, HelpText = "The log file path.")]
+    [NotNull]
+    public string? LogFilePath { get; set; }
+
 
     [Option("out", Required = false, HelpText = "Path to the output directory.")]
     public string? OutputPath { get; set; }
 
 
-    [Option("loglevel", Required = false, HelpText = "The log level.")]
-    public string? LogLevel { get; set; }
+    [Option("loglevel", Default = 2, Min = 0, Max = 5, Required = false, HelpText = "The log level.")]
+    public int LogLevel { get; set; }
 
 
-    [Option("log", Required = false, HelpText = "The log level.")]
-    public string? LogFilePath { get; set; }
-
-
-    [Option("test", Default = "false", Required = false, HelpText = "Enables to run in test mode.")]
-    public bool Test { get; set; }
+    [Option('t', "test", Default = "false", Required = false, HelpText = "Enables to run in test mode.")]
+    public bool TestRun { get; set; }
 }
