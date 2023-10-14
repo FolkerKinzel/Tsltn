@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.XmlFragments",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolkerKinzel.XmlFragmentsTests", "FolkerKinzel.XmlFragmentsTests\FolkerKinzel.XmlFragmentsTests.csproj", "{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reverser", "Reverser\Reverser.csproj", "{EF119C10-59DA-4B1D-A126-88353D62FC3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,14 @@ Global
 		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|x86.ActiveCfg = Release|Any CPU
 		{FE961243-F0C1-4F38-B1E1-E3CD8AE6C3DD}.Release|x86.Build.0 = Release|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Debug|x86.Build.0 = Debug|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF119C10-59DA-4B1D-A126-88353D62FC3C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
