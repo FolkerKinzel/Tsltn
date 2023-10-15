@@ -8,13 +8,8 @@ using System.Threading.Tasks;
 
 namespace Reversers;
 
-public class CommandLineArguments
+public class CommandLineArgument
 {
-
-    //[Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
-    //public bool Verbose { get; set; }
-
-
     [Option("tsltn",  Required = true, HelpText = "Path to the TSLTN file.")]
     [NotNull]
     public string? TsltnFile { get; set; }

@@ -12,7 +12,9 @@ internal sealed class Message : IMessage
 
             if (reverser.TestRun)
             {
+                Console.WriteLine();
                 Console.WriteLine("This is a test run. No code files will be changed.");
+                Console.WriteLine();
                 return true;
             }
             else

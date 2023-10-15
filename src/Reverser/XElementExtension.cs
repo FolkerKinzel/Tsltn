@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace Reversers;
 
-internal static class XElementExtensions
+internal static class XElementExtension
 {
     public static string InnerXml(this XElement node)
     {

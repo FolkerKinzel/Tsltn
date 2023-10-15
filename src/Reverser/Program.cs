@@ -9,10 +9,10 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 const string LogFileName = "Reverser.log";
 
-Parser.Default.ParseArguments<CommandLineArguments>(args)
+Parser.Default.ParseArguments<CommandLineArgument>(args)
                    .WithParsed(Run);
 
-static void Run(CommandLineArguments arguments)
+static void Run(CommandLineArgument arguments)
 {
     using var disposable  = (IDisposable)(Log.Logger = InitLogger(arguments));
     Log.Debug("Logger successfully initialized.");
@@ -26,7 +26,7 @@ static void Run(CommandLineArguments arguments)
 
 
 
-static Logger InitLogger(CommandLineArguments arguments)
+static Logger InitLogger(CommandLineArgument arguments)
 {
     arguments.LogFilePath = Path.GetFullPath(arguments.LogFilePath);
 

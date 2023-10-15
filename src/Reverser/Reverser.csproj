@@ -27,4 +27,8 @@
     <None Include="C:\Users\fkinz\source\repos\Tsltn\src\Reverser\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FolkerKinzel.XmlFragments\FolkerKinzel.XmlFragments.csproj" />
+  </ItemGroup>
+
 </Project>
