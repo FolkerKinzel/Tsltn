@@ -24,6 +24,7 @@ public class CommandLineArguments
     [NotNull]
     public string? InputPath { get; set; }
 
+
     [Option("log", Required = true, HelpText = "The log file path.")]
     [NotNull]
     public string? LogFilePath { get; set; }
@@ -33,10 +34,11 @@ public class CommandLineArguments
     public string? OutputPath { get; set; }
 
 
-    [Option("loglevel", Default = 2, Min = 0, Max = 5, Required = false, HelpText = "The log level.")]
+    [Option("loglevel", Default = 2,
+        Required = false, HelpText = "The log level.")]
     public int LogLevel { get; set; }
 
 
-    [Option('t', "test", Default = "false", Required = false, HelpText = "Enables to run in test mode.")]
+    [Option('t', "test", Default = false, Required = false, HelpText = "Enables to run in test mode.")]
     public bool TestRun { get; set; }
 }
