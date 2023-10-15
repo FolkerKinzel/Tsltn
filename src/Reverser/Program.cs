@@ -17,11 +17,17 @@ static void Run(CommandLineArgument arguments)
     using var disposable  = (IDisposable)(Log.Logger = InitLogger(arguments));
     Log.Debug("Logger successfully initialized.");
 
-    var prog = new Reverser(arguments, Log.Logger, new Message());
-    prog.Run();
+    try
+    {
+        var prog = new Reverser(arguments, Log.Logger, new Message());
+        prog.Run();
+    }
+    catch (Exception ex)
+    {
+        Log.Fatal(ex, ex.Message);
+    }
     Console.WriteLine();
     Console.WriteLine("Created log file at {0}", arguments.LogFilePath);
-
 }
 
 

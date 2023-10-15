@@ -84,6 +84,8 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"Encoding.EncoderFallback", "cref=\"P:System.Text.Encoding.EncoderFallback"),
             ("cref=\"Encoding.DecoderFallback", "cref=\"P:System.Text.Encoding.DecoderFallback"),
             ("cref=\"Encoding.UTF8", "cref=\"P:System.Text.Encoding.UTF8"),
+            ("cref=\"Encoding.WebName", "cref=\"P:System.Text.Encoding.WebName"),
+
 
             ("cref=\"Span{T}.Empty", "cref=\"P:System.Span`1.Empty"),
             ("cref=\"Span{T}\"", "cref=\"T:System.Span`1\""),
@@ -104,6 +106,17 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"DecoderValidationFallback.HasError", "cref=\"P:FolkerKinzel.Strings.DecoderValidationFallback.HasError"),
 
             ("cref=\"CharExtension.IsNewLine(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsNewLine(System.Char)"),
+
+            ("cref=\"VCard\"", "cref=\"T:FolkerKinzel.VCards.VCard\""),
+            ("cref=\"PropertyClassTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.PropertyClassTypes\""),
+            ("cref=\"ImppTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.ImppTypes\""),
+            ("cref=\"AddressTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.AddressTypes\""),
+            ("cref=\"RelationTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.RelationTypes\""),
+            ("cref=\"ITimeZoneIDConverter\"", "cref=\"T:FolkerKinzel.VCards.Models.ITimeZoneIDConverter\""),
+
+            ("cref=\"IEnumerable{T}\"", "cref=\"T:System.Collections.Generic.IEnumerable`1\""),
+            ("cref=\"TextReader\"", "cref=\"T:System.IO.TextReader\""),
+            ("cref=\"VCardProperty\"", "cref=\"T:FolkerKinzel.VCards.Models.VCardProperty\""),
 
         };
 
@@ -208,13 +221,11 @@ internal sealed partial class Reverser : IReverser
             }
         }
 
-
-
         string relative = Path.GetRelativePath(InPath, file);
         string outPath = Path.Combine(OutPath, relative);
         _log.Information("Save\n{0} to\n{1}.", file, outPath);
 
-        string test = string.Join(Environment.NewLine, lines);
+        //string test = string.Join(Environment.NewLine, lines);
 
         if (!TestRun)
         {
@@ -227,10 +238,7 @@ internal sealed partial class Reverser : IReverser
 
         static ReadOnlySpan<char> StripCommentsLine(ReadOnlySpan<char> line)
             => line.TrimStart().Slice(3).Trim();
-
-
     }
-
 
 
     private string TranslateComment(string xml)
@@ -246,12 +254,14 @@ internal sealed partial class Reverser : IReverser
             if (Translations.TryGetValue(toTranslate.GetPersistentHashCode(HashType.AlphaNumericIgnoreCase),
                                         out string? translation))
             {
+                foreach ((string Original, string Replacement) item in Replacements)
+                {
+                    translation = translation.Replace(item.Replacement,
+                                                      item.Original,
+                                                      StringComparison.Ordinal);
+                }
+
                 _log.Information("Translation found: {0}", translation);
-
-                //if(translation.Contains("<code"))
-                //{
-
-                //}
 
                 try
                 {
@@ -289,7 +299,7 @@ internal sealed partial class Reverser : IReverser
 
             foreach (string line in s.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
             {
-                ReadOnlySpan<char> span = s.AsSpan();
+                ReadOnlySpan<char> span = line.AsSpan();
 
                 while (span.Length > LINE_LENGTH)
                 {

@@ -2,7 +2,7 @@
   "profiles": {
     "Reverser": {
       "commandName": "Project",
-      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\bin\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Strings\\src\\FolkerKinzel.Strings\\Translations\\FolkerKinzel.Strings.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Strings\\src\\FolkerKinzel.Strings\\\\\" --loglevel 1 --out \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\bin\\ReverserTest\\\\\" -t"
+      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\bin\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.VCards\\src\\FolkerKinzel.VCards\\Translations\\FolkerKinzel.VCards.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.VCards\\src\\FolkerKinzel.VCards\\\\\" --loglevel 1 --out \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\bin\\ReverserTest\\\\\" -t"
     }
   }
 }
