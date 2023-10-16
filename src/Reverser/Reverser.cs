@@ -21,9 +21,13 @@ internal sealed partial class Reverser : IReverser
     private const string SANDCASTLE_CODE = "code";
     private const string LINE_START = "    /// ";
     private const int LINE_LENGTH = 80;
+    private const string CREF_NORMALIZED = "cref=\"";
 
     [GeneratedRegex("cref\\s*=\\s*\".*?\\(\\)", RegexOptions.CultureInvariant, 50)]
     private partial Regex NormalizerRegex();
+
+    [GeneratedRegex("cref\\s*=\\s*\"", RegexOptions.CultureInvariant, 50)]
+    private partial Regex SpaceNormalizerRegex();
 
     public Reverser(CommandLineArgument arguments, ILogger logger, IMessage msg)
     {
@@ -192,19 +196,26 @@ internal sealed partial class Reverser : IReverser
         const string rootStart = "<R>";
         const string rootEnd = "</R>";
 
+        if (file.EndsWith("\\SpanExtension_LastIndexOf.cs"))
+        {
+
+        }
+
         _log.Information("Start translating {0}", file);
 
         var lines = File.ReadAllLines(file).ToList();
 
         for (int i = 0; i < lines.Count; i++)
         {
-            if (IsCommentsLine(lines[i]))
+            string line = lines[i];
+            if (IsCommentsLine(line) && line.Contains('<'))
             {
                 _builder.Clear()
                         .Append(rootStart)
-                        .Append(StripCommentsLine(lines[i]));
+                        .Append(StripCommentsLine(line));
                 lines.RemoveAt(i);
 
+                // Don't use the 'line' variable here!:
                 while (IsCommentsLine(lines[i]) && i < lines.Count)
                 {
                     _builder.Append(' ').Append(StripCommentsLine(lines[i]));
@@ -228,12 +239,10 @@ internal sealed partial class Reverser : IReverser
         string outPath = Path.Combine(OutPath, relative);
         _log.Information("Save\n{0} to\n{1}.", file, outPath);
 
-        //string test = string.Join(Environment.NewLine, lines);
-
         if (!TestRun)
         {
-            //Directory.CreateDirectory(outPath);
-            //File.WriteAllLines(outPath, lines);
+            Directory.CreateDirectory(Path.GetDirectoryName(outPath)!);
+            File.WriteAllLines(outPath, lines);
         }
 
         static bool IsCommentsLine(ReadOnlySpan<char> line)
@@ -252,11 +261,17 @@ internal sealed partial class Reverser : IReverser
         {
             string toTranslate = child.InnerXml();
             _log.Information("Try to translate: {0}", toTranslate);
-            toTranslate = Normalize(toTranslate);
 
-            if (Translations.TryGetValue(toTranslate.GetPersistentHashCode(HashType.AlphaNumericIgnoreCase),
-                                        out string? translation))
+            if (Translations.TryGetValue(Hash(toTranslate),
+                                         out string? translation))
             {
+                //if (translation.Contains("cref=\"P:System.Span`1.Empty\""))
+                //{
+
+                //}
+
+                translation = SpaceNormalizerRegex().Replace(translation, CREF_NORMALIZED);
+
                 foreach ((string Original, string Replacement) item in Replacements)
                 {
                     translation = translation.Replace(item.Replacement,
@@ -273,14 +288,14 @@ internal sealed partial class Reverser : IReverser
                     XElement[] childCodeNodes = child.Elements(SANDCASTLE_CODE).ToArray();
                     XElement[] tmpCodeNodes = tmp.Elements(SANDCASTLE_CODE).ToArray();
 
-                    child.ReplaceNodes(tmp.Nodes());
-
                     int end = Math.Min(childCodeNodes.Length, tmpCodeNodes.Length);
 
                     for (int i = 0; i < end; i++)
                     {
                         tmpCodeNodes[i].ReplaceWith(childCodeNodes[i]);
                     }
+
+                    child.ReplaceNodes(tmp.Nodes());
                 }
                 catch (Exception ex)
                 {
@@ -293,7 +308,7 @@ internal sealed partial class Reverser : IReverser
                 _log.Warning("No translation found.");
                 continue;
             }
-        }
+        } //foreach
 
         _builder.Clear();
         foreach (XElement child in root.Elements())
@@ -336,7 +351,7 @@ internal sealed partial class Reverser : IReverser
     }
 
 
-    private string Normalize(string toTranslate)
+    private int Hash(string toTranslate)
     {
         Match match = NormalizerRegex().Match(toTranslate);
         if (match.Success)
@@ -344,9 +359,10 @@ internal sealed partial class Reverser : IReverser
             toTranslate = toTranslate.Replace(match.Value,
                                               match.Value.Substring(0, match.Length - 2),
                                               StringComparison.Ordinal);
-            return Normalize(toTranslate);
+            return Hash(toTranslate);
         }
 
+        toTranslate = SpaceNormalizerRegex().Replace(toTranslate, CREF_NORMALIZED);
 
         foreach ((string Original, string Replacement) item in Replacements)
         {
@@ -355,7 +371,20 @@ internal sealed partial class Reverser : IReverser
                                               StringComparison.Ordinal);
         }
 
-        return toTranslate;
+        var tmp = XElement.Parse(string.Concat("<R>", toTranslate, "</R>"), LoadOptions.None);
+        XElement[] tmpCodeNodes = tmp.Elements(SANDCASTLE_CODE).ToArray();
+
+        if(tmpCodeNodes.Length > 0)
+        {
+            for (int i = 0; i < tmpCodeNodes.Length; i++)
+            {
+                tmpCodeNodes[i].Value = "";
+            }
+        }
+
+        toTranslate = tmp.InnerXml();
+
+        return toTranslate.GetPersistentHashCode(HashType.AlphaNumericIgnoreCase);
     }
 }
 
