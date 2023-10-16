@@ -38,6 +38,11 @@ static Logger InitLogger(CommandLineArgument arguments)
 
     arguments.LogFilePath = Path.Combine(Path.GetDirectoryName(arguments.LogFilePath) ?? arguments.LogFilePath, LogFileName);
 
+    if(File.Exists(arguments.LogFilePath))
+    {
+        File.Delete(arguments.LogFilePath);
+    }
+
     return new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .WriteTo.File(arguments.LogFilePath, 

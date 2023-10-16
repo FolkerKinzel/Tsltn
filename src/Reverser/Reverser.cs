@@ -17,6 +17,8 @@ internal sealed partial class Reverser : IReverser
     private readonly ILogger _log;
     private readonly IMessage _msg;
     private readonly StringBuilder _builder = new();
+    private static readonly XElement _emptyCodeBlock = new("code");
+
 
     private const string SANDCASTLE_CODE = "code";
     private const string LINE_START = "    /// ";
@@ -68,6 +70,9 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"int\"", "cref=\"T:System.Int32\""),
             ("cref=\"long\"", "cref=\"T:System.Int64\""),
             ("cref=\"char\"", "cref=\"T:System.Char\""),
+            ("cref=\"char.IsWhiteSpace(char)", "cref=\"M:System.Char.IsWhiteSpace(System.Char)"),
+
+
             ("cref=\"byte\"", "cref=\"T:System.Byte\""),
 
             ("cref=\"string\"", "cref=\"T:System.String\""),
@@ -110,6 +115,7 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"DecoderValidationFallback.HasError", "cref=\"P:FolkerKinzel.Strings.DecoderValidationFallback.HasError"),
 
             ("cref=\"CharExtension.IsNewLine(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsNewLine(System.Char)"),
+            ("cref=\"CharExtension.IsWhiteSpace(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsWhiteSpace(System.Char)"),
 
             ("cref=\"VCard\"", "cref=\"T:FolkerKinzel.VCards.VCard\""),
             ("cref=\"PropertyClassTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.PropertyClassTypes\""),
@@ -196,10 +202,10 @@ internal sealed partial class Reverser : IReverser
         const string rootStart = "<R>";
         const string rootEnd = "</R>";
 
-        if (file.EndsWith("\\SpanExtension_LastIndexOf.cs"))
-        {
+        //if (file.EndsWith("\\SpanExtension_LastIndexOf.cs"))
+        //{
 
-        }
+        //}
 
         _log.Information("Start translating {0}", file);
 
@@ -378,7 +384,7 @@ internal sealed partial class Reverser : IReverser
         {
             for (int i = 0; i < tmpCodeNodes.Length; i++)
             {
-                tmpCodeNodes[i].Value = "";
+                tmpCodeNodes[i].ReplaceWith(_emptyCodeBlock);
             }
         }
 
