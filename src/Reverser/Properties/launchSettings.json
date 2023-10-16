@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Reverser": {
-      "commandName": "Project",
-      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Strings\\src\\FolkerKinzel.Strings\\Translations\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Strings\\src\\FolkerKinzel.Strings\\Translations\\FolkerKinzel.Strings.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Strings\\src\\FolkerKinzel.Strings\\\\\" --loglevel 1"
+      "commandName": "Project"
     }
   }
 }
