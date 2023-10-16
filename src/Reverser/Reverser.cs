@@ -117,7 +117,10 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"IEnumerable{T}\"", "cref=\"T:System.Collections.Generic.IEnumerable`1\""),
             ("cref=\"TextReader\"", "cref=\"T:System.IO.TextReader\""),
             ("cref=\"VCardProperty\"", "cref=\"T:FolkerKinzel.VCards.Models.VCardProperty\""),
-
+            ("cref=\"VCardCollectionExtension.DereferenceVCards(IEnumerable{VCard?})", "cref=\"M:FolkerKinzel.VCards.Extensions.VCardCollectionExtension.DereferenceVCards(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
+            ("cref=\"Dereference(IEnumerable{VCard?})", "cref=\"M:FolkerKinzel.VCards.VCard.Dereference(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
+            ("cref=\"VCardCollectionExtension.ReferenceVCards", "cref=\"M:FolkerKinzel.VCards.Extensions.VCardCollectionExtension.ReferenceVCards(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
+            ("cref=\"Reference(IEnumerable{VCard})", "cref=\"M:FolkerKinzel.VCards.VCard.Reference(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
         };
 
     public Dictionary<int, string> Translations { get; } = new Dictionary<int, string>();
