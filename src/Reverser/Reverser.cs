@@ -22,7 +22,7 @@ internal sealed partial class Reverser : IReverser
 
     private const string SANDCASTLE_CODE = "code";
     private const string LINE_START = "    /// ";
-    private const int LINE_LENGTH = 80;
+    private const int LINE_LENGTH = 75;
     private const string CREF_NORMALIZED = "cref=\"";
 
     [GeneratedRegex("cref\\s*=\\s*\".*?\\(\\)", RegexOptions.CultureInvariant, 50)]
