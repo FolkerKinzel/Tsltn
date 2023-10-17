@@ -61,33 +61,7 @@ internal sealed partial class Reverser : IReverser
         _log.Debug("Reverser initialized.");
     }
 
-    private void ParseReplacements(string replacementsPath)
-    {
-        _log.Debug("Start parsing replacements.");
-
-        var lines = File.ReadAllLines(replacementsPath);
-
-        foreach (string line in lines) 
-        {
-            ReadOnlySpan<char> span = line.AsSpan();
-            if(span.IsWhiteSpace() || span.TrimStart().StartsWith('#'))
-            {
-                continue; 
-            }
-
-            _log.Debug("Parse: {0}", line);
-            string[] splits = line.Split(',');
-
-            if(splits.Length != 2)
-            { 
-                throw new FormatException();
-            }
-
-            Replacements.Add((splits[0].Trim(), splits[1].Trim()));
-        }
-
-        _log.Debug("Replacements successfully parsed.");
-    }
+    
 
     public string TsltnPath { get; }
     public string InPath { get; }
@@ -104,12 +78,8 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"long\"", "cref=\"T:System.Int64\""),
             ("cref=\"char\"", "cref=\"T:System.Char\""),
             ("cref=\"char.IsWhiteSpace(char)", "cref=\"M:System.Char.IsWhiteSpace(System.Char)"),
-
-
             ("cref=\"byte\"", "cref=\"T:System.Byte\""),
-
             ("cref=\"string\"", "cref=\"T:System.String\""),
-
             ("cref=\"string.Empty", "cref=\"F:System.String.Empty"),
             ("cref=\"string.GetHashCode", "cref=\"M:System.String.GetHashCode"),
             ("cref=\"StringComparison\"", "cref=\"T:System.StringComparison\""),
@@ -220,6 +190,34 @@ internal sealed partial class Reverser : IReverser
         return list;
     }
 
+    private void ParseReplacements(string replacementsPath)
+    {
+        _log.Debug("Start parsing replacements.");
+
+        var lines = File.ReadAllLines(replacementsPath);
+
+        foreach (string line in lines)
+        {
+            ReadOnlySpan<char> span = line.AsSpan();
+            if (span.IsWhiteSpace() || span.TrimStart().StartsWith('#'))
+            {
+                continue;
+            }
+
+            _log.Debug("Parse: {0}", line);
+            string[] splits = line.Split(',');
+
+            if (splits.Length != 2)
+            {
+                throw new FormatException();
+            }
+
+            Replacements.Add((splits[0].Trim(), splits[1].Trim()));
+        }
+
+        _log.Debug("Replacements successfully parsed.");
+    }
+
     private void TranslateFile(string file)
     {
         const string rootStart = "<R>";
@@ -229,7 +227,8 @@ internal sealed partial class Reverser : IReverser
         //{
 
         //}
-
+        _log.Information("===================================================");
+        _log.Information("");
         _log.Information("Start translating {0}", file);
 
         var lines = File.ReadAllLines(file).ToList();

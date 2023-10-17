@@ -25,3 +25,5 @@ cref="VcfOptions",cref="T:FolkerKinzel.VCards.VcfOptions"
 cref="AddressTypesExtension",cref="T:FolkerKinzel.VCards.Extensions.AddressTypesExtension"
 cref="PropertyID",cref="T:FolkerKinzel.VCards.Models.PropertyID"
 cref="PropertyIDMapping",cref="T:FolkerKinzel.VCards.Models.PropertyIDMapping"
+cref="FallbackEncodingWebName,cref="P:FolkerKinzel.VCards.AnsiFilter.FallbackEncodingWebName
+cref="AnsiFilter",cref="T:FolkerKinzel.VCards.AnsiFilter"
