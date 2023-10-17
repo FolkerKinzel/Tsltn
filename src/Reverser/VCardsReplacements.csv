@@ -1,0 +1,27 @@
+﻿# This list contains comma separated tuples of type and member references
+# in the code file comments that have to be replaced with entries like in the
+# Visual Studio XML comments file. The replacements are performed in the order
+# of this list.
+#
+# Format: CodeFileEntry,Replacement
+#
+# NOTE: Types MUST include the closing double quotes: cref="Type",cref="T:NameSpace.Type"
+
+
+cref="VCard",cref="T:FolkerKinzel.VCards.VCard"
+cref="PropertyClassTypes",cref="T:FolkerKinzel.VCards.Models.Enums.PropertyClassTypes"
+cref="ImppTypes",cref="T:FolkerKinzel.VCards.Models.Enums.ImppTypes"
+cref="AddressTypes",cref="T:FolkerKinzel.VCards.Models.Enums.AddressTypes"
+cref="RelationTypes",cref="T:FolkerKinzel.VCards.Models.Enums.RelationTypes"
+cref="ITimeZoneIDConverter",cref="T:FolkerKinzel.VCards.Models.ITimeZoneIDConverter"
+cref="IEnumerable{T}",cref="T:System.Collections.Generic.IEnumerable`1"
+cref="VCardProperty",cref="T:FolkerKinzel.VCards.Models.VCardProperty"
+cref="VCardCollectionExtension.DereferenceVCards(IEnumerable{VCard?},cref="M:FolkerKinzel.VCards.Extensions.VCardCollectionExtension.DereferenceVCards(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard}
+cref="Dereference(IEnumerable{VCard?},cref="M:FolkerKinzel.VCards.VCard.Dereference(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard}
+cref="VCardCollectionExtension.ReferenceVCards,cref="M:FolkerKinzel.VCards.Extensions.VCardCollectionExtension.ReferenceVCards(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard}
+cref="Reference(IEnumerable{VCard},cref="M:FolkerKinzel.VCards.VCard.Reference(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard}
+cref="TelTypes",cref="T:FolkerKinzel.VCards.Models.Enums.TelTypes"
+cref="VcfOptions",cref="T:FolkerKinzel.VCards.VcfOptions"
+cref="AddressTypesExtension",cref="T:FolkerKinzel.VCards.Extensions.AddressTypesExtension"
+cref="PropertyID",cref="T:FolkerKinzel.VCards.Models.PropertyID"
+cref="PropertyIDMapping",cref="T:FolkerKinzel.VCards.Models.PropertyIDMapping"

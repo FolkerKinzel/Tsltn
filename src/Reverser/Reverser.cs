@@ -53,7 +53,40 @@ internal sealed partial class Reverser : IReverser
 
         TestRun = arguments.TestRun;
 
+        if(arguments.ReplacementsPath != null)
+        {
+            ParseReplacements(arguments.ReplacementsPath);
+        }
+
         _log.Debug("Reverser initialized.");
+    }
+
+    private void ParseReplacements(string replacementsPath)
+    {
+        _log.Debug("Start parsing replacements.");
+
+        var lines = File.ReadAllLines(replacementsPath);
+
+        foreach (string line in lines) 
+        {
+            ReadOnlySpan<char> span = line.AsSpan();
+            if(span.IsWhiteSpace() || span.TrimStart().StartsWith('#'))
+            {
+                continue; 
+            }
+
+            _log.Debug("Parse: {0}", line);
+            string[] splits = line.Split(',');
+
+            if(splits.Length != 2)
+            { 
+                throw new FormatException();
+            }
+
+            Replacements.Add((splits[0].Trim(), splits[1].Trim()));
+        }
+
+        _log.Debug("Replacements successfully parsed.");
     }
 
     public string TsltnPath { get; }
@@ -61,8 +94,8 @@ internal sealed partial class Reverser : IReverser
     public string OutPath { get; }
     public bool TestRun { get; }
 
-    public (string, string)[] Replacements { get; } =
-        new (string, string)[]
+    public List<(string, string)> Replacements { get; } =
+        new ()
         {
             ("cref=\"Stream\"", "cref=\"T:System.IO.Stream\""),
             ("cref=\"Stream.Position", "cref=\"P:System.IO.Stream.Position"),
@@ -101,36 +134,26 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"ReadOnlySpan{T}\"", "cref=\"T:System.ReadOnlySpan`1\""),
             ("cref=\"ReadOnlySpan{T}.Empty", "cref=\"P:System.ReadOnlySpan`1.Empty"),
             ("cref=\"ReadOnlyMemory{T}\"", "cref=\"T:System.ReadOnlyMemory`1\""),
-            ("cref=\"ReadOnlySpanExtension\"", "cref=\"T:FolkerKinzel.Strings.ReadOnlySpanExtension\""),
-            ("cref=\"MemoryExtensions.IndexOfAny{T}(ReadOnlySpan{T}, ReadOnlySpan{T})", "cref=\"M:System.MemoryExtensions.IndexOfAny``1(System.ReadOnlySpan{``0},System.ReadOnlySpan{``0})"),
-            ("cref=\"string.IndexOfAny(char[])", "cref=\"M:System.String.IndexOfAny(System.Char[])"),
-            ("cref=\"MemoryExtensions.LastIndexOfAny{T}(ReadOnlySpan{T}, ReadOnlySpan{T})", "cref=\"M:System.MemoryExtensions.LastIndexOfAny``1(System.ReadOnlySpan{``0},System.ReadOnlySpan{``0})"),
-            ("cref=\"string.LastIndexOfAny(char[])", "cref=\"M:System.String.LastIndexOfAny(System.Char[])"),
+            
             ("cref=\"Environment.NewLine", "cref=\"P:System.Environment.NewLine"),
 
             ("cref=\"Base64FormattingOptions\"", "cref=\"T:System.Base64FormattingOptions\""),
             ("cref=\"Base64FormattingOptions.None", "cref=\"F:System.Base64FormattingOptions.None"),
 
-            ("cref=\"DecoderValidationFallback\"", "cref=\"T:FolkerKinzel.Strings.DecoderValidationFallback\""),
-            ("cref=\"DecoderValidationFallback.HasError", "cref=\"P:FolkerKinzel.Strings.DecoderValidationFallback.HasError"),
-
-            ("cref=\"CharExtension.IsNewLine(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsNewLine(System.Char)"),
-            ("cref=\"CharExtension.IsWhiteSpace(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsWhiteSpace(System.Char)"),
-
-            ("cref=\"VCard\"", "cref=\"T:FolkerKinzel.VCards.VCard\""),
-            ("cref=\"PropertyClassTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.PropertyClassTypes\""),
-            ("cref=\"ImppTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.ImppTypes\""),
-            ("cref=\"AddressTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.AddressTypes\""),
-            ("cref=\"RelationTypes\"", "cref=\"T:FolkerKinzel.VCards.Models.Enums.RelationTypes\""),
-            ("cref=\"ITimeZoneIDConverter\"", "cref=\"T:FolkerKinzel.VCards.Models.ITimeZoneIDConverter\""),
-
-            ("cref=\"IEnumerable{T}\"", "cref=\"T:System.Collections.Generic.IEnumerable`1\""),
             ("cref=\"TextReader\"", "cref=\"T:System.IO.TextReader\""),
-            ("cref=\"VCardProperty\"", "cref=\"T:FolkerKinzel.VCards.Models.VCardProperty\""),
-            ("cref=\"VCardCollectionExtension.DereferenceVCards(IEnumerable{VCard?})", "cref=\"M:FolkerKinzel.VCards.Extensions.VCardCollectionExtension.DereferenceVCards(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
-            ("cref=\"Dereference(IEnumerable{VCard?})", "cref=\"M:FolkerKinzel.VCards.VCard.Dereference(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
-            ("cref=\"VCardCollectionExtension.ReferenceVCards", "cref=\"M:FolkerKinzel.VCards.Extensions.VCardCollectionExtension.ReferenceVCards(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
-            ("cref=\"Reference(IEnumerable{VCard})", "cref=\"M:FolkerKinzel.VCards.VCard.Reference(System.Collections.Generic.IEnumerable{FolkerKinzel.VCards.VCard})"),
+
+
+            //("cref=\"CharExtension.IsNewLine(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsNewLine(System.Char)"),
+            //("cref=\"CharExtension.IsWhiteSpace(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsWhiteSpace(System.Char)"),
+            //("cref=\"ReadOnlySpanExtension\"", "cref=\"T:FolkerKinzel.Strings.ReadOnlySpanExtension\""),
+            //("cref=\"MemoryExtensions.IndexOfAny{T}(ReadOnlySpan{T}, ReadOnlySpan{T})", "cref=\"M:System.MemoryExtensions.IndexOfAny``1(System.ReadOnlySpan{``0},System.ReadOnlySpan{``0})"),
+            //("cref=\"string.IndexOfAny(char[])", "cref=\"M:System.String.IndexOfAny(System.Char[])"),
+            //("cref=\"MemoryExtensions.LastIndexOfAny{T}(ReadOnlySpan{T}, ReadOnlySpan{T})", "cref=\"M:System.MemoryExtensions.LastIndexOfAny``1(System.ReadOnlySpan{``0},System.ReadOnlySpan{``0})"),
+            //("cref=\"string.LastIndexOfAny(char[])", "cref=\"M:System.String.LastIndexOfAny(System.Char[])"),
+            //("cref=\"DecoderValidationFallback\"", "cref=\"T:FolkerKinzel.Strings.DecoderValidationFallback\""),
+            //("cref=\"DecoderValidationFallback.HasError", "cref=\"P:FolkerKinzel.Strings.DecoderValidationFallback.HasError"),
+
+            
         };
 
     public Dictionary<int, string> Translations { get; } = new Dictionary<int, string>();
@@ -214,7 +237,7 @@ internal sealed partial class Reverser : IReverser
         for (int i = 0; i < lines.Count; i++)
         {
             string line = lines[i];
-            if (IsCommentsLine(line) && line.Contains('<'))
+            if (IsCommentsLine(line) && line.Contains('<', StringComparison.Ordinal))
             {
                 _builder.Clear()
                         .Append(rootStart)
@@ -222,7 +245,7 @@ internal sealed partial class Reverser : IReverser
                 lines.RemoveAt(i);
 
                 // Don't use the 'line' variable here!:
-                while (IsCommentsLine(lines[i]) && i < lines.Count)
+                while (i < lines.Count && IsCommentsLine(lines[i]))
                 {
                     _builder.Append(' ').Append(StripCommentsLine(lines[i]));
                     lines.RemoveAt(i);

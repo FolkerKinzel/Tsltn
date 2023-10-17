@@ -36,4 +36,8 @@ public class CommandLineArgument
 
     [Option('t', "test", Default = false, Required = false, HelpText = "Enables to run in test mode.")]
     public bool TestRun { get; set; }
+
+
+    [Option('r', "replacements", Default = null, Required=false, HelpText = "Path to a comma separated text file with specific replacements for the current translation.")]
+    public string? ReplacementsPath { get; set; }
 }
