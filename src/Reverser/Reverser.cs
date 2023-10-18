@@ -121,6 +121,7 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"NullReferenceException\"", "cref=\"T:System.NullReferenceException\""),
             ("cref=\"MD5\"", "cref=\"T:System.Security.Cryptography.MD5\""),
             ("cref=\"SHA256\"", "cref=\"T:System.Security.Cryptography.SHA256\""),
+            ("cref=\"Uri\"", "cref=\"T:System.Uri\""),
 
             ("cref=\"byte\"", "cref=\"T:System.Byte\""),
             ("cref=\"StringBuilder\"", "cref=\"T:System.Text.StringBuilder\""),
@@ -145,6 +146,8 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"Base64FormattingOptions.None", "cref=\"F:System.Base64FormattingOptions.None"),
 
             ("cref=\"TextReader\"", "cref=\"T:System.IO.TextReader\""),
+
+            ("cref=\"XElement\"", "cref=\"T:System.Xml.Linq.XElement\""),
 
 
             //("cref=\"CharExtension.IsNewLine(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsNewLine(System.Char)"),

@@ -20,6 +20,9 @@
 
 
 cref="VCard",cref="T:FolkerKinzel.VCards.VCard"
+cref="VCard.DisplayNames,cref="P:FolkerKinzel.VCards.VCard.DisplayNames
+cref="DisplayNames,cref="P:FolkerKinzel.VCards.VCard.DisplayNames
+
 cref="PropertyClassTypes",cref="T:FolkerKinzel.VCards.Models.Enums.PropertyClassTypes"
 cref="ImppTypes",cref="T:FolkerKinzel.VCards.Models.Enums.ImppTypes"
 cref="AddressTypes",cref="T:FolkerKinzel.VCards.Models.Enums.AddressTypes"
@@ -38,9 +41,13 @@ cref="PropertyID",cref="T:FolkerKinzel.VCards.Models.PropertyID"
 cref="PropertyIDMapping",cref="T:FolkerKinzel.VCards.Models.PropertyIDMapping"
 cref="FallbackEncodingWebName,cref="P:FolkerKinzel.VCards.AnsiFilter.FallbackEncodingWebName
 cref="AnsiFilter",cref="T:FolkerKinzel.VCards.AnsiFilter"
+cref="AnsiFilter.FallbackEncodingWebName",cref="P:FolkerKinzel.VCards.AnsiFilter.FallbackEncodingWebName"
+cref="FallbackEncodingWebName",cref="P:FolkerKinzel.VCards.AnsiFilter.FallbackEncodingWebName"
 cref="Name",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Name"
 cref="Address",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Address"
 cref="Organization",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Organization"
 cref="Gender",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Gender"
 cref="ParameterSection",cref="T:FolkerKinzel.VCards.Models.PropertyParts.ParameterSection"
 cref="ParameterSection.AltID,cref="P:FolkerKinzel.VCards.Models.PropertyParts.ParameterSection.AltID
+cref="StringCollectionProperty",cref="T:FolkerKinzel.VCards.Models.StringCollectionProperty"
+cref="NonStandardProperty",cref="T:FolkerKinzel.VCards.Models.NonStandardProperty"
