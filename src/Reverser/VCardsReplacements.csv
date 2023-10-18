@@ -1,11 +1,22 @@
-﻿# This list contains comma separated tuples of type and member references
+﻿# The list contains comma separated tuples of type and member references
 # in the code file comments that have to be replaced with entries like in the
-# Visual Studio XML comments file. The replacements are performed in the order
-# of this list.
+# Visual Studio XML comments file (or the TSLTN file). The replacements are 
+# performed in the order of this list.
 #
 # Format: CodeFileEntry,Replacement
 #
-# NOTE: Types MUST include the closing double quotes: cref="Type",cref="T:NameSpace.Type"
+# NOTE: - Types MUST include the closing double quotes: cref="Type",cref="T:NameSpace.Type"
+#       - White space in the part cref=" is NOT allowed
+#       - The parameter list of methods which don't have different overloads can be omitted in
+#         the source files. Provide different versions in this order:
+#
+#         NameSpace.Method(),<Replacement>
+#         Method(),<Replacement>
+#         NameSpace.Method,<Replacement>
+#         Method,<Replacement>
+#     
+#	      (Parts of these can be omitted if they don't occur in the source file, but don't change
+#          the order.)
 
 
 cref="VCard",cref="T:FolkerKinzel.VCards.VCard"
@@ -27,3 +38,9 @@ cref="PropertyID",cref="T:FolkerKinzel.VCards.Models.PropertyID"
 cref="PropertyIDMapping",cref="T:FolkerKinzel.VCards.Models.PropertyIDMapping"
 cref="FallbackEncodingWebName,cref="P:FolkerKinzel.VCards.AnsiFilter.FallbackEncodingWebName
 cref="AnsiFilter",cref="T:FolkerKinzel.VCards.AnsiFilter"
+cref="Name",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Name"
+cref="Address",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Address"
+cref="Organization",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Organization"
+cref="Gender",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Gender"
+cref="ParameterSection",cref="T:FolkerKinzel.VCards.Models.PropertyParts.ParameterSection"
+cref="ParameterSection.AltID,cref="P:FolkerKinzel.VCards.Models.PropertyParts.ParameterSection.AltID

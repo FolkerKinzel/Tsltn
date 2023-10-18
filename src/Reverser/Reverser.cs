@@ -12,6 +12,40 @@ using System.Xml.Linq;
 
 namespace Reversers;
 
+/// <summary>
+/// Translates the xml comments of the *.cs files in a specified
+/// directory and all its sub-directories using a specified TSLTN 
+/// file.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Translating the source files is an irreversible and risky operation.
+/// DON'T USE THIS PROGRAM!
+/// </para>
+/// <para>
+/// If you ignore my advice do the following instead:
+/// </para>
+/// <list type="number">
+/// <item>Specify an output path that is different from the input path
+/// using the option --out.</item>
+/// <item>Set the -t option to run the program in test mode.</item>
+/// <item>Inspect the console output and the Reverser.log file to
+/// see which items could not be translated.</item>
+/// <item>Provide a replacement file containing the types and members
+/// of the untranslated items and provide it using the option -r. Look 
+/// at VCardsReplacements.csv as an example. </item>
+/// <item>Another pitfall that leads to untranslated items is that *.cs 
+/// files containing extended characters in the comments had been saved 
+/// in an ANSI encoding. Such entries show question marks instead of letters
+/// in the console. Reopen these files in Visual Studio and save it as UTF-8.</item>
+/// <item>Once you've done all that, remove the -t option from the command line
+/// and run the program to get a preview of the result in your specified --out
+/// directory.</item>
+/// <item>If you are satisfied with the test, make shure to have committed all
+/// changes to your project. Then remove the --out option and run the program.</item>
+/// </list>
+/// 
+/// </remarks>
 internal sealed partial class Reverser : IReverser
 {
     private readonly ILogger _log;
@@ -25,8 +59,8 @@ internal sealed partial class Reverser : IReverser
     private const int LINE_LENGTH = 75;
     private const string CREF_NORMALIZED = "cref=\"";
 
-    [GeneratedRegex("cref\\s*=\\s*\".*?\\(\\)", RegexOptions.CultureInvariant, 50)]
-    private partial Regex NormalizerRegex();
+    //[GeneratedRegex("cref\\s*=\\s*\".*?\\(\\)", RegexOptions.CultureInvariant, 50)]
+    //private partial Regex NormalizerRegex();
 
     [GeneratedRegex("cref\\s*=\\s*\"", RegexOptions.CultureInvariant, 50)]
     private partial Regex SpaceNormalizerRegex();
@@ -81,7 +115,7 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"byte\"", "cref=\"T:System.Byte\""),
             ("cref=\"string\"", "cref=\"T:System.String\""),
             ("cref=\"string.Empty", "cref=\"F:System.String.Empty"),
-            ("cref=\"string.GetHashCode", "cref=\"M:System.String.GetHashCode"),
+            ("cref=\"string.GetHashCode()", "cref=\"M:System.String.GetHashCode"),
             ("cref=\"StringComparison\"", "cref=\"T:System.StringComparison\""),
             ("cref=\"ArgumentException\"", "cref=\"T:System.ArgumentException\""),
             ("cref=\"NullReferenceException\"", "cref=\"T:System.NullReferenceException\""),
@@ -184,7 +218,8 @@ internal sealed partial class Reverser : IReverser
             InitFiles(subDirectory, list);
         }
 
-        list.AddRange(Directory.EnumerateFiles(directory, "*.cs"));
+        list.AddRange(Directory.EnumerateFiles(directory, "*.cs")
+                               .Where((f) => !(f.EndsWith(".Designer.cs") || f.EndsWith(".g.cs"))));
 
         list.TrimExcess();
         return list;
@@ -381,14 +416,14 @@ internal sealed partial class Reverser : IReverser
 
     private int Hash(string toTranslate)
     {
-        Match match = NormalizerRegex().Match(toTranslate);
-        if (match.Success)
-        {
-            toTranslate = toTranslate.Replace(match.Value,
-                                              match.Value.Substring(0, match.Length - 2),
-                                              StringComparison.Ordinal);
-            return Hash(toTranslate);
-        }
+        //Match match = NormalizerRegex().Match(toTranslate);
+        //if (match.Success)
+        //{
+        //    toTranslate = toTranslate.Replace(match.Value,
+        //                                      match.Value.Substring(0, match.Length - 2),
+        //                                      StringComparison.Ordinal);
+        //    return Hash(toTranslate);
+        //}
 
         toTranslate = SpaceNormalizerRegex().Replace(toTranslate, CREF_NORMALIZED);
 
