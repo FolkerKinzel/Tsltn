@@ -105,6 +105,8 @@ internal sealed partial class Reverser : IReverser
     public List<(string, string)> Replacements { get; } =
         new ()
         {
+            ("cref=\"object.ToString", "cref=\"M:System.Object.ToString"),
+
             ("cref=\"Stream\"", "cref=\"T:System.IO.Stream\""),
             ("cref=\"Stream.Position", "cref=\"P:System.IO.Stream.Position"),
 

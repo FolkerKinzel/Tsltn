@@ -51,3 +51,6 @@ cref="ParameterSection",cref="T:FolkerKinzel.VCards.Models.PropertyParts.Paramet
 cref="ParameterSection.AltID,cref="P:FolkerKinzel.VCards.Models.PropertyParts.ParameterSection.AltID
 cref="StringCollectionProperty",cref="T:FolkerKinzel.VCards.Models.StringCollectionProperty"
 cref="NonStandardProperty",cref="T:FolkerKinzel.VCards.Models.NonStandardProperty"
+cref="TextProperty",cref="T:FolkerKinzel.VCards.Models.TextProperty"
+cref="VcfRow",cref="T:FolkerKinzel.VCards.Intls.Deserializers.VcfRow"
+cref="VcfDeserializationInfo",cref="T:FolkerKinzel.VCards.Intls.Deserializers.VcfDeserializationInfo"
