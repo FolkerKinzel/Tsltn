@@ -204,7 +204,13 @@ internal sealed partial class Reverser : IReverser
         foreach (XElement xElement in root.Elements())
         {
             int hash = (int)long.Parse(xElement.Attribute("ID")!.Value, NumberStyles.AllowHexSpecifier);
-            Translations[hash] = xElement.Value;
+
+            string value = xElement.Value;
+
+            if(!string.IsNullOrWhiteSpace(value))
+            {
+                Translations[hash] = value;
+            }
         }
 
         Translations.TrimExcess();
