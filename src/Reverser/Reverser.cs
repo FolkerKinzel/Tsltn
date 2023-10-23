@@ -59,9 +59,6 @@ internal sealed partial class Reverser : IReverser
     private const int LINE_LENGTH = 75;
     private const string CREF_NORMALIZED = "cref=\"";
 
-    //[GeneratedRegex("cref\\s*=\\s*\".*?\\(\\)", RegexOptions.CultureInvariant, 50)]
-    //private partial Regex NormalizerRegex();
-
     [GeneratedRegex("cref\\s*=\\s*\"", RegexOptions.CultureInvariant, 50)]
     private partial Regex SpaceNormalizerRegex();
 
@@ -87,7 +84,7 @@ internal sealed partial class Reverser : IReverser
 
         TestRun = arguments.TestRun;
 
-        if(arguments.ReplacementsPath != null)
+        if (arguments.ReplacementsPath != null)
         {
             ParseReplacements(arguments.ReplacementsPath);
         }
@@ -95,15 +92,14 @@ internal sealed partial class Reverser : IReverser
         _log.Debug("Reverser initialized.");
     }
 
-    
-
     public string TsltnPath { get; }
     public string InPath { get; }
     public string OutPath { get; }
     public bool TestRun { get; }
+    public Dictionary<int, string> Translations { get; } = new Dictionary<int, string>();
 
     public List<(string, string)> Replacements { get; } =
-        new ()
+        new()
         {
             ("cref=\"object.ToString", "cref=\"M:System.Object.ToString"),
 
@@ -141,7 +137,7 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"ReadOnlySpan{T}\"", "cref=\"T:System.ReadOnlySpan`1\""),
             ("cref=\"ReadOnlySpan{T}.Empty", "cref=\"P:System.ReadOnlySpan`1.Empty"),
             ("cref=\"ReadOnlyMemory{T}\"", "cref=\"T:System.ReadOnlyMemory`1\""),
-            
+
             ("cref=\"Environment.NewLine", "cref=\"P:System.Environment.NewLine"),
 
             ("cref=\"Base64FormattingOptions\"", "cref=\"T:System.Base64FormattingOptions\""),
@@ -152,20 +148,9 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"XElement\"", "cref=\"T:System.Xml.Linq.XElement\""),
 
 
-            //("cref=\"CharExtension.IsNewLine(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsNewLine(System.Char)"),
-            //("cref=\"CharExtension.IsWhiteSpace(char)", "cref=\"M:FolkerKinzel.Strings.CharExtension.IsWhiteSpace(System.Char)"),
-            //("cref=\"ReadOnlySpanExtension\"", "cref=\"T:FolkerKinzel.Strings.ReadOnlySpanExtension\""),
-            //("cref=\"MemoryExtensions.IndexOfAny{T}(ReadOnlySpan{T}, ReadOnlySpan{T})", "cref=\"M:System.MemoryExtensions.IndexOfAny``1(System.ReadOnlySpan{``0},System.ReadOnlySpan{``0})"),
-            //("cref=\"string.IndexOfAny(char[])", "cref=\"M:System.String.IndexOfAny(System.Char[])"),
-            //("cref=\"MemoryExtensions.LastIndexOfAny{T}(ReadOnlySpan{T}, ReadOnlySpan{T})", "cref=\"M:System.MemoryExtensions.LastIndexOfAny``1(System.ReadOnlySpan{``0},System.ReadOnlySpan{``0})"),
-            //("cref=\"string.LastIndexOfAny(char[])", "cref=\"M:System.String.LastIndexOfAny(System.Char[])"),
-            //("cref=\"DecoderValidationFallback\"", "cref=\"T:FolkerKinzel.Strings.DecoderValidationFallback\""),
-            //("cref=\"DecoderValidationFallback.HasError", "cref=\"P:FolkerKinzel.Strings.DecoderValidationFallback.HasError"),
 
-            
         };
 
-    public Dictionary<int, string> Translations { get; } = new Dictionary<int, string>();
 
 
     public void Run()
@@ -203,14 +188,15 @@ internal sealed partial class Reverser : IReverser
 
         foreach (XElement xElement in root.Elements())
         {
-            int hash = (int)long.Parse(xElement.Attribute("ID")!.Value, NumberStyles.AllowHexSpecifier);
-
             string value = xElement.Value;
 
-            if(!string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
-                Translations[hash] = value;
+                continue;
             }
+
+            int hash = (int)long.Parse(xElement.Attribute("ID")!.Value, NumberStyles.AllowHexSpecifier);
+            Translations[hash] = value;
         }
 
         Translations.TrimExcess();
@@ -413,7 +399,7 @@ internal sealed partial class Reverser : IReverser
         {
             int idx = span.Slice(LINE_LENGTH).IndexOf(' ');
 
-            if(idx < 0)
+            if (idx < 0)
             {
                 builder.Append(LINE_START).AppendLine(span);
                 return ReadOnlySpan<char>.Empty;
@@ -448,7 +434,7 @@ internal sealed partial class Reverser : IReverser
         var tmp = XElement.Parse(string.Concat("<R>", toTranslate, "</R>"), LoadOptions.None);
         XElement[] tmpCodeNodes = tmp.Elements(SANDCASTLE_CODE).ToArray();
 
-        if(tmpCodeNodes.Length > 0)
+        if (tmpCodeNodes.Length > 0)
         {
             for (int i = 0; i < tmpCodeNodes.Length; i++)
             {
