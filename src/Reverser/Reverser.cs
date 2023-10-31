@@ -139,6 +139,8 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"ReadOnlyMemory{T}\"", "cref=\"T:System.ReadOnlyMemory`1\""),
 
             ("cref=\"Environment.NewLine", "cref=\"P:System.Environment.NewLine"),
+            ("cref=\"Environment.MachineName", "cref=\"P:System.Environment.MachineName"),
+            ("cref=\"Environment.UserName", "cref=\"P:System.Environment.UserName"),
 
             ("cref=\"Base64FormattingOptions\"", "cref=\"T:System.Base64FormattingOptions\""),
             ("cref=\"Base64FormattingOptions.None", "cref=\"F:System.Base64FormattingOptions.None"),
@@ -147,6 +149,14 @@ internal sealed partial class Reverser : IReverser
 
             ("cref=\"XElement\"", "cref=\"T:System.Xml.Linq.XElement\""),
 
+            ("cref=\"Action\"", "cref=\"T:System.Action\""),
+            ("cref=\"Action{T}\"", "cref=\"T:System.Action`1\""),
+            ("cref=\"Task\"", "cref=\"T:System.Threading.Tasks.Task\""),
+            ("cref=\"Task.WhenAll(IEnumerable{Task})", "cref=\"M:System.Threading.Tasks.Task.WhenAll(System.Collections.Generic.IEnumerable{System.Threading.Tasks.Task})"),
+            ("cref=\"Mutex\"", "cref=\"T:System.Threading.Mutex\""),
+
+            ("cref=\"Path.GetInvalidPathChars", "cref=\"M:System.IO.Path.GetInvalidPathChars"),
+            ("cref=\"EventArgs\"", "cref=\"T:System.EventArgs\"")
 
 
         };

@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Reverser": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\bin\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.RecentFiles.WPF\\src\\FolkerKinzel.RecentFiles.WPF\\Translations\\FolkerKinzel.RecentFiles.WPF.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.RecentFiles.WPF\\src\\FolkerKinzel.RecentFiles.WPF\\\\\" --loglevel 1 --out \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\bin\\ReverserTest\\\\\" -r \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\RecentFilesReplacements.csv\" -t"
     }
   }
 }

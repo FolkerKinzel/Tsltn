@@ -1,0 +1,35 @@
+﻿# The list contains comma separated tuples of type and member references
+# in the code file comments that have to be replaced with entries like in the
+# Visual Studio XML comments file (or the TSLTN file). The replacements are 
+# performed in the order of this list.
+#
+# Format: CodeFileEntry,Replacement
+#
+# NOTE: - Types MUST include the closing double quotes: cref="Type",cref="T:NameSpace.Type"
+#       - White space in the part cref=" is NOT allowed
+#       - The parameter list of methods which don't have different overloads can be omitted in
+#         the source files. Provide different versions in this order:
+#
+#         NameSpace.Method(),<Replacement>
+#         Method(),<Replacement>
+#         NameSpace.Method,<Replacement>
+#         Method,<Replacement>
+#     
+#	      (Parts of these can be omitted if they don't occur in the source file, but don't change
+#          the order.)
+
+
+cref="VCard",cref="T:FolkerKinzel.VCards.VCard"
+cref="VCard.DisplayNames,cref="P:FolkerKinzel.VCards.VCard.DisplayNames
+cref="ICommand",cref="T:System.Windows.Input.ICommand"
+cref="RecentFilesMenu",cref="T:FolkerKinzel.RecentFiles.WPF.RecentFilesMenu"
+cref="MenuItem",cref="T:System.Windows.Controls.MenuItem"
+cref="Window",cref="T:System.Windows.Window"
+cref="RecentFilesMenu.RecentFileSelected",cref="E:FolkerKinzel.RecentFiles.WPF.RecentFilesMenu.RecentFileSelected"
+cref="RecentFileSelected",cref="E:FolkerKinzel.RecentFiles.WPF.RecentFilesMenu.RecentFileSelected"
+cref="RecentFileSelectedEventArgs",cref="T:FolkerKinzel.RecentFiles.WPF.RecentFileSelectedEventArgs"
+cref="RecentFilesPersistence",cref="T:FolkerKinzel.RecentFiles.WPF.Intls.RecentFilesPersistence"
+cref="CanExecute(object,cref="M:FolkerKinzel.RecentFiles.WPF.Intls.OpenRecentFile.CanExecute(System.Object
+cref="RecentFilesMenu.Initialize(MenuItem),cref="M:FolkerKinzel.RecentFiles.WPF.RecentFilesMenu.Initialize(System.Windows.Controls.MenuItem)
+cref="AddRecentFileAsync(string),cref="M:FolkerKinzel.RecentFiles.WPF.RecentFilesMenu.AddRecentFileAsync(System.String)
+cref="RecentFilesMenu.Dispose(),cref="M:FolkerKinzel.RecentFiles.WPF.RecentFilesMenu.Dispose
