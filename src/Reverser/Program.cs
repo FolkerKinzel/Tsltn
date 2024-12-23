@@ -1,6 +1,4 @@
 ﻿// See complete turorial for this application at Reverser.cs
-//
-// See https://aka.ms/new-console-template for more information
 
 using CommandLine;
 using Reversers;
