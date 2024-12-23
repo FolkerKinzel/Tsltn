@@ -18,5 +18,5 @@
 #	      (Parts of these can be omitted if they don't occur in the source file, but don't change
 #          the order.)
 
-
+cref="Contact",cref="T:FolkerKinzel.Contacts.Contact"
 
