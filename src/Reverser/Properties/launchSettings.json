@@ -2,7 +2,7 @@
   "profiles": {
     "Reverser": {
       "commandName": "Project",
-      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Contacts\\src\\FolkerKinzel.Contacts\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Contacts\\src\\FolkerKinzel.Contacts\\Translations\\FolkerKinzel.Contacts.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Contacts\\src\\FolkerKinzel.Contacts\\\\\" --loglevel 1 -r \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\ContactsReplacements.csv\""
+      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Contacts.IO\\src\\FolkerKinzel.Contacts.IO\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Contacts.IO\\src\\FolkerKinzel.Contacts.IO\\Translations\\FolkerKinzel.Contacts.IO.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.Contacts.IO\\src\\FolkerKinzel.Contacts.IO\\\\\" --loglevel 1 -r \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\ContactsIOReplacements.csv\" -t"
     }
   }
 }
