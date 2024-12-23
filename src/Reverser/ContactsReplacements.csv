@@ -1,0 +1,33 @@
+﻿# The list contains comma separated tuples of type and member references
+# in the code file comments that have to be replaced with entries like in the
+# Visual Studio XML comments file (or the TSLTN file). The replacements are 
+# performed in the order of this list.
+#
+# Format: CodeFileEntry,Replacement
+#
+# NOTE: - Types MUST include the closing double quotes: cref="Type",cref="T:NameSpace.Type"
+#       - White space in the part cref=" is NOT allowed
+#       - The parameter list of methods which don't have different overloads can be omitted in
+#         the source files. Provide different versions in this order:
+#
+#         NameSpace.Method(),<Replacement>
+#         Method(),<Replacement>
+#         NameSpace.Method,<Replacement>
+#         Method,<Replacement>
+#     
+#	      (Parts of these can be omitted if they don't occur in the source file, but don't change
+#          the order.)
+
+
+cref="Address",cref="T:FolkerKinzel.Contacts.Address"
+cref="Contact",cref="T:FolkerKinzel.Contacts.Contact"
+cref="Name",cref="T:FolkerKinzel.Contacts.Name"
+cref="Work",cref="T:FolkerKinzel.Contacts.Work"
+cref="Person",cref="T:FolkerKinzel.Contacts.Person"
+cref="PhoneNumber",cref="T:FolkerKinzel.Contacts.PhoneNumber"
+cref="MergeableObject{T}",cref="T:FolkerKinzel.Contacts.MergeableObject`1"
+
+cref="IsEmpty,cref="P:FolkerKinzel.Contacts.MergeableObject`1.IsEmpty
+cref="IsMergeableWith(T?),cref="M:FolkerKinzel.Contacts.MergeableObject`1.IsMergeableWith(`0)
+cref="AreMergeable(T?, T?),cref="M:FolkerKinzel.Contacts.MergeableObject`1.AreMergeable(`0,`0)
+

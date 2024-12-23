@@ -156,9 +156,10 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"Mutex\"", "cref=\"T:System.Threading.Mutex\""),
 
             ("cref=\"Path.GetInvalidPathChars", "cref=\"M:System.IO.Path.GetInvalidPathChars"),
-            ("cref=\"EventArgs\"", "cref=\"T:System.EventArgs\"")
+            ("cref=\"EventArgs\"", "cref=\"T:System.EventArgs\""),
 
-
+            ("cref=\"IEnumerable{T}\"", "cref=\"T:System.Collections.Generic.IEnumerable`1\""),
+            ("cref=\"IEnumerable\"", "cref=\"T:System.Collections.IEnumerable\"")
         };
 
 
@@ -247,17 +248,50 @@ internal sealed partial class Reverser : IReverser
             }
 
             _log.Debug("Parse: {0}", line);
-            string[] splits = line.Split(',');
+            int splitPoint = GetSplitPoint(line);
 
-            if (splits.Length != 2)
+            if (splitPoint == -1)
             {
                 throw new FormatException();
             }
 
-            Replacements.Add((splits[0].Trim(), splits[1].Trim()));
+            Replacements.Add((line.AsSpan(0, splitPoint).Trim().ToString(), 
+                              line.AsSpan(splitPoint + 1).Trim().ToString()));
         }
 
         _log.Debug("Replacements successfully parsed.");
+
+        static int GetSplitPoint(string line)
+        {
+            ReadOnlySpan<char> span = line.AsSpan();
+
+            bool inParentheses = false;
+           
+            for (int i = 0; i < span.Length; i++)
+            {
+                if(inParentheses)
+                {
+                    if (span[i] == ')')
+                    {
+                        inParentheses = false;
+                    }
+
+                    continue;
+                }
+
+                switch(span[i])
+                {
+                    case '(':
+                        inParentheses = true;
+                        break;
+                    
+                    case ',':
+                        return i;
+                }
+            }
+
+            return -1;
+        }
     }
 
     private void TranslateFile(string file)
