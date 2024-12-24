@@ -120,8 +120,8 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"MD5\"", "cref=\"T:System.Security.Cryptography.MD5\""),
             ("cref=\"SHA256\"", "cref=\"T:System.Security.Cryptography.SHA256\""),
             ("cref=\"Uri\"", "cref=\"T:System.Uri\""),
+            ("cref=\"bool\"", "cref=\"T:System.Boolean\""),
 
-            ("cref=\"byte\"", "cref=\"T:System.Byte\""),
             ("cref=\"StringBuilder\"", "cref=\"T:System.Text.StringBuilder\""),
             ("cref=\"StringBuilder.MaxCapacity", "cref=\"P:System.Text.StringBuilder.MaxCapacity"),
 
@@ -159,7 +159,10 @@ internal sealed partial class Reverser : IReverser
             ("cref=\"EventArgs\"", "cref=\"T:System.EventArgs\""),
 
             ("cref=\"IEnumerable{T}\"", "cref=\"T:System.Collections.Generic.IEnumerable`1\""),
-            ("cref=\"IEnumerable\"", "cref=\"T:System.Collections.IEnumerable\"")
+            ("cref=\"IEnumerable\"", "cref=\"T:System.Collections.IEnumerable\""),
+            ("cref=\"List{T}\"", "cref=\"T:System.Collections.Generic.List`1\""),
+
+            ("cref=\"CultureInfo\"", "cref=\"T:System.Globalization.CultureInfo\"")
         };
 
 
@@ -265,28 +268,26 @@ internal sealed partial class Reverser : IReverser
         {
             ReadOnlySpan<char> span = line.AsSpan();
 
-            bool inParentheses = false;
-           
+            int bracesCounter = 0;
+
             for (int i = 0; i < span.Length; i++)
             {
-                if(inParentheses)
-                {
-                    if (span[i] == ')')
-                    {
-                        inParentheses = false;
-                    }
+                char c = span[i];
 
+                if (c is ')' or '}')
+                {
+                    bracesCounter--;
+                    continue;
+                }
+                else if (c is '(' or '{')
+                {
+                    bracesCounter++;
                     continue;
                 }
 
-                switch(span[i])
+                if (bracesCounter == 0 && c == ',')
                 {
-                    case '(':
-                        inParentheses = true;
-                        break;
-                    
-                    case ',':
-                        return i;
+                    return i;
                 }
             }
 

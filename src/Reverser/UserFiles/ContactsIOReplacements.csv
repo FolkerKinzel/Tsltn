@@ -19,4 +19,16 @@
 #          the order.)
 
 cref="Contact",cref="T:FolkerKinzel.Contacts.Contact"
-
+cref="CsvRecordWrapper",cref="T:FolkerKinzel.CsvTools.Helpers.CsvRecordWrapper"
+cref="Tuple{T1, T2, T3}",cref="T:System.Tuple`3"
+cref="Tuple{T1, T2, T3}.Item1,cref="P:System.Tuple`3.Item1
+cref="Tuple{T1, T2, T3}.Item2,cref="P:System.Tuple`3.Item2
+cref="Tuple{T1, T2, T3}.Item3,cref="P:System.Tuple`3.Item3
+cref="Contact.Clean,cref="M:FolkerKinzel.Contacts.Contact.Clean
+cref="ContactPersistence.SaveCsv(string, IEnumerable{Contact?}, CsvCompatibility, IFormatProvider?, Encoding?),cref="M:FolkerKinzel.Contacts.IO.ContactPersistence.SaveCsv(System.String,System.Collections.Generic.IEnumerable{FolkerKinzel.Contacts.Contact},FolkerKinzel.Contacts.IO.CsvCompatibility,System.IFormatProvider,System.Text.Encoding)
+cref="ContactCollectionExtension.SaveCsv(IEnumerable{Contact?}, string, CsvCompatibility, IFormatProvider?, Encoding?),cref="M:FolkerKinzel.Contacts.IO.ContactCollectionExtension.SaveCsv(System.Collections.Generic.IEnumerable{FolkerKinzel.Contacts.Contact},System.String,FolkerKinzel.Contacts.IO.CsvCompatibility,System.IFormatProvider,System.Text.Encoding)
+cref="Contact.IsEmpty,cref="P:FolkerKinzel.Contacts.Contact.IsEmpty
+cref="Contact.Clean,cref="M:FolkerKinzel.Contacts.Contact.Clean
+cref="Contact.Clone,cref="M:FolkerKinzel.Contacts.Contact.Clone
+cref="ContactPersistence.SaveVcf(string, IEnumerable{Contact?}, VCardVersion),cref="M:FolkerKinzel.Contacts.IO.ContactPersistence.SaveVcf(System.String,System.Collections.Generic.IEnumerable{FolkerKinzel.Contacts.Contact},FolkerKinzel.Contacts.IO.VCardVersion)
+cref="ContactCollectionExtension.SaveVcf(IEnumerable{Contact?}, string, VCardVersion),cref="M:FolkerKinzel.Contacts.IO.ContactCollectionExtension.SaveVcf(System.Collections.Generic.IEnumerable{FolkerKinzel.Contacts.Contact},System.String,FolkerKinzel.Contacts.IO.VCardVersion)
