@@ -18,3 +18,34 @@
 #	      (Parts of these can be omitted if they don't occur in the source file, but don't change
 #          the order.)
 
+cref="CsvAnalyzer",cref="T:FolkerKinzel.CsvTools.CsvAnalyzer"
+cref="AnalyzedLinesMinCount,cref="F:FolkerKinzel.CsvTools.CsvAnalyzer.AnalyzedLinesMinCount
+cref="int.MaxValue,cref="F:System.Int32.MaxValue
+cref="CsvOptions",cref="T:FolkerKinzel.CsvTools.CsvOptions"
+cref="CsvOptionsExtension",cref="T:FolkerKinzel.CsvTools.CsvOptionsExtension"
+cref="DisableCaching,cref="F:FolkerKinzel.CsvTools.CsvOptions.DisableCaching
+cref="CsvReader",cref="T:FolkerKinzel.CsvTools.CsvReader"
+cref="InvalidCsvException",cref="T:FolkerKinzel.CsvTools.InvalidCsvException"
+cref="CsvRecord",cref="T:FolkerKinzel.CsvTools.CsvRecord"
+cref="DataColumnCollection",cref="T:System.Data.DataColumnCollection"
+cref="CsvWriter",cref="T:FolkerKinzel.CsvTools.CsvWriter"
+cref="string.Trim(),cref="M:System.String.Trim
+cref="CsvOptions.None,cref="F:FolkerKinzel.CsvTools.CsvOptions.None
+cref="Read,cref="M:FolkerKinzel.CsvTools.CsvReader.Read
+cref="IEnumerator{T}",cref="T:System.Collections.Generic.IEnumerator`1"
+cref="CsvRecordWrapper",cref="T:FolkerKinzel.CsvTools.CsvRecordWrapper"
+cref="Record,cref="P:FolkerKinzel.CsvTools.CsvWriter.Record
+cref="WriteRecord,cref="M:FolkerKinzel.CsvTools.CsvWriter.WriteRecord
+cref="ReadOnlySpan{T}.Empty,cref="P:System.ReadOnlySpan`1.Empty
+cref="TextWriter",cref="T:System.IO.TextWriter"
+cref="DataTable",cref="T:System.Data.DataTable"
+cref="StreamWriter",cref="T:System.IO.StreamWriter"
+cref="KeyValuePair{TKey, TValue}",cref="T:System.Collections.Generic.KeyValuePair`2"
+cref="KeyValuePair{TKey, TValue}.Key,cref="P:System.Collections.Generic.KeyValuePair`2.Key
+cref="KeyValuePair{TKey, TValue}.Value,cref="P:System.Collections.Generic.KeyValuePair`2.Value
+cref="CsvRecord.Count,cref="P:FolkerKinzel.CsvTools.CsvRecord.Count
+cref="ReadOnlyMemory{T}",cref="T:System.ReadOnlyMemory`1"
+cref="ReadOnlyMemory{T}.Empty,cref="P:System.ReadOnlyMemory`1.Empty
+cref="Dictionary{TKey, TValue}",cref="T:System.Collections.Generic.Dictionary`2"
+cref="ArgumentException",cref="T:System.ArgumentException"
+cref="StreamReader",cref="T:System.IO.StreamReader"
