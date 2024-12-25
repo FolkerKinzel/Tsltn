@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Reverser": {
-      "commandName": "Project",
-      "commandLineArgs": "--log \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.CsvTools\\src\\FolkerKinzel.CsvTools\\\\\" --tsltn \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.CsvTools\\src\\FolkerKinzel.CsvTools\\Translations\\FolkerKinzel.CsvTools.en.tsltn\" --in \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.CsvTools\\src\\FolkerKinzel.CsvTools\\\\\" --loglevel 1 -r \"C:\\Users\\fkinz\\source\\repos\\Tsltn\\src\\Reverser\\UserFiles\\CsvToolsReplacements.csv\" --out \"C:\\Users\\fkinz\\source\\repos\\FolkerKinzel.CsvTools\\src\\FolkerKinzel.CsvTools\\Translations\\ReverserTest\\\\\""
+      "commandName": "Project"
     }
   }
 }

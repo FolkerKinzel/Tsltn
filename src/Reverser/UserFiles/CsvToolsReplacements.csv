@@ -36,6 +36,7 @@ cref="IEnumerator{T}",cref="T:System.Collections.Generic.IEnumerator`1"
 cref="CsvRecordWrapper",cref="T:FolkerKinzel.CsvTools.CsvRecordWrapper"
 cref="Record,cref="P:FolkerKinzel.CsvTools.CsvWriter.Record
 cref="WriteRecord,cref="M:FolkerKinzel.CsvTools.CsvWriter.WriteRecord
+cref="ReadRecord,cref="M:FolkerKinzel.CsvTools.CsvWriter.ReadRecord
 cref="ReadOnlySpan{T}.Empty,cref="P:System.ReadOnlySpan`1.Empty
 cref="TextWriter",cref="T:System.IO.TextWriter"
 cref="DataTable",cref="T:System.Data.DataTable"
