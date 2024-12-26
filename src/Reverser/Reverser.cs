@@ -217,7 +217,7 @@ internal sealed partial class Reverser : IReverser
     }
 
 
-    private List<string> InitFiles(string directory, List<string> list)
+    private static List<string> InitFiles(string directory, List<string> list)
     {
         foreach (string subDirectory in Directory.EnumerateDirectories(directory))
         {
@@ -268,7 +268,7 @@ internal sealed partial class Reverser : IReverser
         {
             ReadOnlySpan<char> span = line.AsSpan();
 
-            int bracesCounter = 0;
+            int parenthesesCounter = 0;
 
             for (int i = 0; i < span.Length; i++)
             {
@@ -276,16 +276,16 @@ internal sealed partial class Reverser : IReverser
 
                 if (c is ')' or '}')
                 {
-                    bracesCounter--;
+                    parenthesesCounter--;
                     continue;
                 }
                 else if (c is '(' or '{')
                 {
-                    bracesCounter++;
+                    parenthesesCounter++;
                     continue;
                 }
 
-                if (bracesCounter == 0 && c == ',')
+                if (parenthesesCounter == 0 && c == ',')
                 {
                     return i;
                 }
